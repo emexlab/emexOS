@@ -57,6 +57,9 @@ EOF
 # 3. Patch TinyGL to use system <math.h> headers
 echo ":: Patching TinyGL..."
 grep -l "#include <math.h>" src/*.c src/*.h | xargs sed -i 's/"math.h"/<math.h>/' || true
+sed -i 's/static void gl_free/static inline void gl_free/' include/zbuffer.h
+sed -i 's/static void\* gl_malloc/static inline void\* gl_malloc/' include/zbuffer.h
+sed -i 's/static void\* gl_zalloc/static inline void\* gl_zalloc/' include/zbuffer.h
 
 echo ":: TinyGL porting setup complete."
 echo ":: To build libc and TinyGL, run: "
