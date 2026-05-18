@@ -43,7 +43,7 @@ static void compute_home(dt_win_t *w)
 }
 
 int win_add(
-	pid_t pid, const char *title,
+    pid_t pid, const char *title,
     int x, int y, int w, int h, unsigned int style
 ) {
     for (int i = 0; i < DT_WIN_MAX; i++)
@@ -132,7 +132,7 @@ void win_move(int idx, int nx, int ny)
 
 void win_focus(int idx)
 {
-	// auto unfocuses the others then
+    // auto unfocuses the others then
     for (int i = 0; i < DT_WIN_MAX; i++) wins[i].focused = 0;
     if (idx >= 0 && idx < DT_WIN_MAX && wins[idx].valid)
     {
@@ -153,7 +153,7 @@ int win_hit(int idx, int mx, int my)
     if (!w) return 0;
 
     return
-    	mx >= w->x && mx < w->x + w->w &&
+        mx >= w->x && mx < w->x + w->w &&
         my >= w->y && my < w->y + w->h
     ;
 }
@@ -164,7 +164,7 @@ int win_hit_title(int idx, int mx, int my)
     if (!w || (w->style & DT_POPUP) || (w->style & DT_NOTITLE)) return 0;
 
     return
-    	mx >= w->x && mx < w->x + w->w &&
+        mx >= w->x && mx < w->x + w->w &&
         my >= w->y && my < w->y + DT_TITLE_H
     ;
 }
@@ -176,7 +176,7 @@ int win_hit_close(int idx, int mx, int my)
     int bx = w->x + DT_CLOSE_X;
     int by = w->y + DT_CLOSE_Y;
     return
-    	mx >= bx && mx < bx + DT_CLOSE_SZ &&
+        mx >= bx && mx < bx + DT_CLOSE_SZ &&
         my >= by && my < by + DT_CLOSE_SZ
     ;
 }
@@ -189,5 +189,5 @@ dt_win_t *win_get(int idx)
 
 int win_count(void)
 {
-	return win_cnt;
+    return win_cnt;
 }

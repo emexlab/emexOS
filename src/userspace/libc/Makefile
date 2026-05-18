@@ -4,11 +4,11 @@ INC := $(CURDIR)/include
 BLD := $(CURDIR)/build
 
 CFLAGS := -ffreestanding -nostdlib -fno-builtin -fno-stack-protector \
-          -fno-PIE -fno-pic -m64 -march=x86-64 -mno-sse -mno-sse2    \
+          -fno-PIE -fno-pic -m64 -march=x86-64 \
           -mno-mmx -mno-red-zone -Wall -Wextra -std=gnu11            \
           -I$(INC) -Isrc
 
-SRCS := src/errno.c src/string.c src/stdlib.c src/unistd.c src/fcntl.c src/stdio.c src/dirent.c src/ioctl.c src/system.c src/wait.c src/sinfo.c
+SRCS := src/errno.c src/string.c src/stdlib.c src/unistd.c src/fcntl.c src/stdio.c src/dirent.c src/ioctl.c src/system.c src/wait.c src/sinfo.c src/math.c
 OBJS := $(patsubst src/%.c, $(BLD)/%.o, $(SRCS))
 
 all: $(BLD)/libc.a $(BLD)/crt0.o

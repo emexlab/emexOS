@@ -204,6 +204,20 @@ void cpu_detect(void) {
         amd64_print_info(&amd64_info);
         amd64_init_optimizations();
     }
+
+    // Enable SSE for userspace
+    u64 cr0, cr4;
+    __asm__ volatile("mov %%cr0, %0" : "=r"(cr0));
+    cr0 &= ~(1ULL << 2); // clear EM
+    cr0 |= (1ULL << 1);  // set MP
+    __asm__ volatile("mov %0, %%cr0" : : "r"(cr0));
+
+    __asm__ volatile("mov %%cr4, %0" : "=r"(cr4));
+    cr4 |= (1ULL << 9);  // set OSFXSR
+    cr4 |= (1ULL << 10); // set OSXMMEXCPT
+    __asm__ volatile("mov %0, %%cr4" : : "r"(cr4));
+
+    log("[CPU]", "SSE enabled\n", d);
 }
 
 const char* cpu_get_vendor(void) {

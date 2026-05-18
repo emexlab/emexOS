@@ -3,7 +3,7 @@ LD      := x86_64-elf-ld
 LIBC    := ../../libc
 
 CFLAGS  := -ffreestanding -nostdlib -fno-builtin -fno-stack-protector \
-           -fno-PIE -fno-pic -m64 -march=x86-64 -mno-sse -mno-sse2    \
+           -fno-PIE -fno-pic -m64 -march=x86-64     \
            -mno-mmx -mno-red-zone -Wall -Wextra -std=gnu11            \
            -I$(LIBC)/include
 

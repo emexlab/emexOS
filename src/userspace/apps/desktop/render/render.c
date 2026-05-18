@@ -99,7 +99,7 @@ void render_win(dt_win_t *w)
 
     if (style & DT_POPUP)
     {
-    	// content will be untouched
+        // content will be untouched
         hline_comp(wx, wy,          ww, DT_BLACK);
         hline_comp(wx, wy + wh - 1, ww, DT_BLACK);
         for (int dy = 1; dy < wh - 1; dy++) {
@@ -139,7 +139,7 @@ void render_win(dt_win_t *w)
         }
         if (has_title && dy >= 2 && dy < DT_TITLE_H)
         {
-        	int frow = dy - DT_TITLE_PB; // title text
+            int frow = dy - DT_TITLE_PB; // title text
 
             // fill titlebar bg
             for (int dx = 2; dx < ww - 2 && dx < ROW_MAX; dx++)
@@ -164,14 +164,14 @@ void render_win(dt_win_t *w)
                     if (bry == 0 || bry == DT_CLOSE_SZ)
                     {
                         for (
-                        	int dx = bx; dx <= bx + DT_CLOSE_SZ && dx < ROW_MAX; dx++
+                            int dx = bx; dx <= bx + DT_CLOSE_SZ && dx < ROW_MAX; dx++
                         ) row_buf[dx] = DT_BLACK;
                     } else
                     {
                         if (bx < ROW_MAX) row_buf[bx] = DT_BLACK;
                         if (bx + DT_CLOSE_SZ < ROW_MAX) row_buf[bx + DT_CLOSE_SZ] = DT_BLACK;
                         for (
-                        	int dx = bx + 1; dx < bx + DT_CLOSE_SZ && dx < ROW_MAX; dx++
+                            int dx = bx + 1; dx < bx + DT_CLOSE_SZ && dx < ROW_MAX; dx++
                         ) row_buf[dx] = DT_FACE;
                     }
                 }

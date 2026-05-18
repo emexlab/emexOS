@@ -4,11 +4,11 @@
 
 // cursor type enum
 typedef enum {
-    CUR_TYPE_NORMAL     		= 0,
-    CUR_TYPE_HRESIZE    		= 1,
-    CUR_TYPE_VRESIZE    		= 2,
-    CUR_TYPE_DRESIZE_NWSE 		= 3,
-    CUR_TYPE_DRESIZE_NESW 		= 4,
+  CUR_TYPE_NORMAL = 0,
+  CUR_TYPE_HRESIZE = 1,
+  CUR_TYPE_VRESIZE = 2,
+  CUR_TYPE_DRESIZE_NWSE = 3,
+  CUR_TYPE_DRESIZE_NESW = 4,
 } cur_type_t;
 
 void cur_init(int fb_fd, int w, int h);

@@ -1,8 +1,8 @@
 #include "fb0.h"
 
-#include <kernel/module/module.h>
-#include <kernel/graph/graphics.h>
 #include <kernel/communication/serial.h>
+#include <kernel/graph/graphics.h>
+#include <kernel/module/module.h>
 #include <string/string.h>
 #include <theme/doccr.h>
 #include <types.h>
@@ -10,162 +10,166 @@
 #include <drivers/drivers.h>
 
 static size_t fb_write_pos = 0;
-static size_t fb_read_pos  = 0;
+static size_t fb_read_pos = 0;
 
 static int fb0_mod_init(void) {
-    log("[FB0]", "init /dev/fb0\n", d);
-    return 0;
+  log("[FB0]", "init /dev/fb0\n", d);
+  return 0;
 }
 
 static void fb0_mod_fini(void) {}
 
-static void *fb0_open(const char *path)
-{
-    (void)path;
+static void *fb0_open(const char *path) {
+  (void)path;
+  fb_write_pos = 0;
+  fb_read_pos = 0;
+  return (void *)1;
+}
+
+static int fb0_read(void *handle, void *buf, size_t count, u64 offset) {
+  (void)handle;
+  (void)offset;
+  u32 *fb = get_framebuffer();
+  u32 pitch = get_fb_pitch();
+  u32 h = get_fb_height();
+
+  if (!fb)
+    return -1;
+
+  size_t fb_size = (size_t)pitch * h;
+
+  // EOF
+  if (fb_read_pos >= fb_size)
+    return 0;
+
+  size_t remaining = fb_size - fb_read_pos;
+  if (count > remaining)
+    count = remaining;
+
+  memcpy(buf, (u8 *)fb + fb_read_pos, count);
+  fb_read_pos += count;
+  return (int)count;
+}
+
+static int fb0_write(void *handle, const void *buf, size_t count, u64 offset) {
+  (void)handle;
+  (void)offset;
+  u32 *fb = get_framebuffer();
+  u32 pitch = get_fb_pitch();
+  u32 h = get_fb_height();
+
+  if (!fb)
+    return -1;
+
+  size_t fb_size = (size_t)pitch * h;
+
+  // wrap around if we're on end
+  if (fb_write_pos >= fb_size)
     fb_write_pos = 0;
-    fb_read_pos = 0;
-    return (void *)1;
+
+  size_t remaining = fb_size - fb_write_pos;
+  if (count > remaining)
+    count = remaining;
+
+  memcpy((u8 *)fb + fb_write_pos, buf, count);
+  fb_write_pos += count;
+  return (int)count;
 }
 
-static int fb0_read(void *handle, void *buf, size_t count, u64 offset)
-{
-    (void)handle;
-    (void)offset;
-    u32 *fb = get_framebuffer();
-    u32 pitch = get_fb_pitch();
-    u32 h = get_fb_height();
+int fb0_ioctl(int request, void *arg) {
+  if (!arg)
+    return -1;
 
-    if (!fb) return -1;
+  u32 w = get_fb_width();
+  u32 h = get_fb_height();
+  u32 pitch = get_fb_pitch();
+  u32 *fb = get_framebuffer();
 
-    size_t fb_size = (size_t)pitch * h;
-
-    // EOF
-    if (fb_read_pos >= fb_size) return 0;
-
-    size_t remaining = fb_size - fb_read_pos;
-    if (count > remaining) count = remaining;
-
-    memcpy(buf, (u8 *)fb + fb_read_pos, count);
-    fb_read_pos += count;
-    return (int)count;
-}
-
-static int fb0_write(void *handle, const void *buf, size_t count, u64 offset)
-{
-    (void)handle;
-    (void)offset;
-    u32 *fb = get_framebuffer();
-    u32 pitch = get_fb_pitch();
-    u32 h = get_fb_height();
-
-    if (!fb) return -1;
-
-    size_t fb_size = (size_t)pitch * h;
-
-    // wrap around if we're on end
-    if (fb_write_pos >= fb_size) fb_write_pos = 0;
-
-    size_t remaining = fb_size - fb_write_pos;
-    if (count > remaining) count = remaining;
-
-    memcpy((u8 *)fb + fb_write_pos, buf, count);
-    fb_write_pos += count;
-    return (int)count;
-}
-
-int fb0_ioctl(int request, void *arg)
-{
-    if (!arg) return -1;
-
-    u32 w = get_fb_width();
-    u32 h = get_fb_height();
-    u32 pitch = get_fb_pitch();
-    u32 *fb = get_framebuffer();
-
-    switch (request) {
-        case FBIOGET_VSCREENINFO:
-    	{
-            fb_var_screeninfo_t *info = (fb_var_screeninfo_t *)arg;
-            info->xres = w;
-            info->yres = h;
-            info->xres_virtual = w;
-            info->yres_virtual = h;
-            info->xoffset = 0;
-            info->yoffset = 0;
-            info->bits_per_pixel = 32;
-            info->grayscale = 0;
-            info->blue_offset = 0; info->blue_length  = 8;
-            info->green_offset = 8; info->green_length = 8;
-            info->red_offset = 16; info->red_length   = 8;
-            info->transp_offset = 24; info->transp_length = 8;
-            return 0;
-        }
-        case FBIOGET_FSCREENINFO:
-    	{
-            fb_fix_screeninfo_t *fix = (fb_fix_screeninfo_t *)arg;
-            str_copy(fix->id, FBN);
-            fix->smem_start = (u64)fb;
-            fix->smem_len 	= pitch * h;
-            fix->type   	= 0; // FB_TYPE_PACKED_PIXELS
-            fix->visual 	= 2; // FB_VISUAL_TRUECOLOR
-            fix->line_length = pitch;
-            return 0;
-        }
-        case FBIO_READ_RECT:
-    	{
-            fb_rect_t *r = (fb_rect_t *)arg;
-            if (!r || !r->pixels) return -1;
-            u32 pitch_dw = pitch / 4;
-            for (u32 row = 0; row < r->h; row++)
-            {
-                u32 py = r->y + row;
-                if (py >= h) break;
-                for (u32 col = 0; col < r->w; col++)
-                {
-                    u32 px = r->x + col;
-                    r->pixels[row * r->w + col] = (px < w) ? fb[py * pitch_dw + px] : 0;
-                }
-            }
-            return 0;
-        }
-        case FBIO_BLIT:
-    	{
-            fb_rect_t *r = (fb_rect_t *)arg;
-            if (!r || !r->pixels) return -1;
-            u32 pitch_dw = pitch / 4;
-            for (u32 row = 0; row < r->h; row++)
-            {
-                u32 py = r->y + row;
-                if (py >= h) break;
-
-                for (u32 col = 0; col < r->w; col++)
-                {
-                    u32 px = r->x + col;
-                    if (px >= w) break;
-                    u32 c = r->pixels[row * r->w + col];
-                    if ((c >> 24) == 0) continue; // transparent
-                    fb[py * pitch_dw + px] = c;
-                }
-            }
-
-            return 0;
-        }
-        case FBIO_RESET_POS:
-            fb_write_pos = 0;
-            return 0;
-        default:
-            return -1;
+  switch (request) {
+  case FBIOGET_VSCREENINFO: {
+    fb_var_screeninfo_t *info = (fb_var_screeninfo_t *)arg;
+    info->xres = w;
+    info->yres = h;
+    info->xres_virtual = w;
+    info->yres_virtual = h;
+    info->xoffset = 0;
+    info->yoffset = 0;
+    info->bits_per_pixel = 32;
+    info->grayscale = 0;
+    info->blue_offset = 0;
+    info->blue_length = 8;
+    info->green_offset = 8;
+    info->green_length = 8;
+    info->red_offset = 16;
+    info->red_length = 8;
+    info->transp_offset = 24;
+    info->transp_length = 8;
+    return 0;
+  }
+  case FBIOGET_FSCREENINFO: {
+    fb_fix_screeninfo_t *fix = (fb_fix_screeninfo_t *)arg;
+    str_copy(fix->id, FBN);
+    fix->smem_start = (u64)fb;
+    fix->smem_len = pitch * h;
+    fix->type = 0;   // FB_TYPE_PACKED_PIXELS
+    fix->visual = 2; // FB_VISUAL_TRUECOLOR
+    fix->line_length = pitch;
+    return 0;
+  }
+  case FBIO_READ_RECT: {
+    fb_rect_t *r = (fb_rect_t *)arg;
+    if (!r || !r->pixels)
+      return -1;
+    u32 pitch_dw = pitch / 4;
+    for (u32 row = 0; row < r->h; row++) {
+      u32 py = r->y + row;
+      if (py >= h)
+        break;
+      for (u32 col = 0; col < r->w; col++) {
+        u32 px = r->x + col;
+        r->pixels[row * r->w + col] = (px < w) ? fb[py * pitch_dw + px] : 0;
+      }
     }
+    return 0;
+  }
+  case FBIO_BLIT: {
+    fb_rect_t *r = (fb_rect_t *)arg;
+    if (!r || !r->pixels)
+      return -1;
+    u32 pitch_dw = pitch / 4;
+    for (u32 row = 0; row < r->h; row++) {
+      u32 py = r->y + row;
+      if (py >= h)
+        break;
+
+      for (u32 col = 0; col < r->w; col++) {
+        u32 px = r->x + col;
+        if (px >= w)
+          break;
+        u32 c = r->pixels[row * r->w + col];
+        if ((c >> 24) == 0)
+          continue; // transparent
+        fb[py * pitch_dw + px] = c;
+      }
+    }
+
+    return 0;
+  }
+  case FBIO_RESET_POS:
+    fb_write_pos = 0;
+    return 0;
+  default:
+    return -1;
+  }
 }
 
-driver_module fb0_module =
-{
-    .name    = FB0NAME,
-    .mount   = FB0PATH,
+driver_module fb0_module = {
+    .name = FB0NAME,
+    .mount = FB0PATH,
     .version = FB0UNIVERSAL,
-    .init    = fb0_mod_init,
-    .fini    = fb0_mod_fini,
-    .open    = fb0_open,
-    .read    = fb0_read,
-    .write   = fb0_write,
+    .init = fb0_mod_init,
+    .fini = fb0_mod_fini,
+    .open = fb0_open,
+    .read = fb0_read,
+    .write = fb0_write,
 };

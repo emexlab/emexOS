@@ -25,8 +25,8 @@ fetchDeps:
 
 disk:
 	@mkdir -p $(DISK_DIR)
-	@if $(DISK_IMG); then\
-		@rm $(DISK_IMG);\
+	@if [ -f $(DISK_IMG) ]; then \
+		rm $(DISK_IMG); \
 	fi
 	@qemu-img create -f raw $(DISK_IMG) 256M
 	@echo "[DISK] created $(DISK_IMG)"
@@ -62,7 +62,6 @@ $(ISO): limine.conf $(LIMINE_TOOL) buildgen $(BUILD_DIR)/kernel.elf disk userspa
 	@cp $(BUILD_DIR)/kernel.elf $(ISODIR)/boot/kernel_a.elf
 	@cp $(BUILD_DIR)/kernel.elf $(ISODIR)/boot/kernel_b.elf
 	@cp $(DISK_DIR)/logo.bin $(ISODIR)/boot/logo.bin
-	@cp tools/vad/test.bin $(ISODIR)/boot/test.bin
 	@cp $< $(ISODIR)/boot/limine/
 	@cp $(addprefix $(INCLUDE_DIR)/limine/limine-, bios.sys bios-cd.bin uefi-cd.bin) $(ISODIR)/boot/limine/
 	@cp $(addprefix $(INCLUDE_DIR)/limine/BOOT, IA32.EFI X64.EFI) $(ISODIR)/EFI/BOOT/
@@ -87,6 +86,7 @@ $(ISO): limine.conf $(LIMINE_TOOL) buildgen $(BUILD_DIR)/kernel.elf disk userspa
 	@cp -r src/userspace/apps/sysinfo/sysinfo.elf $(DISK_DIR)/rd/emr/system/
 	@cp -r src/userspace/apps/filemanager/fm.elf $(DISK_DIR)/rd/emr/system/
 	@cp -r src/userspace/apps/template/template.elf $(DISK_DIR)/rd/emr/system/
+	@cp -r src/userspace/apps/gears/gears.elf $(DISK_DIR)/rd/bin/gears.elf
 
 	@echo "[MK] copying other binarys..."
 	# delete those using make binclean
@@ -206,6 +206,7 @@ binclean:
 	@rm -f  $(DISK_DIR)/rd/emr/system/system.emx/initd.elf
 	@rm -f  $(DISK_DIR)/rd/emr/system/desktop.elf
 	@rm -f  $(DISK_DIR)/rd/emr/system/login.elf
+	@rm -f  $(DISK_DIR)/rd/emr/system/gears.elf
 	@rm -f  $(DISK_DIR)/rd/emr/system/libraries/cursor.elf
 	@rm -f  $(DISK_DIR)/rd/emr/system/libraries/libemxfb0.a
 	@rm -f  $(DISK_DIR)/rd/emr/system/libraries/libfont8x12.a

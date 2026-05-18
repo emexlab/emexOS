@@ -125,7 +125,7 @@ static int _pollEvents(dt_event_t *buf, int max)
 {
     if (!buf||max<=0) return 0;
     char path[64]; _pid_path(DT_INPUT_PFX, path);
-    int fd=open(path, O_RDONLY);
+    int fd=open(path, O_RDONLY | O_NONBLOCK);
     if (fd<0) return 0;
 
     int count=0;
@@ -134,7 +134,7 @@ static int _pollEvents(dt_event_t *buf, int max)
     close(fd);
 
     if (count>0) {
-        fd=open(path, O_WRONLY|O_CREAT);
+        fd=open(path, O_WRONLY|O_CREAT|O_NONBLOCK);
         if (fd>=0) close(fd);
     }
     return count;

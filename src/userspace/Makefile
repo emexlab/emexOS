@@ -15,6 +15,7 @@ all:
 	@$(MAKE) -C apps/sysinfo
 	@$(MAKE) -C apps/filemanager
 	@$(MAKE) -C apps/template
+	@$(MAKE) -C apps/gears
 
 	@$(MAKE) -C bin/echo
 	@$(MAKE) -C bin/hello
@@ -52,6 +53,7 @@ clean:
 	@$(MAKE) -C apps/sysinfo clean
 	@$(MAKE) -C apps/filemanager clean
 	@$(MAKE) -C apps/template clean
+	@$(MAKE) -C apps/gears clean
 
 	@$(MAKE) -C bin/echo clean
 	@$(MAKE) -C bin/hello clean

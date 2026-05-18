@@ -223,18 +223,23 @@ static void run_cmd(void) {
     return;
   }
 
-  // build /bin/<cmd>.elf path and check it exists first
+  // built-in command Handling or absolute path
   char path[BUFFER];
-  size_t bl = sizeof(BIN_PATH) - 1;
-  size_t cl = strlen(argv[0]);
-  if (bl + cl + 5 > BUFFER) {
-    buf_puts(argv[0], CI_ERR);
-    buf_puts(": name too long\n", CI_ERR);
-    return;
+  if (argv[0][0] == '/' || argv[0][0] == '.') {
+    strncpy(path, argv[0], BUFFER);
+  } else {
+    // build /bin/<cmd>.elf path
+    size_t bl = sizeof(BIN_PATH) - 1;
+    size_t cl = strlen(argv[0]);
+    if (bl + cl + 5 > BUFFER) {
+      buf_puts(argv[0], CI_ERR);
+      buf_puts(": name too long\n", CI_ERR);
+      return;
+    }
+    memcpy(path, BIN_PATH, bl);
+    memcpy(path + bl, argv[0], cl);
+    memcpy(path + bl + cl, ".elf", 5);
   }
-  memcpy(path, BIN_PATH, bl);
-  memcpy(path + bl, argv[0], cl);
-  memcpy(path + bl + cl, ".elf", 5);
 
   if (!file_exists(path)) {
     buf_puts(argv[0], CI_ERR);

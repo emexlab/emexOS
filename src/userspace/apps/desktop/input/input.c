@@ -15,12 +15,12 @@ static int g_drag_oy = 0;
 static int g_resize_idx  = -1;
 static int g_resize_edge = RESIZE_NONE;
 // why r coordinates so hard
-static int g_resize_sx   	= 0;   // mouse x at resize start
-static int g_resize_sy   	= 0;   // mouse y at resize start
-static int g_resize_wx   	= 0;   // window x at resize start
-static int g_resize_wy   	= 0;   // window y at resize start
-static int g_resize_ww   	= 0;   // window w at resize start
-static int g_resize_wh   	= 0;   // window h at resize start
+static int g_resize_sx       = 0;   // mouse x at resize start
+static int g_resize_sy       = 0;   // mouse y at resize start
+static int g_resize_wx       = 0;   // window x at resize start
+static int g_resize_wy       = 0;   // window y at resize start
+static int g_resize_ww       = 0;   // window w at resize start
+static int g_resize_wh       = 0;   // window h at resize start
 
 // rubber band state
 static int g_band_active = 0;
@@ -57,10 +57,10 @@ int win_get_resize_edge(int idx, int mx, int my)
 
     // must actually be inside or on the window frame
     if (
-    	mx <  wx      ||
-    	mx >= wx + ww ||
-     	my <  wy      ||
-      	my >= wy + wh
+        mx <  wx      ||
+        mx >= wx + ww ||
+         my <  wy      ||
+          my >= wy + wh
     ) return RESIZE_NONE;
 
     if (on_left)   edge |= RESIZE_LEFT;
@@ -82,10 +82,10 @@ static cur_type_t edge_to_cursor(int edge)
 
     // diagonal
     int nwse =
-		((edge & RESIZE_LEFT)    &&
-		 (edge & RESIZE_TOP))    ||
-		((edge & RESIZE_RIGHT)   &&
-		 (edge & RESIZE_BOTTOM))
+        ((edge & RESIZE_LEFT)    &&
+         (edge & RESIZE_TOP))    ||
+        ((edge & RESIZE_RIGHT)   &&
+         (edge & RESIZE_BOTTOM))
     ;
 
     if (nwse) return CUR_TYPE_DRESIZE_NWSE;
@@ -107,7 +107,8 @@ void input_init(void)
 
 void input_frame_begin(input_state_t *is)
 {
-    (void)is;
+    is->sel_px1 = is->sel_x1;
+    is->sel_py1 = is->sel_y1;
 }
 
 static int handle_one(mouse_event_t *ev, input_state_t *is)
@@ -190,20 +191,20 @@ static int handle_one(mouse_event_t *ev, input_state_t *is)
                 }
             } else if (edge != RESIZE_NONE && !(win_get(top_idx) && (win_get(top_idx)->style & DT_NOMOVE) && edge == RESIZE_NONE))
             {
-            	#if DT_ENABLE_RESIZING
-	            	// start resize
-	                dt_win_t *wn = win_get(top_idx);
-	                if (wn) {
-	                    g_resize_idx  = top_idx;
-	                    g_resize_edge = edge;
-	                    g_resize_sx   = mx;
-	                    g_resize_sy   = my;
-	                    g_resize_wx   = wn->x;
-	                    g_resize_wy   = wn->y;
-	                    g_resize_ww   = wn->w;
-	                    g_resize_wh   = wn->h;
-	                    cur_set_type(edge_to_cursor(edge));
-	                }
+                #if DT_ENABLE_RESIZING
+                    // start resize
+                    dt_win_t *wn = win_get(top_idx);
+                    if (wn) {
+                        g_resize_idx  = top_idx;
+                        g_resize_edge = edge;
+                        g_resize_sx   = mx;
+                        g_resize_sy   = my;
+                        g_resize_wx   = wn->x;
+                        g_resize_wy   = wn->y;
+                        g_resize_ww   = wn->w;
+                        g_resize_wh   = wn->h;
+                        cur_set_type(edge_to_cursor(edge));
+                    }
                 #endif
             } else if (win_hit_title(top_idx, mx, my))
             {
@@ -268,10 +269,10 @@ static int handle_one(mouse_event_t *ev, input_state_t *is)
         {
             int dx = mx - g_resize_sx;
             int dy = my - g_resize_sy;
-            int nx = 	  g_resize_wx;
-            int ny = 	  g_resize_wy;
-            int nw = 	  g_resize_ww;
-            int nh = 	  g_resize_wh;
+            int nx =       g_resize_wx;
+            int ny =       g_resize_wy;
+            int nw =       g_resize_ww;
+            int nh =       g_resize_wh;
 
             if (g_resize_edge & RESIZE_RIGHT)  nw = g_resize_ww + dx;
             if (g_resize_edge & RESIZE_BOTTOM) nh = g_resize_wh + dy;
@@ -355,7 +356,7 @@ static int handle_one(mouse_event_t *ev, input_state_t *is)
 
             dt_event_t mev;
             if (
-            	dt_make_mouse_event(g_focused_idx, mx, my, btns, &mev)
+                dt_make_mouse_event(g_focused_idx, mx, my, btns, &mev)
             ) dt_dispatch_event(g_focused_pid, &mev);
         }
     }
