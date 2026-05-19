@@ -4,6 +4,7 @@ all:
 	@$(MAKE) -C libs/libfont
 	@$(MAKE) -C libs/libdesktop
 	@$(MAKE) -C libs/eXui
+	@$(MAKE) -C libs/tinygl
 #@$(MAKE) -C libs/cursor
 
 	@$(MAKE) -C apps/system
@@ -42,6 +43,7 @@ clean:
 	@$(MAKE) -C libs/libfont clean
 	@$(MAKE) -C libs/libdesktop clean
 	@$(MAKE) -C libs/eXui clean
+	@$(MAKE) -C libs/tinygl clean
 #@$(MAKE) -C libs/cursor clean
 
 	@$(MAKE) -C apps/system clean
