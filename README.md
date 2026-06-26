@@ -20,6 +20,9 @@ a simple x86_64 Operating System in C made from scratch
 	</a>
 </div>
 
+NOTE:
+EMEXOS DEVELOPEMENT WILL TAKE A PAUSE AFTER 1st August 2026
+
 ## What is emexOS?
 [emexOS](https://github.com/emexlab/emexOS) is a small graphical operating system entirely written from scratch in C by emex and [all its contributors](https://github.com/emexlab/emexOS/graphs/contributors). It's designed for customizer and retro-enthusiasts, who want to fully change the look of their system and love retro-style.
 
