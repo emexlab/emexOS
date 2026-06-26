@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: panic.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "panic.h"
 
 #include <kernel/graph/graphics.h>
@@ -185,7 +196,16 @@ __attribute__((noreturn)) void panic_exception(cpu_state_t *state, const char *m
     print("System halted, \nYour computer will now restart...", PANIC_FG);
 
     delay(100);
-    panic_reboot();
+    log("::", "DROPPING INTO EMERGENCY_SHELL...\n", _d);
+    emergency_shell();
+
+    reboot: {
+	    log("::", "FAILED, TRIGGERING REBOOT...\n", _d);
+	    delay(55);
+	    log("::", "REBOOTING...\n", _d);
+	    delay(15);
+	    panic_reboot();
+    };
 
     // HALT
     //while(1) {

@@ -34,7 +34,7 @@ case $MONTH_STR in
     Dec) M="DR" ;;
 esac
 #                  VER
-BUILD="${YEAR}${M}.07.${n}"
+BUILD="${YEAR}${M}.0-7.${n}"
 
 echo "[BUILDGEN] build = $BUILD"
 

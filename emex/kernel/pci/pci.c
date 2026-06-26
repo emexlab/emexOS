@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: pci.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "pci.h"
 #include "device.h"
 #include "config.h"

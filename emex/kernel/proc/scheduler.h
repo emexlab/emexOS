@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: scheduler.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 

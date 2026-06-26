@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: config.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef PCI_CONFIG_H
 #define PCI_CONFIG_H
 

@@ -1,13 +1,23 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: system.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
 #pragma once
 
 #include "../ebuild.h"
 #include "../emex.h"
 
 #define KERNEL_ARCH "[x86-64]"
-#define KERNEL_BARENAME __EMEX_KERNEL "OS"
-#define KERNEL_DEFRELEASE __EMEX_VERSION_V
-#define KERNEL_DEFRELEASE_NAME "" ___EMEX_BUILD " "
-#define KERNEL_VERSION KERNEL_BARENAME " " KERNEL_ARCH //" " KERNEL_DEFRELEASE
+#define KERNEL_NAME __EMEX_KERNEL
+#define KERNEL_RELEASE_VER __EMEX_VERSION_V
+#define KERNEL_RELEASE_BUILD "" ___EMEX_BUILD " "
+#define KERNEL_FULL KERNEL_BARENAME " " KERNEL_ARCH //" " KERNEL_DEFRELEASE
 //#define VERIFYSYSGEN "62522870358368638010"
 #define KERNELADRESSNUM "kman"
 #define KERNELPROC "kernel"
@@ -18,6 +28,7 @@
 
 #define USE_HCF 1
 #define BOOTUP_VISUALS 0 // verbose boot == 0, silent boot == 1
+#define BS_DEBUG 0 // verbose boot == 1, animation/gfx boot == 0
 #define TTYNOGUI 1 // GUI == 0, no GUI == 1
 #define DEBUG_LOGGING 1 // 1 on; 0 off
 

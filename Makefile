@@ -1,3 +1,14 @@
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Copyright (c) 2026 emex-foundation
+#
+# FILE: Makefile
+# CREATED BY: emex
+# MODIFIED BY: --
+#
+#
+
 include common.mk
 LIMINE_DIR := $(INCLUDE_DIR)/limine
 LIMINE_TOOL := $(LIMINE_DIR)/limine
@@ -64,7 +75,7 @@ $(ISO): limine.conf $(LIMINE_TOOL) buildgen $(BUILD_DIR)/kernel.elf disk userspa
 	@cp $(BUILD_DIR)/kernel.elf $(ISODIR)/boot/kernel_a.elf
 	@cp $(BUILD_DIR)/kernel.elf $(ISODIR)/boot/kernel_b.elf
 	@cp $(DISK_DIR)/logo.bin $(ISODIR)/boot/logo.bin
-	@cp $(DISK_DIR)/load_desktop.bin $(ISODIR)/boot/load_desktop.bin
+	@cp $(DISK_DIR)/banner.bin $(ISODIR)/boot/banner.bin
 	@cp $< $(ISODIR)/boot/limine/
 	@cp $(addprefix $(INCLUDE_DIR)/limine/limine-, bios.sys bios-cd.bin uefi-cd.bin) $(ISODIR)/boot/limine/
 	@cp $(addprefix $(INCLUDE_DIR)/limine/BOOT, IA32.EFI X64.EFI) $(ISODIR)/EFI/BOOT/
@@ -81,9 +92,10 @@ $(ISO): limine.conf $(LIMINE_TOOL) buildgen $(BUILD_DIR)/kernel.elf disk userspa
 	@mkdir -p $(DISK_DIR)/rd/emr/system/bin
 	@mkdir -p $(DISK_DIR)/rd/emr/system/libraries
 	@mkdir -p $(DISK_DIR)/rd/emr/system/libraries/emex
-	@cp -r $(USERSPACE_DIR)/apps/shell/shell.emx $(DISK_DIR)/rd/emr/system
-	@cp -r $(USERSPACE_DIR)/apps/terminal/terminal.emx $(DISK_DIR)/rd/emr/system
-	@cp -r $(USERSPACE_DIR)/apps/system/system.emx $(DISK_DIR)/rd/emr/system/
+	@cp -r $(USERSPACE_DIR)/apps/shell/shell.emx/app.elf $(DISK_DIR)/rd/emr/system/shell.elf
+	@cp -r $(USERSPACE_DIR)/apps/terminal/terminal.emx/app.elf $(DISK_DIR)/rd/emr/system/terminal.elf
+	@cp -r $(USERSPACE_DIR)/apps/welcome/welcome.elf $(DISK_DIR)/rd/emr/system/welcome.elf
+	@cp -r $(USERSPACE_DIR)/apps/system/system.emx/app.elf $(DISK_DIR)/rd/emr/system/system.elf
 	@cp -r $(USERSPACE_DIR)/apps/desktop/desktop.elf $(DISK_DIR)/rd/emr/system/
 	@cp -r $(USERSPACE_DIR)/apps/sysinfo/sysinfo.elf $(DISK_DIR)/rd/emr/system/
 	@cp -r $(USERSPACE_DIR)/apps/filemanager/fm.elf $(DISK_DIR)/rd/emr/system/
@@ -96,7 +108,6 @@ $(ISO): limine.conf $(LIMINE_TOOL) buildgen $(BUILD_DIR)/kernel.elf disk userspa
 	@cp $(USERSPACE_DIR)/bin/hello/hello.elf $(DISK_DIR)/rd/bin/
 	@cp $(USERSPACE_DIR)/bin/touch/touch.elf $(DISK_DIR)/rd/bin/
 	@cp $(USERSPACE_DIR)/bin/uname/uname.elf $(DISK_DIR)/rd/bin/
-	@cp $(USERSPACE_DIR)/bin/initd/initd.elf $(DISK_DIR)/rd/emr/system/system.emx/
 	@cp $(USERSPACE_DIR)/bin/echo/echo.elf $(DISK_DIR)/rd/bin/
 	@cp $(USERSPACE_DIR)/bin/ls/ls.elf $(DISK_DIR)/rd/bin/
 	@cp $(USERSPACE_DIR)/bin/cd/cd.elf $(DISK_DIR)/rd/bin/
@@ -142,7 +153,7 @@ run: $(ISO)
 	@qemu-system-x86_64 \
 		-M pc \
 		-cpu qemu64 \
-		-m 2048 \
+		-m 512M \
 		-netdev user,id=net0 \
 		-device e1000,netdev=net0 \
 		-device AC97 \
@@ -202,8 +213,6 @@ binclean:
 	@rm -f  $(DISK_DIR)/initrd.cpio
 	@rm -f  $(DISK_DIR)/initrdh.cpio
 	@rm -rf $(DISK_DIR)/rd/bin
-#@rm -rf $(DISK_DIR)/rdh/user_id/apps
-#@rm -rf $(DISK_DIR)/rdh/user_id/bin
 	@rm -rf $(DISK_DIR)/rd/emr/system/shell.emx/app.elf
 	@rm -rf $(DISK_DIR)/rd/emr/system/shelly.emx/app.elf
 	@rm -rf $(DISK_DIR)/rd/emr/system/system.emx/app.elf
@@ -217,8 +226,6 @@ binclean:
 	@rm -f  $(DISK_DIR)/rd/emr/system/libraries/libfont8x12.a
 	@rm -f  $(DISK_DIR)/rd/emr/system/libraries/libdesktop.a
 	@mkdir -p $(DISK_DIR)/rd/bin
-#@mkdir -p $(DISK_DIR)/rdh/user_id/apps
-#@mkdir -p $(DISK_DIR)/rdh/user_id/bin
 	@echo "[OK] binclean done"
 
 #@rm $(DISK_DIR)/disk.img

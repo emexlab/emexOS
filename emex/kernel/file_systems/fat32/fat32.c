@@ -1,4 +1,13 @@
-// src/kernel/file_systems/fat32/fat32.c
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: fat32.c
+ * CREATED BY: Novice06
+ * MODIFIED BY: emex
+ *
+ */
 #include "fat32.h"
 #include <drivers/storage/ata/disk.h>
 #include <kernel/mem/lib/main.h>

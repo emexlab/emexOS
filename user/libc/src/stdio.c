@@ -302,3 +302,68 @@ void perror(const char *s) {
     write(STDERR_FILENO, msg, strlen(msg));
     write(STDERR_FILENO, "\n", 1);
 }
+
+int fseek(FILE *f, long offset, int whence)
+{
+    if (!f) return -1;
+    off_t r = lseek(f->_fd, (off_t)offset, whence);
+    if (r == (off_t)-1) { f->_err = 1; return -1; }
+    f->_eof = 0; // seeking clears EOF
+    return 0;
+}
+
+long ftell(FILE *f)
+{
+    if (!f) return -1;
+    off_t r = lseek(f->_fd, 0, 1 /*SEEK_CUR*/);
+    if (r == (off_t)-1) { f->_err = 1; return -1L; }
+    return (long)r;
+}
+
+void rewind(FILE *f)
+{
+    if (!f) return;
+    lseek(f->_fd, 0, 0 /*SEEK_SET*/);
+    f->_eof = 0;
+    f->_err = 0;
+}
+
+int fgetc(FILE *f)
+{
+    if (!f || f->_eof || f->_err) return EOF;
+    if (!(f->_flags & _FILE_READ)) { f->_err = 1; return EOF; }
+
+    unsigned char c;
+    ssize_t r = read(f->_fd, &c, 1);
+
+    if (r < 0) { f->_err = 1; return EOF; }
+    if (r == 0) { f->_eof = 1; return EOF; }
+
+    return (int)c;
+}
+
+int getchar(void) { return fgetc(stdin); }
+
+int ungetc(int c, FILE *f)
+{
+    /* TODO:
+     * finish this "stub" idk
+     */
+    (void)c;
+
+    if (!f) return EOF;
+
+    off_t cur = lseek(f->_fd, 0, 1 /*SEEK_CUR*/);
+
+    if (cur > 0)
+    {
+        lseek(f->_fd, cur - 1, 0 /*SEEK_SET*/);
+        f->_eof = 0;
+    }
+    return (unsigned char)c;
+}
+
+int remove(const char *path)
+{
+    return unlink(path);
+}

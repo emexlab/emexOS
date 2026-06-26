@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: device.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef PCI_DEVICE_H
 #define PCI_DEVICE_H
 

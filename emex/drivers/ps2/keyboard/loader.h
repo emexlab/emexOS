@@ -1,4 +1,14 @@
-// loader.h
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: loader.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef KEYBOARD_LOADER_H
 #define KEYBOARD_LOADER_H
 

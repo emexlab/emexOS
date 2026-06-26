@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: tmpfs.c
+ * CREATED BY: emex
+ * MODIFIED BY: Offihito
+ *
+ */
+
 #include "../vfs.h"
 #include <kernel/mem/lib/main.h>
 #include <kernel/graph/lib/string.h>

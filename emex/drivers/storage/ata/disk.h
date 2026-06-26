@@ -1,4 +1,14 @@
-//src/drivers/storage/disk.h
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: disk.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef DISK_H
 #define DISK_H
 

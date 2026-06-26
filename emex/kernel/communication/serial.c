@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: serial.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "serial.h"
 #include <kernel/graph/lib/string.h>
 #include <kernel/include/ports.h>

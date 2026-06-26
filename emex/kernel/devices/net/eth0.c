@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: eth0.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "eth0.h"
 #include <kernel/module/module.h>
 #include <kernel/communication/serial.h>

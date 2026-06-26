@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: paging.h
+ * CREATED BY: tsaraki
+ * MODIFIED BY: emex
+ *
+ */
+
 #ifndef PAGGING_H
 #define PAGGING_H
 

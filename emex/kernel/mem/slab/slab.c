@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: slab.c
+ * CREATED BY: tsaraki
+ * MODIFIED BY: --
+ *
+ */
+
 #include "slab.h"
 #include <kernel/communication/serial.h>
 #include <kernel/arch/x86_64/exceptions/panic.h>

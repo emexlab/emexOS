@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: idt.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "idt.h"
 #include <kernel/arch/x86_64/exceptions/isr.h>
 #include <kernel/arch/x86_64/exceptions/irq.h>

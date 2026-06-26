@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: cpu.c
+ * CREATED BY: emex
+ * MODIFIED BY: Offihito
+ *
+ */
+
 #include "cpu.h"
 #include <kernel/graph/lib/string.h>
 #include <kernel/mem/lib/main.h>
@@ -238,8 +249,11 @@ void cpu_enable_sse(void) {
     u64 cr0, cr4;
 
     __asm__ volatile("mov %%cr0, %0" : "=r"(cr0));
+
     cr0 &= ~(1ULL << 2);  // clear EM
     cr0 |=  (1ULL << 1);  // set MP
+    cr0 &= ~(1ULL << 3);  // TS = 0
+
     __asm__ volatile("mov %0, %%cr0" :: "r"(cr0) : "memory");
 
     __asm__ volatile("mov %%cr4, %0" : "=r"(cr4));

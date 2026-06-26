@@ -1,3 +1,13 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: ahci.h
+ * CREATED BY: offihito
+ * MODIFIED BY: --
+ *
+ */
 #ifndef AHCI_H
 #define AHCI_H
 
@@ -115,7 +125,7 @@ typedef struct {
     u8  cfis[64];
     u8  acmd[16];
     u8  rsv[48];
-    hba_prdt_entry_t prdt_entry[16]; 
+    hba_prdt_entry_t prdt_entry[16];
 } hba_cmd_table_t;
 
 typedef struct {

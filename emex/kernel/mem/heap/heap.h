@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: heap.h
+ * CREATED BY: tsaraki
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef HEAP_H
 #define HEAP_H
 

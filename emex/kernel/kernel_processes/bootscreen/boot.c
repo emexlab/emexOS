@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: boot.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "boot.h"
 #include "gfx.h"
 #include "print.h"
@@ -6,6 +17,7 @@
 #include <kernel/graph/graphics.h>
 #include <kernel/data/images/bmp.h>
 #include <kernel/graph/lib/string.h>
+#include <kernel/include/assembly.h>
 // all the print function will be migrated to this file
 // because currently the console is a part of the screen (like console_scrollup)
 // and this is bad thats why i create kernel processes and the bootscreen process
@@ -18,10 +30,10 @@ bmp_image_t bs_logo;
 int bs_logo_loaded = 0;
 
 #define BS_MAX_PIX (1920 * 1200)
-static u32 bs_buf_left [BS_MAX_PIX / 4]; // BS1
-static u32 bs_buf_right[BS_MAX_PIX / 4]; // BS2
-static u32 bs_buf_full [BS_MAX_PIX / 2];     // BS3
-static u32 bs_buf_bs4  [BS_MAX_PIX / 2];     // BS4 (unused but allocated)
+static u32 bs_buf_bs1[BS_MAX_PIX / 2];
+static u32 bs_buf_bs2[BS_MAX_PIX / 2];
+static u32 bs_buf_bs3[BS_MAX_PIX    ];
+static u32 bs_buf_bs4[BS_MAX_PIX    ];
 
 static u32 bs_pdw = 0; /* fb_pitch : 4 */
 static u32 bs_fbh = 0; /* real fbh */
@@ -70,7 +82,7 @@ void bs_init_screens(void)
 	// BS1: left half
 	bs_screens[BS1].cursor_x = 0;
 	bs_screens[BS1].cursor_y = 0;
-	bs_screens[BS1].buffer   = bs_buf_left;
+	bs_screens[BS1].buffer   = bs_buf_bs1;
 	bs_screens[BS1].x        = 0;
 	bs_screens[BS1].y        = 0;
 	bs_screens[BS1].width    = half;
@@ -79,7 +91,7 @@ void bs_init_screens(void)
 	// BS2: right half
 	bs_screens[BS2].cursor_x = 0;
 	bs_screens[BS2].cursor_y = 0;
-	bs_screens[BS2].buffer   = bs_buf_right;
+	bs_screens[BS2].buffer   = bs_buf_bs2;
 	bs_screens[BS2].x        = half;
 	bs_screens[BS2].y        = 0;
 	bs_screens[BS2].width    = fw - half;
@@ -88,7 +100,7 @@ void bs_init_screens(void)
 	// BS3: full screen
 	bs_screens[BS3].cursor_x = 0;
 	bs_screens[BS3].cursor_y = 0;
-	bs_screens[BS3].buffer   = bs_buf_full;
+	bs_screens[BS3].buffer   = bs_buf_bs3;
 	bs_screens[BS3].x        = 0;
 	bs_screens[BS3].y        = 0;
 	bs_screens[BS3].width    = fw;
@@ -104,10 +116,10 @@ void bs_init_screens(void)
 	bs_screens[BS4].height   = fh;
 
 	// clear all buffers
-	memset(bs_buf_left,  0, sizeof(bs_buf_left));
-	memset(bs_buf_right, 0, sizeof(bs_buf_right));
-	memset(bs_buf_full,  0, sizeof(bs_buf_full));
-	memset(bs_buf_bs4,   0, sizeof(bs_buf_bs4));
+	memset(bs_buf_bs1, 0, sizeof(bs_buf_bs1));
+	memset(bs_buf_bs2, 0, sizeof(bs_buf_bs2));
+	memset(bs_buf_bs3, 0, sizeof(bs_buf_bs3));
+	memset(bs_buf_bs4, 0, sizeof(bs_buf_bs4));
 }
 
 void bs_switch(int id)
@@ -395,39 +407,50 @@ void init_bootscreen(void)
     bs_init_screens();
     bs_logo_loaded = 0;
 
+    log("::", "clearing BS1, BS2, BS3, BS4...", _d);
     clear(BS1, 0xff000000);
     clear(BS2, 0xff000000);
 	clear(BS3, 0xff000000);
 	clear(BS4, 0xff000000);
+	log("", "done\n", _d);
 
     u32 fw   = get_fb_width();
     u32 fh   = get_fb_height();
     u32 half = fw / 2;
 
+    log("::", "set regions for BS1, BS2, BS3, BS4...", _d);
     bs_set_region(BS1, 0,    0, half,      fh);
     bs_set_region(BS2, half, 0, fw - half, fh);
     bs_set_region(BS3, 0,    0, fw,        fh);
     bs_set_region(BS4, 0,    0, fw,        fh);
+    log("", "done\n", _d);
 
 	//change in emex/config/bootlogs.h
 	#if BS_DEBUG == 1
-		bs_screens[BS1].visible = 1;
-		bs_screens[BS2].visible = 1;
-		bs_screens[BS3].visible = 1;
-		bs_screens[BS4].visible = 1;
+		log("::", "BS_DEBUG==1\n", _d);
+		bs_screens[BS1].visible = DBS1;
+		bs_screens[BS2].visible = DBS2;
+		bs_screens[BS3].visible = DBS3;
+		bs_screens[BS4].visible = DBS4;
+		log("::", "switching to BS2...", _d);
 	    bs_switch(BS2);
 	    //this just "early draws" the informations but the cpu wont show up,
 	    // after the cpu was detected it imediatly overwrites it
+		log("::", "drawing system informations...", _d);
 	    bs2_draw_info();
+		log("donedonedone", "\n\n\n\ndone\n\n\n\n", _d);
 	#else
-		bs_screens[BS1].visible = 0;
-		bs_screens[BS2].visible = 0;
-		bs_screens[BS3].visible = 1;
-		bs_screens[BS4].visible = 1;
+		log("::", "BS_DEBUG==0\n", _d);
+		bs_screens[BS1].visible = DBS1;
+		bs_screens[BS2].visible = DBS2;
+		bs_screens[BS3].visible = DBS3;
+		bs_screens[BS4].visible = DBS4;
+		log("::", "switching to BS4...", _d);
 		bs_switch(BS4);
+		log("::", "starting gfx loading screen...", _d);
 	    loading_screen();
+		log("", "done\n", _d);
     #endif
-
     bs_switch(BS1);
 
     bs_log_start(BS1);

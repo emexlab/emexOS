@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: ls.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include <unistd.h>
 #include <dirent.h>
 #include <string.h>

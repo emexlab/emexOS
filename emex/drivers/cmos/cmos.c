@@ -1,14 +1,18 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: cmos.c
+ * CREATED BY: ArTicZera
+ * MODIFIED BY: emex
+ * LINK: https://github.com/ArTicZera/NovaOS/blob/main/Hardware/cmos.c
+ *
+ */
+
 #include "cmos.h"
 #include <kernel/include/ports.h>
 #include <kernel/graph/graphics.h>
-
-/*
- * ----------------------------------------------------------------------------------
- * NOTE: THIS IS NOT MY CODE!
- * This code is from: https://github.com/ArTicZera/NovaOS/blob/main/Hardware/cmos.c
- * *MODIFIED
- * ----------------------------------------------------------------------------------
- */
 
 static u8 cmos_read_register(u8 reg) {
     outb(0x70, reg);

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: input.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "input.h"
 #include "../win/win.h"
 #include "../cursor/cursor.h"

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: users.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "users.h"
 #include <kernel/file_systems/vfs/vfs.h>
 #include <kernel/graph/lib/string.h>

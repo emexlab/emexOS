@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: arp.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 // https://wiki.osdev.org/Address_Resolution_Protocol
 #include "arp.h"
 #include "eth.h"

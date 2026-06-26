@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: loader.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 // elf loader from a month ago (i wonder this works.. i mean i think it works)
 // added relocation
 #include "loader.h"

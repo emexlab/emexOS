@@ -1,9 +1,20 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: system.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "scalls.h"
 #include <kernel/arch/x86_64/poweroff.h>
 #include <kernel/user/ulime.h>
 #include <drivers/ps2/mouse/mouse.h>
 
-// unix/linux -like
+// unix/linux-like
 #define RSYSTEM_MAGIC1       0xfee1dead
 #define RSYSTEM_MAGIC2       0x28121969
 #define RSYSTEM_CMD_RESTART  0x01234567

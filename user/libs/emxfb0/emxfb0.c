@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: emxfb0.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "emxfb0.h"
 
 void ds_blit_row(draw_ctx *ctx, int x, int y, int len) {

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: scheduler.c
+ * CREATED BY: emex
+ * MODIFIED BY: Offihito
+ *
+ */
+
 #include "scheduler.h"
 #include <kernel/multitasking/multitasking.h>
 #include <kernel/mem/lib/main.h>

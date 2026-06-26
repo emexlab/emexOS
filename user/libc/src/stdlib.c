@@ -168,3 +168,32 @@ int atoi(const char *s) { return (int)strtol(s, NULL, 10); }
 long atol(const char *s)  { return strtol(s, NULL, 10); }
 int abs (int x) { return x < 0 ? -x : x; }
 long labs(long x) { return x < 0 ? -x : x; }
+
+/* just there for DOOOOOOOOOOOOOM fahhh*/
+char *getenv(const char *name) {
+	(void)name;
+	return NULL;
+}
+
+void qsort(
+	void *base, size_t nmemb, size_t size,
+    int (*compar)(const void *, const void *)
+){
+    unsigned char *b = (unsigned char *)base;
+    unsigned char  tmp[256]; /* max element size we support */
+    if (size > sizeof(tmp)) return;
+
+    for (size_t i = 1; i < nmemb; i++)
+    {
+        memcpy(tmp, b + i * size, size);
+        size_t j = i;
+
+        while (j > 0 && compar(b + (j - 1) * size, tmp) > 0)
+        {
+            memcpy(b + j * size, b + (j - 1) * size, size);
+            j--;
+        }
+        memcpy(b + j * size, tmp, size);
+    }
+}
+

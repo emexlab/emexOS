@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: rtl8139.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "rtl8139.h"
 #include <kernel/pci/pci.h>
 #include <kernel/pci/config.h>

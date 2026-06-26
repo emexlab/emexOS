@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: desktop.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
@@ -287,17 +298,19 @@ static void render_band(input_state_t *is)
 	int sw = comp_w();
 	int sh = comp_h();
 
-	for (int ry = y0 + 1; ry < y1 && ry < sh; ry++) {
-		for (int rx = x0 + 1; rx < x1 && rx < sw; rx++) {
+	for (int ry = y0 + 1; ry < y1 && ry < sh; ry++)
+	{
+		for (int rx = x0 + 1; rx < x1 && rx < sw; rx++)
+		{
 			unsigned int bg = comp_get(rx, ry);
-			// simple alpha blend: 80% bg + 20% blue
 			unsigned int br = (bg >> 16) & 0xFF;
 			unsigned int bg2 = (bg >> 8) & 0xFF;
 			unsigned int bb = bg & 0xFF;
 
-			br = (br * 4 + 0 * 1) / 5;
-			bg2 = (bg2 * 4 + 0 * 1) / 5;
-			bb = (bb * 4 + 255 * 1) / 5;
+			br = (br * 4 + 128) / 5;
+			bg2 = (bg2 * 4 + 128) / 5;
+			bb = (bb * 4 + 128) / 5;
+
 			comp_set(rx, ry, 0xFF000000u | (br << 16) | (bg2 << 8) | bb);
 		}
 	}

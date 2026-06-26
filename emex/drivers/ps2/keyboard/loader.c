@@ -1,4 +1,14 @@
-// loader.c
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: loader.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "loader.h"
 //#include <kernel/include/reqs.h>
 #include <kernel/mem/lib/main.h>

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: page_verify.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "paging.h"
 #include <limine/limine.h>
 

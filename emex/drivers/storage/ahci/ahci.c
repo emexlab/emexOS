@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: ahci.c
+ * CREATED BY: offihito
+ * MODIFIED BY: --
+ *
+ */
+
 #include "ahci.h"
 #include <kernel/pci/pci.h>
 #include <kernel/pci/config.h>

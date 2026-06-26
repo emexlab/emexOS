@@ -1,4 +1,13 @@
-#pragma once
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: fat32_internal
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */#pragma once
 
 #include <types.h>
 #include "fat32.h"

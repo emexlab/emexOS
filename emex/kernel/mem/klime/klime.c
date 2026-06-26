@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: klime.c
+ * CREATED BY: tsaraki
+ * MODIFIED BY: emex
+ *
+ */
+
 #include "klime.h"
 #include "../heap/heap.h"
 #include "../slab/slab.h"

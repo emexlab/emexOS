@@ -1,6 +1,16 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: fb0.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "fb0.h"
 
-#include <kernel/module/module.h>
 #include <kernel/graph/graphics.h>
 #include <kernel/kernel_processes/bootscreen/boot.h>
 #include <kernel/communication/serial.h>

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: reqs.h
+ * CREATED BY: emex
+ * MODIFIED BY: asmileyguy
+ *
+ */
+
 #ifndef REQS_H
 #define REQS_H
 

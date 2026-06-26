@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: touch.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>

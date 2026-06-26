@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: devices.h
+ * CREATED BY: emex
+ * MODIFIED BY: Offihito
+ *
+ */
+
 #pragma once
 
 #include <kernel/devices/disks/hdd0.h>
@@ -10,14 +21,15 @@
 #include <kernel/devices/random/urandom.h>
 #include <kernel/devices/zero/zero.h>
 #include <kernel/devices/audio/audio0.h>
+#include <kernel/devices/vt/vt.h>
 
 /*
- * version numbers probably dont get updated
+ * version numbers probably dont get updated, so dont wonder btw xd
  */
 
-#define ATANAME "dev_atahdd0"
-#define ATAPATH "/dev/hda"
-#define ATAUNIVERSAL VERSION_NUM(0, 1, 2, 0)
+#define HDANAME "dev_hda0"
+#define HDAPATH "/dev/hda0"
+#define HDAUNIVERSAL VERSION_NUM(0, 1, 2, 0)
 
 #define KBDNAME "dev_ps2_keyboard0"
 #define KBDPATH "/dev/input/keyboard0"

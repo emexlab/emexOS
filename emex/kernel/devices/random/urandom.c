@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: urandom.c
+ * CREATED BY: emex
+ * MODIFIED BY: xTrayambak
+ *
+ */
+
 #include "urandom.h"
 
 #include <kernel/module/module.h>

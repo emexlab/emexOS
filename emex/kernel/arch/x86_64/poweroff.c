@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: poweroff.c
+ * CREATED BY: emex (used code from ArTicZera)
+ * MODIFIED BY: --
+ *
+ */
+
 #include "poweroff.h"
 
 #include <types.h>

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: timer.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "timer.h"
 #include "irq.h"
 #include <kernel/include/ports.h>

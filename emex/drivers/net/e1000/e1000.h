@@ -1,3 +1,13 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: e1000.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
 #ifndef E1000_H
 #define E1000_H
 

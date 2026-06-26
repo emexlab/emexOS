@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: keyboard.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
@@ -33,6 +44,12 @@
 #define KEY_F10         0x119
 #define KEY_F11         0x11A
 #define KEY_F12         0x11B
+
+// modifier press/release events
+#define KEY_LSHIFT      0x180
+#define KEY_RSHIFT      0x181
+#define KEY_LCTRL       0x182
+#define KEY_LALT        0x183
 
 // key event structure
 typedef struct {

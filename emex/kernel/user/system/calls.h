@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: calls.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef __CALLS
 #define __CALLS 1
 
@@ -29,6 +40,7 @@
 	#define STAT 4
 	// #define FSTAT       5
 	// #define LSTAT       6
+	#define LSEEK 8
 
 	#define FORK 57
 	#define VFORK 58

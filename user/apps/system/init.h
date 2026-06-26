@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: init.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #pragma once
 
 // esh will automatically load the shell after everything is finished

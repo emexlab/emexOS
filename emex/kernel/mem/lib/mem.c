@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: mem.c
+ * CREATED BY: tsaraki
+ * MODIFIED BY: emex
+ *
+ */
+
 #include "main.h"
 #include <kernel/mem/heap/heap.h>
 

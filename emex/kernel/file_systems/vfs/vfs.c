@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: vfs.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "vfs.h"
 #include <kernel/graph/theme.h>
 #include <kernel/mem/meminclude.h>

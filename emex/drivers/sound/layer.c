@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: layer.c
+ * CREATED BY: offihito
+ * MODIFIED BY: --
+ *
+ */
+
 #include "layer.h"
 #include "ac97/ac97.h"
 

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: halt.h
+ * CREATED BY: asmileyguy
+ * MODIFIED BY: --
+ *
+ */
+
 #pragma once
 
 void cli(void);

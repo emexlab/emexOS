@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: vt.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef DEVICE_VT_H
 #define DEVICE_VT_H
 
@@ -42,6 +53,12 @@ typedef struct
     void *output_node;
 } vt_t;
 
+/* ioctl for controll*/
+#define VT_CREATE      0x5600
+#define VT_DESTROY     0x5601
+#define VT_FOCUS       0x5602
+#define VT_GETFOC      0x5603
+
 void vt_subsystem_init(void);
 void vt_destroy(u64 id);
 void vt_focus(u64 id);
@@ -57,5 +74,9 @@ int vt_input_write  (vt_t *vt, const vt_key_event_t *ev);
 
 /* blocks til data*/
 int vt_input_read(vt_t *vt, void *buf, size_t count);
+
+int vt_ctrl_ioctl(int request, void *arg);
+
+extern driver_module vt_module;
 
 #endif

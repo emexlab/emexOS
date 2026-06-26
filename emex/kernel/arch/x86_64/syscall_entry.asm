@@ -1,3 +1,13 @@
+;
+; SPDX-License-Identifier: GPL-3.0-or-later
+;
+; Copyright (c) 2026 emex-foundation
+;
+; FILE: syscall_entry.asm
+; CREATED BY: emex
+; MODIFIED BY: --
+;
+
 bits 64
 
 global syscall_entry

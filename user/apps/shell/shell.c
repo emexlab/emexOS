@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: shell.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -113,7 +124,7 @@ static void builtin_gui(void)
         { "/emr/system/desktop.elf",  1 },
         { "/emr/system/login.elf",    0 },
         { "/emr/system/sysinfo.elf",  1 },
-        { "/emr/system/terminal.emx", 0 },
+        { "/emr/system/terminal.elf", 0 },
         { NULL, 0 }
     };
 

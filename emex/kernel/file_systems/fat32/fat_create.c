@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: fat_create.c
+ * CREATED BY: Novice06
+ * MODIFIED BY: emex
+ *
+ */
+
 #include "fat32_internal.h"
 #include <kernel/mem/lib/main.h>
 #include <kernel/graph/lib/string.h>

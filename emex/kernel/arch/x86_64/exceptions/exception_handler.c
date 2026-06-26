@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: exceptions_handler.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "exception_handler.h"
 #include "panic.h"
 

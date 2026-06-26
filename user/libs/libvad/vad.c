@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: vad.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "vad.h"
 #include "exui.h"
 #include <fcntl.h>

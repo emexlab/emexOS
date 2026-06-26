@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: taskbar.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "taskbar.h"
 #include "../compositor/comp.h"
 #include "../config/cfg.h"
@@ -21,7 +32,7 @@ static int	s_tb_y  = 0;
 
 static void setup_entries(void)
 {
-    s_entry_count = 4;
+    s_entry_count = 5;
 
     entries:
     {
@@ -30,7 +41,7 @@ static void setup_entries(void)
 	      	TB_ENTRY_NAMELEN - 1
 	    );
 	    strncpy( s_entries[0].exec,
-	    	"/emr/system/terminal.emx",
+	    	"/emr/system/terminal.elf",
 	     	TB_ENTRY_EXECLEN - 1
 	    );
 	} {
@@ -60,6 +71,15 @@ static void setup_entries(void)
 	    	"/emr/system/sysinfo.elf",
 	     	TB_ENTRY_EXECLEN - 1
 	    );
+    } {
+	    strncpy( s_entries[4].name,
+	    	"cube3d",
+	     	TB_ENTRY_NAMELEN - 1
+	    );
+	    strncpy( s_entries[4].exec,
+	    	"/emr/system/bin/cube.elf",
+	     	TB_ENTRY_EXECLEN - 1
+	    );
     }
 }
 
@@ -86,11 +106,11 @@ static int btn_x(int i)
 static int hit_btn(int i, int mx, int my)
 {
     int bx = btn_x(i);
-    int by = s_tb_y + 2;
+    int by = s_tb_y + TB_BTN_VPAD;
 
     return
     	mx >= bx && mx < bx + TB_BTN_W &&
-        my >= by && my < by + TB_H - 4
+        my >= by && my < by + (TB_H - TB_BTN_VPAD * 2)
     ;
 }
 
@@ -100,40 +120,54 @@ void taskbar_draw(int mx, int my, int btn_down)
     int w  = s_scr_w;
 
     // bar bg
-    for (int dy = 0; dy < TB_H; dy++) comp_fill(0, y + dy, w, 1, DT_FACE);
+    for (int dy = 0; dy < TB_H; dy++) comp_fill(0, y + dy, w, 1, TB_BACKGROUND);
 
     // top border line
-    comp_fill(0, y, w, 1, DT_BLACK);
+    comp_fill(0, y, w, 1, TB_TOP_BORDER);
 
     for (int i = 0; i < s_entry_count; i++)
     {
         int bx  = btn_x(i);
-        int by   = y + 2;
-        int bh  = TB_H - 4;
+        int by   = y + TB_BTN_VPAD;
+        int bh  = TB_H - (TB_BTN_VPAD * 2);
         int hov = hit_btn(i, mx, my);
         int press = hov && btn_down;
 
         // button face
-        comp_fill(bx, by, TB_BTN_W, bh, DT_FACE);
+        comp_fill(bx, by, TB_BTN_W, bh, TB_BACKGROUND);
 
         // win95 style raised/pressed borders
-    	{
-		    if (press)
+       	/*{
+		    if (!press)
 		    {
-		        comp_fill(bx,                by,             TB_BTN_W, 1,  DT_BLACK);
-		        comp_fill(bx,                by,             1,        bh, DT_BLACK);
-		        comp_fill(bx,                by + bh - 1,    TB_BTN_W, 1,  DT_LIGHT);
-		        comp_fill(bx + TB_BTN_W - 1, by,             1,        bh, DT_LIGHT);
+				comp_fill(bx, by, TB_BTN_W, 1, TB_LIGHT);
+        		comp_fill(bx, by + bh - 1, TB_BTN_W, 1, TB_LIGHT);
+         		comp_fill(bx, by, 1, bh, TB_LIGHT);
+          		comp_fill(bx + TB_BTN_W - 1, by, 1, bh, TB_LIGHT);
 		    } else
 		    {
-		        comp_fill(bx,                by,             TB_BTN_W,  1,    DT_LIGHT);
-		        comp_fill(bx,                by,             1,        bh,    DT_LIGHT);
-		        comp_fill(bx,                by + bh - 2,    TB_BTN_W,  1,    DT_SHADOW);
-		        comp_fill(bx + 1,            by + bh - 1,    TB_BTN_W - 1, 1, DT_BLACK);
-		        comp_fill(bx + TB_BTN_W - 2, by + 1,         1, bh - 2,       DT_SHADOW);
-		        comp_fill(bx + TB_BTN_W - 1, by,             1, bh,           DT_BLACK);
+				comp_fill(bx, by, TB_BTN_W, 1, TB_LIGHT);
+        		comp_fill(bx, by + bh - 1, TB_BTN_W, 1, TB_LIGHT);
+          		comp_fill(bx, by, 1, bh, TB_LIGHT);
+           		comp_fill(bx + TB_BTN_W - 1, by, 1, bh, TB_LIGHT);
 		    }
-     	}
+     	}*/
+
+	    {
+	        int show_border = hov || press;
+
+	        if (show_border)
+	        {
+	            unsigned int col = press ? TB_BTN_TOP : TB_LIGHT;
+
+	            comp_fill(bx, by, TB_BTN_W, TB_BORDER_W, col);
+	            //comp_fill(bx, by + bh - TB_BORDER_W, TB_BTN_W, TB_BORDER_W, col);
+	            //comp_fill(bx, by, TB_BORDER_W, bh, col);
+	            //comp_fill(bx + TB_BTN_W - TB_BORDER_W, by, TB_BORDER_W, bh, col);
+
+				comp_fill(bx, by, TB_BTN_W, bh, TB_BUTTON_BG);
+	        }
+	    }
 
         // label, centered
         int fw   	= font_w(FONT8X12_BOLD);
@@ -151,7 +185,7 @@ void taskbar_draw(int mx, int my, int btn_down)
                 uint16_t bits = font_glyph(FONT8X12_BOLD, c, row);
                 for (int col = 0; col < fw; col++)
                 {
-                    unsigned int color = (bits & (1u << col)) ? DT_BLACK : DT_FACE;
+                    unsigned int color = (bits & (1u << col)) ? TB_WHITE : TB_BUTTON_BG;
                     comp_set(tx + ci * fw + col, ty + row, color);
                 }
             }

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: partition.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "partition.h"
 #include "mbr.h"
 #include <drivers/storage/ata/disk.h>

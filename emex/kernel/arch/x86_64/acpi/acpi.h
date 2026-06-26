@@ -1,7 +1,18 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: acpi.h
+ * CREATED BY: asmileyguy
+ * MODIFIED BY: --
+ *
+ */
+
 #pragma once
 
 #include <types.h>
-#include <kernel/modules/limine.h>
+#include <kernel/limine/limine.h>
 
 #define SCI_EN (1 << 0)
 #define SLP_EN (1 << 13)

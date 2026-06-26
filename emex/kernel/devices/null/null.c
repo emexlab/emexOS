@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: null.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "null.h"
 #include <kernel/module/module.h>
 #include <kernel/communication/serial.h>

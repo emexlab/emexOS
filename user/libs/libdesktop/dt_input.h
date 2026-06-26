@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: dt_input.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #pragma once
 
 #define DT_EV_NONE  0

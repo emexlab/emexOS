@@ -1,5 +1,16 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: shm.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "scalls.h"
-#include <kernel/multitasking/ipc/ipc.h>
+#include <kernel/ipc/ipc.h>
 
 u64 scall_mmap(ulime_proc_t *proc, u64 addr, u64 length, u64 shm_id) {
     (void)addr;

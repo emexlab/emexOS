@@ -1,6 +1,15 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: hdd0.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "hdd0.h"
-#include <kernel/module/module.h>
-#include <kernel/communication/serial.h>
 #include <kernel/graph/lib/string.h>
 
 #include <drivers/drivers.h>
@@ -9,8 +18,14 @@
 
 #define HDA_SECTOR_SIZE 512
 
-static int ATAmodule_init(void) {
-    log("[HDA]", "init /dev/hda\n", d);
+/*
+ * TODO
+ * make disk layer and disconnect hda0 from ata
+ */
+
+static int ATAmodule_init(void)
+{
+    log("[HDA]", "init /dev/hda0\n", d);
     return 0;
 }
 
@@ -86,9 +101,9 @@ static int hda_write(void *handle, const void *buf, size_t count, u64 offset)
 }
 
 driver_module ata_module = {
-    .name    = ATANAME,
-    .mount   = ATAPATH,
-    .version = ATAUNIVERSAL,
+    .name    = HDANAME,
+    .mount   = HDAPATH,
+    .version = HDAUNIVERSAL,
     .init    = ATAmodule_init,
     .fini    = ATAmodule_fini,
     .open    = hda_open,

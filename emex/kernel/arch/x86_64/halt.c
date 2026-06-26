@@ -1,8 +1,15 @@
-#include <kernel/cpu/cpu.h>
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: halt.c
+ * CREATED BY: asmileyguy
+ * MODIFIED BY: emex
+ *
+ */
 
-//
-// MADE BY @msaid5860
-//
+#include <kernel/cpu/cpu.h>
 
 // Disable interrupts
 void cli(void) {

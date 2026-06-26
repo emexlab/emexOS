@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: syscalls.c
+ * CREATED BY: emex
+ * MODIFIED BY: Offihito, mach-port-t (Nyxia)
+ *
+ */
+
 #include "user.h"
 #include "system/calls.h"
 
@@ -27,7 +38,7 @@
 #include <kernel/mem/phys/physmem.h>
 
 //multitasking
-#include <kernel/multitasking/ipc/ipc.h>
+#include <kernel/ipc/ipc.h>
 #include <kernel/multitasking/multitasking.h>
 
 // sinfo
@@ -90,25 +101,40 @@ static ulime_proc_t *find_proc_by_cr3(ulime_t *u, u64 cr3) {
 }
 
 // syscall handlers
-u64 scall_write(ulime_proc_t *proc, u64 fd, u64 buf, u64 count) {
+u64 scall_write(ulime_proc_t *proc, u64 fd, u64 buf, u64 count)
+{
     (void)proc;
     if (!is_valid_user_ptr_range(buf, count)) return (u64)-1;
 
     if (fd >= 3)
         return (u64)fs_write((int)fd, (const void *)buf, (size_t)count);
 
-    if (fd != 1 && fd != 2) return (u64)-1;
-
-    char tmp[2];
-
-    for (u64 i = 0; i < count; i++)
+    if (fd == 1 || fd == 2)
     {
-        tmp[0] = ((char*)buf)[i];
-        tmp[1] = '\0';
-        printf("%s", tmp);
+        u64 focused = vt_get_focused();
+
+        if (focused != (u64)-1)
+        {
+            vt_t *vt = vt_get(focused);
+            if (vt)
+            {
+                vt_output_write(vt, (const void *)buf, (size_t)count);
+                return count;
+            }
+        }
+
+        char tmp[2];
+
+        for (u64 i = 0; i < count; i++)
+        {
+            tmp[0] = ((char *)buf)[i];
+            tmp[1] = '\0';
+            printf("%s", tmp);
+        }
+        return count;
     }
 
-    return count;
+    return (u64)-1;
 }
 
 u64 scall_exit(ulime_proc_t *proc, u64 exit_code, u64 arg2, u64 arg3)
@@ -411,12 +437,20 @@ u64 scall_read(ulime_proc_t *proc, u64 fd, u64 buf, u64 count)
 
     if (!is_valid_user_ptr_range(buf, count)) return (u64)-1;
 
-    /* stdin/stderr: no source, return 0 */
-    if (fd == 0 || fd == 2) return 0;
+    if (fd >= 3)  return (u64)fs_read((int)fd, (void *)buf, (size_t)count);
 
-    /* all real fds (keyboard, files, etc.) go through the VFS */
-    if (fd >= 3)
-        return (u64)fs_read((int)fd, (void *)buf, (size_t)count);
+    /* stdin (fd 0): read from focused VT input ring */
+    if (fd == 0)
+    {
+        u64 focused = vt_get_focused();
+
+        if (focused != (u64)-1)
+        {
+            vt_t *vt = vt_get(focused);
+            if (vt) return (u64)vt_input_read(vt, (void *)buf, (size_t)count);
+        }
+        return 0;
+    }
 
     return 0;
 }
@@ -457,6 +491,28 @@ u64 scall_open(ulime_proc_t *proc, u64 path_ptr, u64 flags, u64 arg3)
 u64 scall_close(ulime_proc_t *proc, u64 fd, u64 arg2, u64 arg3) {
     (void)proc; (void)arg2; (void)arg3;
     return (u64)fs_close((int)fd);
+}
+
+u64 scall_lseek(ulime_proc_t *proc, u64 fd, u64 offset, u64 whence)
+{
+    (void)proc;
+
+    if ((int)fd < 3) return (u64)-1;
+    fs_file *f = fs_get_file((int)fd);
+    if (!f || !f->node) return (u64)-1;
+
+    u64 new_pos;
+    switch ((int)whence)
+    {
+        case 0: /* SEEK_SET */ new_pos = offset; break;
+        case 1: /* SEEK_CUR */ new_pos = f->pos + offset; break;
+        case 2: /* SEEK_END */ new_pos = f->node->size + offset; break;
+        default: return (u64)-1;
+    }
+
+    if (new_pos > f->node->size) new_pos = f->node->size;
+    f->pos = new_pos;
+    return new_pos;
 }
 
 u64 scall_getdents(ulime_proc_t *proc, u64 path_ptr, u64 buf_ptr, u64 max_entries)
@@ -533,21 +589,18 @@ u64 scall_ioctl(ulime_proc_t *proc, u64 fd, u64 request, u64 arg_ptr)
 
     void *arg = (void *)arg_ptr;
 
-    // fb0:fb0_ioctl
-    if (fd >= 3) {
-        fs_file *f = fs_get_file((int)fd);
-        if (f && f->node) {
-            // fb0 ioctl
-            if (str_equals(f->node->name, "fb0")) {
-                return (u64)fb0_ioctl((int)request, arg);
-            }
-        }
-    }
+    if (fd < 3) return 0;
 
-    /*TODO:
-     * vt
-     */
-    if (fd <= 2) return 0;
+    fs_file *f = fs_get_file((int)fd);
+    if (!f || !f->node) return (u64)-1;
+
+    const char *name = f->node->name;
+
+    if (str_equals(name, "fb0"))
+        return (u64)fb0_ioctl((int)request, arg);
+
+    if (str_equals(name, "control"))
+        return (u64)vt_ctrl_ioctl((int)request, arg);
 
     return (u64)-1;
 }
@@ -645,89 +698,6 @@ u64 scall_getcwd(ulime_proc_t *proc, u64 buf_ptr, u64 size, u64 arg3) {
     return (u64)(cwlen + 1); // return the written byte count
 }
 
-/*u64 scall_mmap(ulime_proc_t *proc, u64 args_ptr, u64 arg2, u64 arg3) {
-    (void)arg2; (void)arg3;
-
-    if (!args_ptr || args_ptr > 0x0000800000000000ULL) return (u64)MAP_FAILED;
-
-    mmap_args_t *a = (mmap_args_t *)args_ptr;
-
-    if (a->length == 0) return (u64)MAP_FAILED;
-
-    u64 len   = (a->length + 0xFFF) & ~0xFFFULL;
-    u64 pages = len / 4096;
-
-    if (a->flags & MAP_ANONYMOUS) {
-        u64 phys = physmem_alloc_to(pages);
-        if (!phys) return (u64)MAP_FAILED;
-
-        u64 virt = a->addr;
-        if (!virt || virt < 0x400000) {
-            virt = proc->mmap_base;
-            if (!virt) virt = proc->heap_base + proc->heap_size + 0x100000;
-        }
-        virt = (virt + 0xFFF) & ~0xFFFULL;
-
-        for (u64 i = 0; i < pages; i++) {
-            paging_map_page_proc(
-                g_ulime->hpr,
-                proc->pml4_phys,
-                virt + i * 4096,
-                phys + i * 4096,
-                USER_FLAGS
-            );
-        }
-
-        // zero via HHDM
-        u8 *p = (u8 *)(phys + g_ulime->hpr->offset);
-        for (u64 i = 0; i < len; i++) p[i] = 0;
-
-        proc->mmap_base = virt + len;
-        return virt;
-    }
-
-    // fb0 file mapping
-    if (a->fd >= 3) {
-        fs_file *f = fs_get_file(a->fd);
-        if (f && f->node && str_equals(f->node->name, "fb0")) {
-            u32 *fb    = get_framebuffer();
-            u64 fbphys = virt_to_phys(g_ulime->hpr, (void *)fb);
-            u64 fbsize = (u64)get_fb_pitch() * get_fb_height();
-
-            u64 fbpages = (fbsize + 0xFFF) / 4096;
-            u64 virt    = a->addr;
-            if (!virt) virt = proc->mmap_base;
-            if (!virt) virt = 0x3000000;
-            virt = (virt + 0xFFF) & ~0xFFFULL;
-
-            for (u64 i = 0; i < fbpages; i++) {
-                paging_map_page_proc(
-                    g_ulime->hpr,
-                    proc->pml4_phys,
-                    virt + i * 4096,
-                    fbphys + i * 4096,
-                    USER_FLAGS | PTE_PCD
-                );
-            }
-            proc->mmap_base = virt + fbpages * 4096;
-            return virt;
-        }
-    }
-    return (u64)MAP_FAILED;
-}
-u64 scall_munmap(ulime_proc_t *proc, u64 addr, u64 length, u64 arg3) {
-    (void)proc; (void)arg3;
-    if (!addr) return (u64)-1;
-
-    u64 len   = (length + 0xFFF) & ~0xFFFULL;
-    u64 pages = len / 4096;
-
-    for (u64 i = 0; i < pages; i++) {
-        paging_unmap_page(addr + i * 4096);
-    }
-    return 0;
-}*/
-
 u64 scall_waitpid(ulime_proc_t *proc, u64 pid, u64 arg2, u64 arg3)
 {
     (void)arg2;
@@ -805,11 +775,13 @@ u64 scall_waitpid(ulime_proc_t *proc, u64 pid, u64 arg2, u64 arg3)
 u64 scall_sysinfo(ulime_proc_t *proc, u64 info_addr, u64 a1, u64 a2) {
 	(void)a1;
 	(void)a2;
+	(void)proc;
 
 	if (!is_valid_user_ptr_range(info_addr, sizeof(struct sysinfo_t))) return (u64) -1;
 
 	struct sysinfo_t *info = (struct sysinfo_t *)info_addr;
-	info->uptime = timer_get_uptime_seconds();
+	info->uptime    = timer_get_uptime_seconds();
+	info->uptime_ms = timer_get_milliseconds();
 
 	return 0;
 }
@@ -860,6 +832,7 @@ void _init_syscalls_table(ulime_t *ulime_ptr) {
     //ulime->syscalls[READ]   = scall_read;
     ulime_ptr->syscalls[OPEN]            = scall_open;
     ulime_ptr->syscalls[CLOSE]           = scall_close;
+    ulime_ptr->syscalls[LSEEK]           = scall_lseek;
     ulime_ptr->syscalls[GETPID]          = scall_getpid;
     ulime_ptr->syscalls[BRK]             = scall_brk;
     ulime_ptr->syscalls[EXIT]            = scall_exit;

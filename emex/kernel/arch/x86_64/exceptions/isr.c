@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: isr.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "isr.h"
 #include "exception_handler.h"
 //#include <kernel/arch/x64/idt/idt.h>

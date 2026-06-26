@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: acpi.c
+ * CREATED BY: asmileyguy (for NullOS)
+ * MODIFIED BY: emex
+ *
+ */
+
 #include <types.h>
 #include <kernel/include/reqs.h>
 #include <kernel/include/ports.h>
@@ -6,12 +17,6 @@
 #include <kernel/graph/lib/string.h>
 #include <kernel/cpu/cpu.h>
 #include <kernel/user/ulime.h>
-
-/*
- * Written by @msaid5860 for NullOS.
- * Modified to match emexOS. AND NOT OPTIMIZED FOR IT
- *
-*/
 
 /*
 Some string functions not in shared/string.c

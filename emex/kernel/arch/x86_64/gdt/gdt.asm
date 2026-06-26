@@ -1,4 +1,13 @@
-[BITS 64]
+;
+; SPDX-License-Identifier: GPL-3.0-or-later
+;
+; Copyright (c) 2026 emex-foundation
+;
+; FILE: gdt.asm
+; CREATED BY: emex
+; MODIFIED BY: --
+;
+; [BITS 64]
 
 global gdt_flush
 global tss_flush

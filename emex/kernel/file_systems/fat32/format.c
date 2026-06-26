@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: format.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "fat32.h"
 #include <drivers/storage/ata/disk.h>
 #include <kernel/mem/lib/main.h>

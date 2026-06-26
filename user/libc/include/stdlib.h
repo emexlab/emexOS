@@ -26,3 +26,6 @@ long labs(long x);
 
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1
+
+char *getenv(const char *name);
+void  qsort(void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *));

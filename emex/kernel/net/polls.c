@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: polls.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 //#include <drivers/net/e1000/e1000.h>
 #include <kernel/communication/serial.h>
 #include "net.h"

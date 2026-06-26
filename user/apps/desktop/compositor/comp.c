@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: comp.c
+ * CREATED BY: emex
+ * MODIFIED BY: Offihito
+ *
+ */
+
 #include "comp.h"
 
 #include <emx/fb.h>
@@ -13,18 +24,24 @@ static unsigned int *g_buf = 0;
 // fixed by @offihito
 
 void comp_init(int fb_fd, int w, int h) {
-  g_fd = fb_fd;
-  g_w = w;
-  g_h = h;
-  g_buf = (unsigned int *)malloc((unsigned)(w * h) * sizeof(unsigned int));
+	g_fd = fb_fd;
+	g_w = w;
+	g_h = h;
+	g_buf = (unsigned int *)malloc((unsigned)(w * h) * sizeof(unsigned int));
 }
 
-void comp_capture(void) {
-  if (!g_buf || g_fd < 0)
-    return;
-  fb_rect_t r = {
-      .x = 0, .y = 0, .w = (unsigned)g_w, .h = (unsigned)g_h, .pixels = g_buf};
-  ioctl(g_fd, FBIO_READ_RECT, &r);
+void comp_capture(void)
+{
+	if (!g_buf || g_fd < 0) return;
+	fb_rect_t r = {
+	    .x = 0,
+		.y = 0,
+		.w = (unsigned)g_w,
+		.h = (unsigned)g_h,
+		.pixels = g_buf
+	};
+
+	ioctl(g_fd, FBIO_READ_RECT, &r);
 }
 
 void comp_fill(int x, int y, int w, int h, unsigned int color) {

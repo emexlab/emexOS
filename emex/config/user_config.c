@@ -1,3 +1,13 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: user_config.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
 #include "user_config.h"
 #include <kernel/file_systems/vfs/vfs.h>
 #include <kernel/data/ini/ini.h>

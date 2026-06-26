@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: bg.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "bg.h"
 #include "../compositor/comp.h"
 #include "../config/cfg.h"

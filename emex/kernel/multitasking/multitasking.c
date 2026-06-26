@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: multitasking.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "multitasking.h"
 #include <kernel/arch/x86_64/gdt/gdt.h>
 #include <kernel/communication/serial.h>

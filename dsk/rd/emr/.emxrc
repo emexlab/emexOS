@@ -5,46 +5,28 @@
 
 var gui = 1 // the variable just needs to exist to work
 var lsblk       = ("/bin/lsblk.elf")
-var stinf       = ("/emr/system/system.emx/stinf.elf")
 var desktop     = ("/emr/system/desktop.elf")
 var sysinfo     = ("/emr/system/sysinfo.elf")
 var filemanager = ("/emr/system/fm.elf")
 var bg_test     = ("/emr/system/sinfo.elf")
 var bg_test2    = ("/emr/system/libraries/cursor.elf")
 var login_path  = ("/emr/system/login.elf")
-var gshell_path = ("/emr/system/terminal.emx/app.elf")
-var shell_path  = ("/emr/system/shell.emx/app.elf")
+var gshell_path = ("/emr/system/terminal.elf")
+var shell_path  = ("/emr/system/shell.elf")
 
-print("succesfully jumped into userspace...")
+print("succesfully jumped into userspace... yay :3")
 
-if  stinf
-	print("stinf found... loading...")
-	exec stinf
-	//exec /emr/system/system.emx/initd.elf
-	//exec /bin/meminfo.elf
-else
-	elog("warning: stinf not found")
-endif
-
-wait    150
+wait 150
 
 if  gui
-	print("gui variable found")
 	exec  -bg desktop
-	//exec  -bg bg_test
-	//exec  -bg bg_test
 
-	wait    50
-
-	exec login_path
-
-	wait    10
+	exec  login_path
 
 	exec  -bg  sysinfo
-	//exec  -bg  /emr/system/bin/cube.elf
-	//exec  -bg  /emr/system/bin/neroapp.elf
 	exec  -bg  gshell_path
+	exec  -bg  /emr/system/welcome.elf
 else
-	print("gui variable NOT found")
+	print("[warning] gui NOT found")
 	exec shell_path
 endif

@@ -1,7 +1,17 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: graphics.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "graphics.h"
 #include <kernel/module/module.h>
 #include <kernel/communication/serial.h>
-#include <kernel/kernel_processes/bootscreen/boot.h>
 
 //donnot put static before the uints!
 u32 *framebuffer = NULL;

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: desktop.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #pragma once
 
 #if (__EMEX_VERSION_MAJOR < 1)

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: qr1.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "qr.h"
 #include "qr_internal.h"
 #include <string.h>

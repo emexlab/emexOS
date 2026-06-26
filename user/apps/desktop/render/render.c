@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: render.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "render.h"
 #include "../compositor/comp.h"
 #include "../config/cfg.h"
@@ -12,8 +23,8 @@ static int slen(const char *s) { int n = 0; while (s[n]) n++; return n; }
 
 static unsigned int stripe(int y, int focused)
 {
-    if (focused) return (y & 1) ? DT_BLACK : DT_WHITE;
-    return (y & 1) ? DT_SHADOW : DT_LIGHT;
+    if (focused) return (y & 1) ? WIN_BLACK : WIN_WHITE;
+    return (y & 1) ? WIN_UNFOCUSED_BG : WIN_FOCUSED_BG;
 }
 
 static void buf_char(int bx, char c, unsigned int fg, unsigned int bg, int frow)
@@ -53,10 +64,10 @@ static void hline_comp(int x, int y, int w, unsigned int c)
 // to the backbuffer
 static void side_borders_comp(int wx, int y, int ww)
 {
-    comp_set(wx,          y, DT_BLACK);
-    comp_set(wx + 1,      y, DT_BLACK);
-    comp_set(wx + ww - 2, y, DT_BLACK);
-    comp_set(wx + ww - 1, y, DT_BLACK);
+    comp_set(wx,          y, WIN_BLACK);
+    comp_set(wx + 1,      y, WIN_BLACK);
+    comp_set(wx + ww - 2, y, WIN_BLACK);
+    comp_set(wx + ww - 1, y, WIN_BLACK);
 }
 
 static void blit_win_buf(dt_win_t *w, unsigned int style, int has_title, int wx, int wy)
@@ -100,13 +111,13 @@ void render_win(dt_win_t *w)
     if (style & DT_POPUP)
     {
     	// content will be untouched
-        hline_comp(wx, wy,          ww, DT_BLACK);
-        hline_comp(wx, wy + wh - 1, ww, DT_BLACK);
+        hline_comp(wx, wy,          ww, WIN_BLACK);
+        hline_comp(wx, wy + wh - 1, ww, WIN_BLACK);
         for (int dy = 1; dy < wh - 1; dy++) {
             int ay = wy + dy;
             if (ay < 0 || ay >= h) continue;
-            comp_set(wx,          ay, DT_BLACK);
-            comp_set(wx + ww - 1, ay, DT_BLACK);
+            comp_set(wx,          ay, WIN_BLACK);
+            comp_set(wx + ww - 1, ay, WIN_BLACK);
         }
         return;
     }
@@ -126,7 +137,7 @@ void render_win(dt_win_t *w)
 
     unsigned int title_bg = has_title
         ? (focused ? DT_TITLE_ACT : DT_TITLE_INA)
-        : DT_FACE
+        : WIN_FACE
     ;
 
     for (int dy = 0; dy < wh; dy++)
@@ -134,7 +145,7 @@ void render_win(dt_win_t *w)
         int ay = wy + dy;
         if (ay < 0 || ay >= h) continue;
         if (dy < 2 || dy >= wh - 2) {
-            hline_comp(wx, ay, ww, DT_BLACK);
+            hline_comp(wx, ay, ww, WIN_BLACK);
             continue;
         }
         if (has_title && dy >= 2 && dy < DT_TITLE_H)
@@ -149,9 +160,9 @@ void render_win(dt_win_t *w)
                     : title_bg;
             }
             // left, right border pixels
-            row_buf[0] = row_buf[1] = DT_BLACK;
+            row_buf[0] = row_buf[1] = WIN_BLACK;
 
-            if (ww - 2 < ROW_MAX) row_buf[ww - 2] = row_buf[ww - 1] = DT_BLACK;
+            if (ww - 2 < ROW_MAX) row_buf[ww - 2] = row_buf[ww - 1] = WIN_BLACK;
 
             if (frow >= 0 && frow < DT_FH) buf_str_clamped(tx, tw + DT_FW, w->title, DT_TITLE_TXT, title_bg, frow);
 
@@ -165,14 +176,14 @@ void render_win(dt_win_t *w)
                     {
                         for (
                         	int dx = bx; dx <= bx + DT_CLOSE_SZ && dx < ROW_MAX; dx++
-                        ) row_buf[dx] = DT_BLACK;
+                        ) row_buf[dx] = WIN_BLACK;
                     } else
                     {
-                        if (bx < ROW_MAX) row_buf[bx] = DT_BLACK;
-                        if (bx + DT_CLOSE_SZ < ROW_MAX) row_buf[bx + DT_CLOSE_SZ] = DT_BLACK;
+                        if (bx < ROW_MAX) row_buf[bx] = WIN_BLACK;
+                        if (bx + DT_CLOSE_SZ < ROW_MAX) row_buf[bx + DT_CLOSE_SZ] = WIN_BLACK;
                         for (
                         	int dx = bx + 1; dx < bx + DT_CLOSE_SZ && dx < ROW_MAX; dx++
-                        ) row_buf[dx] = DT_FACE;
+                        ) row_buf[dx] = WIN_FACE;
                     }
                 }
             }
@@ -184,7 +195,7 @@ void render_win(dt_win_t *w)
         // separator line after the titlebar
         if (has_title && dy == DT_TITLE_H)
         {
-            hline_comp(wx, ay, ww, DT_BLACK);
+            hline_comp(wx, ay, ww, WIN_BLACK);
             continue;
         }
 

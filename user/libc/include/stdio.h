@@ -34,6 +34,14 @@ int ferror(FILE *f);
 int fprintf(FILE *f, const char *fmt, ...);
 int vfprintf(FILE *f, const char *fmt, va_list ap);
 
+int fseek(FILE *f, long offset, int whence);
+long ftell(FILE *f);
+void rewind(FILE *f);
+int fgetc(FILE *f);
+int getchar(void);
+int ungetc(int c, FILE *f);
+int remove(const char *path);
+
 int puts(const char *s);
 int putchar(int c);
 
@@ -41,4 +49,3 @@ int printf(const char *fmt, ...);
 int vprintf(const char *fmt, va_list ap);
 int snprintf(char *buf, size_t size, const char *fmt, ...);
 int vsnprintf(char *buf, size_t size, const char *fmt, va_list ap);
-int remove(const char *path); // file or directory

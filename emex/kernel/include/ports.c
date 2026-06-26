@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: ports.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "ports.h"
 
 void outb(u16 port, u8 val)

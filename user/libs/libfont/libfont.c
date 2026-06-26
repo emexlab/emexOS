@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: libfont.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "libfont.h"
 #include "data/font8x12.h"
 #include "data/font8x12_bold.h"

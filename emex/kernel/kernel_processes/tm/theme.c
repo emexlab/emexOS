@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: theme.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "theme.h"
 #include <kernel/file_systems/vfs/vfs.h>
 #include <kernel/data/conf/conf.h>

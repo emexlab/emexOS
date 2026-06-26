@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: physmem.c
+ * CREATED BY: tsaraki
+ * MODIFIED BY: emex
+ *
+ */
+
 #include "physmem.h"
 #include <limine/limine.h>
 #include <kernel/arch/x86_64/exceptions/panic.h>

@@ -20,3 +20,5 @@ char *strrchr(const char *s, int c);
 char *strstr (const char *hay, const char *needle);
 char *strtok (char *s, const char *delim);
 char *strdup (const char *s);
+int strcasecmp (const char *a, const char *b);
+int strncasecmp(const char *a, const char *b, size_t n);

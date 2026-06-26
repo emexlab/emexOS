@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: login.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>

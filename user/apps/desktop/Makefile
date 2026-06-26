@@ -1,3 +1,14 @@
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Copyright (c) 2026 emex-foundation
+#
+# FILE: Makefile
+# CREATED BY: emex
+# MODIFIED BY: --
+#
+#
+
 CC     := x86_64-elf-gcc
 LD     := x86_64-elf-ld
 LIBC   := ../../libc
@@ -53,6 +64,6 @@ libs:
 	$(MAKE) -C $(LIBS_D)/libbmp
 
 clean:
-	rm -f *.o compositor/*.o bg/*.o win/*.o cursor/*.o render/*.o input/*.o cmd/*.o desktop.elf
+	rm -f *.o compositor/*.o bg/*.o win/*.o cursor/*.o render/*.o input/*.o cmd/*.o taskbar/*.o desktop.elf
 
 .PHONY: all libs clean

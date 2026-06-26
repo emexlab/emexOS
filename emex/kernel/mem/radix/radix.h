@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: radix.h
+ * CREATED BY: mimalloc
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef RADIX_H
 #define RADIX_H
 

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: device.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "device.h"
 #include "config.h"
 #include <kernel/graph/lib/string.h>

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: cpio.c
+ * CREATED BY: emex
+ * MODIFIED BY: Offihito
+ *
+ */
+
 #include "cpio.h"
 
 #include <kernel/file_systems/vfs/vfs.h>

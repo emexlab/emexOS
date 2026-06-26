@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: info.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "info.h"
 #include "boot.h"
 #include "config.h"
@@ -96,7 +107,7 @@ void bs2_draw_info(void)
 
     information_text: {
     	f_setcontext(FONT_8X8_BOLD);
-    	print_to(BS2, "\n" KERNEL_BARENAME " " KERNEL_DEFRELEASE_NAME "\n", cyan());
+    	print_to(BS2, "\n" KERNEL_NAME " " KERNEL_RELEASE_BUILD "\n", cyan());
      	f_setcontext(FONT_8X8);
 
      	print_to(BS2,  ARCH_TEXT "" KERNEL_ARCH "\n", white());

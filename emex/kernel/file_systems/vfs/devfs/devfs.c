@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: devfs.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "../vfs.h"
 #include <kernel/mem/klime/klime.h>
 #include <kernel/mem/lib/main.h>

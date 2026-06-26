@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: vad.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #pragma once
 
 //#include "../emxfb0/emxfb0.h"

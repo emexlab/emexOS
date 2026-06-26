@@ -1,5 +1,16 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: mq.c
+ * CREATED BY: emex
+ * MODIFIED BY: xTrayambak
+ *
+ */
+
 #include "scalls.h"
-#include <kernel/multitasking/ipc/ipc.h>
+#include <kernel/ipc/ipc.h>
 #include <kernel/user/system/ptrs.h>
 
 u64 scall_mq_open(ulime_proc_t *proc, u64 name_ptr, u64 oflag, u64 mode)

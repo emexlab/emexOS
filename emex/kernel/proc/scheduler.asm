@@ -1,3 +1,13 @@
+;
+; SPDX-License-Identifier: GPL-3.0-or-later
+;
+; Copyright (c) 2026 emex-foundation
+;
+; FILE: scheduler.asm
+; CREATED BY: emex
+; MODIFIED BY: --
+;
+
 [BITS 64]
 
 global scheduler_context_switch

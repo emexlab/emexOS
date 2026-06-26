@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: cfg.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #pragma once
 
 #define DT_DIR    "/tmp/dt"
@@ -9,28 +20,41 @@
 #define DT_BG 0xFF008080u  // win95/98 teal ig
 
 // window frame
-#define DT_BLACK     0xFF000000u
-#define DT_WHITE     0xFFFFFFFFu
-#define DT_FACE      0xFFD4D0C8u
-#define DT_LIGHT     0xFFDFDFDFu
-#define DT_SHADOW    0xFF808080u
+#define WIN_BLACK           0xFF000000u
+#define WIN_WHITE           0xFFFFFFFFu
+#define WIN_FACE            0xFFD4D0C8u
+#define WIN_BUTTON          0xFFD4D0C8u
+#define WIN_FOCUSED_BG      0xFFA0A0A0u
+#define WIN_UNFOCUSED_BG    0xFF000000u
 
 // rubber band selection colors
 #define BAND_BORDER 0xCCA8A5A5u   // border
 #define BAND_FILL   0x33A8A5A5u   // the content
 
 //taskbar
-#define TB_H 28
-#define TB_BTN_PAD 4
+#define TB_H 34
+#define TB_BTN_PAD 2
+#define TB_BTN_VPAD 6
 #define TB_BTN_W 80
+#define TB_BORDER_W 3
 #define TB_ENTRY_NAMELEN 32
 #define TB_ENTRY_EXECLEN 64
-#define TB_MAX_ENTRIES 8
+#define TB_MAX_ENTRIES 10
+
+#define TB_BACKGROUND 0xFF202020u
+#define TB_TOP_BORDER 0xFF707070u
+#define TB_BUTTON_BG  0xFF404040u
+#define TB_BLACK      0xFF000000u
+#define TB_WHITE      0xFFFFFFFFu
+#define TB_LIGHT      0xFF808080u
+#define TB_SHADOW     0xFF606060u
+#define TB_BTN_TOP    0xFF6A89A7u
+#define TB_FACE       0xFFD4D0C8u
 
 #define DT_ENABLE_RESIZING 0
 
 // window title bar
-#define DT_TITLE_ACT 0xFF000080u  // when focused
+#define DT_TITLE_ACT 0xFFB0D0C0u  // when focused
 #define DT_TITLE_INA 0xFF808080u  // when unfocused
 #define DT_TITLE_TXT 0xFFFFFFFFu  // text of titlebar
 

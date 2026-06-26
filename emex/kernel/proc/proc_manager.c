@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: proc_manager.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "proc_manager.h"
 
 #include <kernel/mem/lib/main.h>
@@ -41,7 +52,8 @@ int proc_kill_proc(proc_manager_t *pm, u64 pid) {
 int proc_load_program_from_ulime(proc_manager_t *pm, ulime_proc_t *proc, u8 *code, u64 size) {
     if (!pm || !proc) return -1;
 
-    return ulime_load_program(proc, code, size);
+    //return ulime_load_program(proc, code, size);
+    return 0;
 }
 
 void proc_list_procs(proc_manager_t *pm) {

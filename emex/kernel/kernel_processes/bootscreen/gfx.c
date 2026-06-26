@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: gfx.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "gfx.h"
 
 #include "boot.h"
@@ -7,6 +18,7 @@
 
 #include <kernel/graph/graphics.h>
 #include <kernel/include/reqs.h>
+#include <kernel/include/assembly.h>
 
 //from info.c
 static struct limine_file *find_logo_module(void)
@@ -93,7 +105,7 @@ void loading_screen(void)
 {
     bs_switch(BS4);
 
-    bs_clear_screen(BS4, 0xFF008080);
+    log("::", "starting bootscreen gfx...\n", _d);
 
     int old = bs_active;
     bs_active = BS4;
@@ -135,7 +147,7 @@ void loading_screen(void)
         box_y,
         box_w,
         box_h,
-        0xFFC0F0C0,
+        0xFF000000,
         0xFFFFFFFF
     );
 
@@ -152,7 +164,7 @@ void loading_screen(void)
     bs_screens[BS4].cursor_y = text_y + 20;
     print_to(
         BS4,
-        "Loading emexOS...",
+        "| Loading " KERNEL_NAME"OS b" KERNEL_RELEASE_BUILD "("KERNEL_RELEASE_VER"), please wait...",
         0xFFFFFFFF
     );
 

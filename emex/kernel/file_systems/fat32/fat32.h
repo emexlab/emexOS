@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: fat32.h
+ * CREATED BY: Novice06
+ * MODIFIED BY: emex
+ *
+ */
+
 #ifndef FAT32_H
 #define FAT32_H
 

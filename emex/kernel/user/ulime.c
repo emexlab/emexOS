@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: ulime.c
+ * CREATED BY: tsaraki
+ * MODIFIED BY: emex
+ *
+ */
+
 #include "ulime.h"
 #include <kernel/communication/serial.h>
 #include <kernel/arch/x86_64/exceptions/panic.h>
@@ -9,7 +20,11 @@
 
 // ulime == (U)ser (LI)fe ti(ME)
 
-ulime_t *ulime_init(limine_hhdm_response_t *hpr, klime_t *klime, void *glime, u64 uphys_start) {
+ulime_t *ulime_init(
+    limine_hhdm_response_t *hpr,
+    klime_t *klime,
+    u64 uphys_start
+) {
     (void)uphys_start;
 
     if (!klime) return NULL;
@@ -18,13 +33,6 @@ ulime_t *ulime_init(limine_hhdm_response_t *hpr, klime_t *klime, void *glime, u6
     memset(ulime, 0, ULIME_META_SIZE);
 
     ulime->klime = klime;
-
-    #if ENABLE_GLIME
-        ulime->glime = (glime_t *)glime;
-    #else
-        ulime->glime = NULL;
-        (void)glime;
-    #endif
 
     ulime->ptr_proc_list = NULL;
     ulime->ptr_proc_curr = NULL;
@@ -85,12 +93,15 @@ ulime_proc_t *ulime_proc_create(ulime_t *ulime, u8 *name, u64 entry_point)
     proc->uid = 0;
     proc->gid = 0;
 
-    proc->heap_size = 16 * 1024 * 1024; // 16 MB
-    //proc->heap_size = 8 * 1024 * 1024;
+    proc->code_size = 1024 * 1024;
+    proc->code_base = (ulime->user_space_used + 0xFFF) & ~0xFFF;
+    ulime->user_space_used = proc->code_base + proc->code_size;
+
+    proc->heap_size = 10 * 1024 * 1024; // 6 MB
     proc->heap_base = (ulime->user_space_used + 0xFFF) & ~0xFFF;
     ulime->user_space_used = proc->heap_base + proc->heap_size;
+
     proc->stack_size = 64 * 1024;
-    //proc->stack_size = 256 * 1024;
     proc->stack_base = (ulime->user_space_used + 0xFFF) & ~0xFFF;
     ulime->user_space_used = proc->stack_base + proc->stack_size;
 
@@ -113,27 +124,53 @@ ulime_proc_t *ulime_proc_create(ulime_t *ulime, u8 *name, u64 entry_point)
     return proc;
 }
 
-int ulime_proc_mmap(ulime_t *ulime, ulime_proc_t *proc) {
+int ulime_proc_mmap(ulime_t *ulime, ulime_proc_t *proc)
+{
     printf("[ULIME] Mapping memory for process '%s'...\n", proc->name);
 
     u64 stack_pages = (proc->stack_size + 0xFFF) / PAGE_SIZE;
     u64 phys_stack = physmem_alloc_to(stack_pages);
-    if (!phys_stack) {
+
+    if (!phys_stack)
+    {
         printf("[ULIME] ERROR: Failed to allocate physical stack\n");
         return 1;
     }
-    printf("  Stack phys: 0x%llx (%llu pages)\n",
-           (unsigned long long)phys_stack, (unsigned long long)stack_pages);
+    printf(
+    	"  Stack phys: 0x%llx (%llu pages)\n",
+        (unsigned long long)phys_stack,
+        (unsigned long long)stack_pages
+    );
+
+
+    u64 code_pages = (proc->code_size + 0xFFF) / PAGE_SIZE;
+    u64 phys_code = physmem_alloc_to(code_pages);
+
+    if (!phys_code)
+    {
+        printf("[ULIME] ERROR: Failed to allocate code\n");
+        return 1;
+    }
+
 
     u64 heap_pages = (proc->heap_size + 0xFFF) / PAGE_SIZE;
     u64 phys_heap = physmem_alloc_to(heap_pages);
-    if (!phys_heap) {
+
+    if (!phys_heap)
+	{
         printf("[ULIME] ERROR: Failed to allocate physical heap\n");
         physmem_free_to(phys_stack, stack_pages);
         return 1;
     }
-    printf("  Heap phys:  0x%llx (%llu pages)\n",
-           (unsigned long long)phys_heap, (unsigned long long)heap_pages);
+    printf(
+		"  Heap phys:  0x%llx (%llu pages)\n",
+        (unsigned long long)phys_heap,
+		(unsigned long long)heap_pages
+	);
+
+	//save code
+	proc->phys_code = phys_code;
+
 
     u64 pml4_phys = paging_create_proc_pml4(ulime->hpr);
     proc->pml4_phys = pml4_phys;
@@ -142,18 +179,48 @@ int ulime_proc_mmap(ulime_t *ulime, ulime_proc_t *proc) {
     u64 stack_flags = PTE_PRESENT | PTE_WRITABLE | PTE_USER | PTE_NO_EXEC;
     u64 heap_flags  = PTE_PRESENT | PTE_WRITABLE | PTE_USER;
 
+    for (u64 i = 0; i < code_pages; i++)
+    {
+        u64 virt = proc->code_base + (i * PAGE_SIZE);
+        u64 phys = phys_code + (i * PAGE_SIZE);
+
+        paging_map_page_proc(
+            ulime->hpr,
+            pml4_phys,
+            virt,
+            phys,
+            heap_flags
+        );
+    }
+
     // map heap/code into the process's own PML4
-    for (u64 i = 0; i < heap_pages; i++) {
+    for (u64 i = 0; i < heap_pages; i++)
+    {
         u64 virt = proc->heap_base + (i * PAGE_SIZE);
         u64 phys = phys_heap + (i * PAGE_SIZE);
-        paging_map_page_proc(ulime->hpr, pml4_phys, virt, phys, heap_flags);
+
+        paging_map_page_proc(
+        	ulime->hpr,
+         	pml4_phys,
+          	virt,
+           	phys,
+            heap_flags
+        );
     }
 
     // map stack into the processes own PML4
-    for (u64 i = 0; i < stack_pages; i++) {
+    for (u64 i = 0; i < stack_pages; i++)
+    {
         u64 virt = proc->stack_base + (i * PAGE_SIZE);
         u64 phys = phys_stack + (i * PAGE_SIZE);
-        paging_map_page_proc(ulime->hpr, pml4_phys, virt, phys, stack_flags);
+
+        paging_map_page_proc(
+        	ulime->hpr,
+         	pml4_phys,
+          	virt,
+           	phys,
+            stack_flags
+        );
     }
 
     // clear memory via HHDM
@@ -170,11 +237,30 @@ int ulime_proc_mmap(ulime_t *ulime, ulime_proc_t *proc) {
     return 0;
 }
 
-int ulime_proc_kill(ulime_t *ulime, u64 pid) {
+int ulime_proc_kill(ulime_t *ulime, u64 pid)
+{
     ulime_proc_t *proc = ulime->ptr_proc_list;
-    while (proc) {
-        if (proc->pid == pid) {
+
+    while (proc)
+    {
+        if (proc->pid == pid)
+        {
+        	//TODO:
+         // pretty much everything is broken so we need a proper design
+            u64 heap_pages =
+                (proc->heap_size + PAGE_SIZE - 1) / PAGE_SIZE;
+
+            u64 stack_pages =
+                (proc->stack_size + PAGE_SIZE - 1) / PAGE_SIZE;
+
+            if(proc->phys_heap) physmem_free_to(proc->phys_heap, heap_pages);
+
+            if(proc->phys_stack) physmem_free_to(proc->phys_stack, stack_pages);
+
+            proc->phys_heap = 0;
+            proc->phys_stack = 0;
             proc->state = PROC_ZOMBIE;
+
             return 0;
         }
         proc = proc->next;
@@ -254,20 +340,20 @@ void ulime_proc_list(ulime_t *ulime)
         current = current->next;
     }
 }
-
+/* shittss i fixed it and then noticed i dont even use it anymore..... TwT just elf load TwT..........
 int ulime_load_program(ulime_proc_t *proc, u8 *code, u64 code_size) {
     if (code_size > proc->heap_size) {
         BOOTUP_PRINTF("Program too large for process heap\n");
         return 1;
     }
 
-    void *dest = (void *)(proc->phys_heap + proc->ulime->hpr->offset);
+    void *dest = (void *)(proc->phys_code + proc->ulime->hpr->offset);
     memcpy(dest, code, code_size);
-    proc->entry_point = proc->heap_base;
+    proc->entry_point = proc->code_base;
 
     BOOTUP_PRINTF(
     	"Loaded program (%lu bytes) into process %s at 0x%lX\n",
         code_size, proc->name, proc->entry_point
     );
     return 0;
-}
+}*/

@@ -1,3 +1,14 @@
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Copyright (c) 2026 emex-foundation
+#
+# FILE: Makefile
+# CREATED BY: emex
+# MODIFIED BY: --
+#
+#
+
 CC      := x86_64-elf-gcc
 LD      := x86_64-elf-ld
 LIBC    := ../../libc

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: mouse0.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "mouse0.h"
 #include <kernel/module/module.h>
 #include <kernel/communication/serial.h>

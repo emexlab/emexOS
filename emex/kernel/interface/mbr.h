@@ -1,4 +1,14 @@
-// src/kernel/interface/mbr.h
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: mbr.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef MBR_H
 #define MBR_H
 

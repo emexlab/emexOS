@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: reqs.c
+ * CREATED BY: emex
+ * MODIFIED BY: asmileyguy
+ *
+ */
+
 #include "reqs.h"
 #include <types.h>
 #include <limine/limine.h>

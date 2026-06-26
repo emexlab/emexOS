@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: ac97.h
+ * CREATED BY: Offihito
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef AC97_H
 #define AC97_H
 
@@ -42,15 +53,15 @@
 #define AC97_CR_FEIE  (1 << 3)  /* FIFO error interrupt enable */
 #define AC97_CR_IOCE  (1 << 4)  /* buffer-completion interrupt enable */
 
-#define AC97_SR_DCH   (1 << 0) 
-#define AC97_SR_CELV  (1 << 1) 
-#define AC97_SR_LVBCI (1 << 2)  
-#define AC97_SR_BCIS  (1 << 3)  
-#define AC97_SR_FIFOE (1 << 4)  
+#define AC97_SR_DCH   (1 << 0)
+#define AC97_SR_CELV  (1 << 1)
+#define AC97_SR_LVBCI (1 << 2)
+#define AC97_SR_BCIS  (1 << 3)
+#define AC97_SR_FIFOE (1 << 4)
 
-#define AC97_GLOB_CNT_GIE  (1 << 0)  
-#define AC97_GLOB_CNT_COLD (1 << 1)  
-#define AC97_GLOB_CNT_WARM (1 << 2) 
+#define AC97_GLOB_CNT_GIE  (1 << 0)
+#define AC97_GLOB_CNT_COLD (1 << 1)
+#define AC97_GLOB_CNT_WARM (1 << 2)
 
 #define AC97_GLOB_STS_PRES1     (1 << 7)
 #define AC97_GLOB_STS_PRES2     (1 << 8)
@@ -64,8 +75,8 @@
 #define AC97_BDL_BUF_BYTES   4096
 #define AC97_BDL_BUF_SAMPLES (AC97_BDL_BUF_BYTES / 2)
 
-#define AC97_BDL_FLAG_IOC  (1u << 31)  
-#define AC97_BDL_FLAG_BUP  (1u << 30)  
+#define AC97_BDL_FLAG_IOC  (1u << 31)
+#define AC97_BDL_FLAG_BUP  (1u << 30)
 
 #define AC97_DEFAULT_RATE  44100
 

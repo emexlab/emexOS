@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: uptime.c
+ * CREATED BY: xTrayambak
+ * MODIFIED BY: emex
+ *
+ */
+
 #include <unistd.h>
 #include <stdio.h>
 
@@ -16,7 +27,9 @@ int main(void)
 {
 	struct sysinfo_t info;
 	int ret = sysinfo(&info);
-	if (ret < 0) {
+
+	if (ret < 0)
+	{
 		perror("sysinfo");
 		return 1;
 	}

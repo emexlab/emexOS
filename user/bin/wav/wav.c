@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: wav.c
+ * CREATED BY: Offihito
+ * MODIFIED BY: emex
+ *
+ */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -9,7 +20,7 @@
 #define IO_BUF_SIZE  65536
 
 static uint8_t  hdr_buf[256];
-static int16_t  pcm_buf[IO_BUF_SIZE / 2]; 
+static int16_t  pcm_buf[IO_BUF_SIZE / 2];
 
 static int xread(int fd, void *dst, int n)
 {
@@ -129,7 +140,7 @@ int main(int argc, char *argv[])
     }
 
     uint32_t src_frame  = channels == 1 ? 2u : 4u;
-    uint32_t max_frames = (IO_BUF_SIZE / 2) / 2; 
+    uint32_t max_frames = (IO_BUF_SIZE / 2) / 2;
     uint32_t remaining  = data_size;
     uint32_t written    = 0;
 

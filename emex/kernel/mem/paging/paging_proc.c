@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: paging_proc.c
+ * CREATED BY: emex
+ * MODIFIED BY: Voxi0
+ *
+ */
+
 #include "paging.h"
 #include <limine/limine.h>
 #include <kernel/mem/phys/physmem.h>

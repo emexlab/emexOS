@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: ac97.c
+ * CREATED BY: Offihito
+ * MODIFIED BY: emex
+ *
+ */
+
 #include "ac97.h"
 
 #include <kernel/pci/device.h>
@@ -48,10 +59,10 @@ static void ac97_irq_handler(cpu_state_t *state)
 
     outw(dev.nabm_base + AC97_NABM_PCM_OUT_SR, sr & (AC97_SR_BCIS | AC97_SR_LVBCI));
 
-#if ENABLE_ULIME
-    if (scheduler != NULL)
-        scheduler->ticks = scheduler->quantum;
-#endif
+	#if ENABLE_ULIME
+	    if (scheduler != NULL)
+	        scheduler->ticks =	 scheduler->quantum;
+	#endif
 }
 
 static int codec_cold_reset(void)
@@ -371,7 +382,7 @@ int ac97_beep(u32 freq_hz, u32 duration_ms)
             u8  idx     = (u8)((phase_acc >> 16) & 0xFF);
             i16 sample  = (i16)(((i32)sine_table[idx] * amplitude) >> 15);
 
-            buf[i * 2 + 0] = sample; 
+            buf[i * 2 + 0] = sample;
             buf[i * 2 + 1] = sample;
 
             phase_acc += (u32)step_fp;

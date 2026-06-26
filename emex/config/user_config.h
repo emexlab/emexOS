@@ -1,3 +1,13 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: user_config.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
 #ifndef USER_CONFIG_H
 #define USER_CONFIG_H
 

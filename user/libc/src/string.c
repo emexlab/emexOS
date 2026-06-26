@@ -105,9 +105,12 @@ static char *_tok;
 char *strtok(char *s, const char *delim) {
     if (s) _tok = s;
     if (!_tok) return NULL;
+
     while (*_tok && strchr(delim, *_tok)) _tok++;
     if (!*_tok) { _tok = NULL; return NULL; }
+
     char *tok = _tok;
+
     while (*_tok && !strchr(delim, *_tok)) _tok++;
     if (*_tok) *_tok++ = '\0'; else _tok = NULL;
     return tok;
@@ -117,5 +120,37 @@ char *strdup(const char *s) {
     size_t n = strlen(s) + 1;
     char *p = malloc(n);
     if (p) memcpy(p, s, n);
+
     return p;
 }
+
+int strcasecmp(const char *a, const char *b)
+{
+    while (*a && *b)
+    {
+        int ca = (*a >= 'A' && *a <= 'Z') ? (*a + 32) : *a;
+        int cb = (*b >= 'A' && *b <= 'Z') ? (*b + 32) : *b;
+
+        if (ca != cb) return ca - cb;
+
+        a++;
+        b++;
+    }
+
+    return (unsigned char)*a - (unsigned char)*b;
+}
+
+int strncasecmp(const char *a, const char *b, size_t n)
+{
+    for (size_t i = 0; i < n; i++)
+    {
+        int ca = (a[i] >= 'A' && a[i] <= 'Z') ? (a[i] + 32) : a[i];
+        int cb = (b[i] >= 'A' && b[i] <= 'Z') ? (b[i] + 32) : b[i];
+        if (ca != cb) return ca - cb;
+
+        if (!a[i]) return 0;
+    }
+
+    return 0;
+}
+

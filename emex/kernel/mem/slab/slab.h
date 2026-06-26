@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: slab.h
+ * CREATED BY: tsaraki
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef SLAB_H
 #define SLAB_H
 
@@ -20,6 +31,6 @@ enum slab_result{
     SlabInitSuccess,
 };
 
-void slab_init(slab_allocator_t *ptr_slab, u64 *ptr_slab_meta, u64 *ptr_slab_data); 
+void slab_init(slab_allocator_t *ptr_slab, u64 *ptr_slab_meta, u64 *ptr_slab_data);
 
 #endif

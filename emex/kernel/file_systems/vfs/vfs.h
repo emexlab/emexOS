@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: vfs.h
+ * CREATED BY: emex
+ * MODIFIED BY: Offihito
+ *
+ */
+
 #ifndef _VFS_H
 #define _VFS_H
 
@@ -148,7 +159,7 @@ extern void *fs_klime;
 typedef struct {
     void *data;
     u64 cap;
-    int ro;    
+    int ro;
 } tmpfs_data;
 
 //void tmpfs_init(void);

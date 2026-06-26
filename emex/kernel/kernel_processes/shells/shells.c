@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: shells.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "shells.h"
 #include <drivers/ps2/keyboard/keyboard.h>
 

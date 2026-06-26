@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: physmem.c
+ * CREATED BY: tsaraki
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef PHYSMEM_H
 #define PHYSMEM_H
 

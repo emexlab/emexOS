@@ -1,4 +1,14 @@
-// src/drivers/storage/ata/ide.h
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: ide.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef PCI_IDE_H
 #define PCI_IDE_H
 

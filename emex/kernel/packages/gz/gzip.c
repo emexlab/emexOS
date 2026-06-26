@@ -1,12 +1,17 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: gzip
+ * CREATED BY: asmileyguy
+ * MODIFIED BY: emex
+ *
+ */
+
 #include <types.h>
 #include <kernel/mem/lib/main.h>
 #include "gzip.h"
-
-//
-// MADE BY @msaid5860 for NullOS
-// gzip parser
-// ported to emexOS by @emex
-//
 
 static uint32_t tgz_get_bits(tgz_stream *s, int bits) {
     while (s->bit_cnt < bits) {

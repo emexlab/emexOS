@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: gdt_verify.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include <kernel/communication/serial.h>
 
 void verify_gdt_setup(void) {

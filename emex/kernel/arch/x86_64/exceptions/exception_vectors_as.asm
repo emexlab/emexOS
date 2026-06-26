@@ -1,3 +1,13 @@
+;
+; SPDX-License-Identifier: GPL-3.0-or-later
+;
+; Copyright (c) 2026 emex-foundation
+;
+; FILE: exceptions_handler.asm
+; CREATED BY: emex
+; MODIFIED BY: --
+;
+
 [BITS 64]
 
 extern isr_handler

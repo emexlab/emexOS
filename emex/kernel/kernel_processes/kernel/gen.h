@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: gen.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef GEN_HEADER
 #define GEN_HEADER
 
@@ -32,6 +43,5 @@
 void kproc(void);
 void init_kernelprocesses2(void);
 void uproc(void);
-void genprocs(void);
 
 #endif

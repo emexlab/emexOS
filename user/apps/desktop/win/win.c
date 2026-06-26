@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: win.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "win.h"
 #include "../config/cfg.h"
 #include <string.h>

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: print.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "print.h"
 #include "boot.h"
 #include "log.h"

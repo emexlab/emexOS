@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: keyboard.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "keyboard.h"
 #include "maps.h"
 #include <kernel/include/ports.h>
@@ -34,24 +45,54 @@ static void keyboard_irq_handler(cpu_state_t* state) {
         extended = 1;
         return;
     }
-    if (sc & 0x80) {
+    if (sc & 0x80)
+    {
         u8 make = sc & 0x7F;
-        if (extended) {
+        key_event_t rel_event;
+        rel_event.pressed   = 0;
+        rel_event.modifiers = 0;
+
+        if (ctrl)  rel_event.modifiers |= KEY_CTRL_MASK;
+        if (shift) rel_event.modifiers |= KEY_SHIFT_MASK;
+        if (alt)   rel_event.modifiers |= KEY_ALT_MASK;
+
+        if (extended)
+        {
             extended = 0;
-            return;
+
+            // release of extended keys
+            switch (make)
+            {
+                case 0x48: rel_event.keycode = KEY_ARROW_UP;    keyboard_put_event(rel_event); return;
+                case 0x50: rel_event.keycode = KEY_ARROW_DOWN;  keyboard_put_event(rel_event); return;
+                case 0x4B: rel_event.keycode = KEY_ARROW_LEFT;  keyboard_put_event(rel_event); return;
+                case 0x4D: rel_event.keycode = KEY_ARROW_RIGHT; keyboard_put_event(rel_event); return;
+                default: return;
+            }
         }
 
-        if (make == 0x2A || make == 0x36) shift = 0;
-        if (make == 0x1D) ctrl = 0;
-        if (make == 0x38) alt = 0;
+        if (make == 0x2A) { shift = 0; rel_event.keycode = KEY_LSHIFT; keyboard_put_event(rel_event); return; }
+        if (make == 0x36) { shift = 0; rel_event.keycode = KEY_RSHIFT; keyboard_put_event(rel_event); return; }
+        if (make == 0x1D) { ctrl  = 0; rel_event.keycode = KEY_LCTRL;  keyboard_put_event(rel_event); return; }
+        if (make == 0x38) { alt   = 0; rel_event.keycode = KEY_LALT;   keyboard_put_event(rel_event); return; }
+
+        // other key releases then come with normal key
+        if (make < 128)
+        {
+            const keymap_t *km = keymap_get_current();
+            u8 c = shift ? km->shift[make] : km->normal[make];
+            if (c) { rel_event.keycode = c; keyboard_put_event(rel_event); }
+        }
         return;
     }
 
-    // Handle modifier keys
-    if (!extended) {
-        if (sc == 0x2A || sc == 0x36) { shift = 1; return; }
-        if (sc == 0x1D) { ctrl = 1; return; }
-        if (sc == 0x38) { alt = 1; return; }
+    // press
+    if (!extended)
+    {
+        if (sc == 0x2A) { shift = 1; key_event_t e; e.pressed=1; e.modifiers=KEY_SHIFT_MASK; e.keycode=KEY_LSHIFT; keyboard_put_event(e); return; }
+        if (sc == 0x36) { shift = 1; key_event_t e; e.pressed=1; e.modifiers=KEY_SHIFT_MASK; e.keycode=KEY_RSHIFT; keyboard_put_event(e); return; }
+        if (sc == 0x1D) { ctrl  = 1; key_event_t e; e.pressed=1; e.modifiers=KEY_CTRL_MASK;  e.keycode=KEY_LCTRL;  keyboard_put_event(e); return; }
+        if (sc == 0x38) { alt   = 1; key_event_t e; e.pressed=1; e.modifiers=KEY_ALT_MASK;   e.keycode=KEY_LALT;   keyboard_put_event(e); return; }
         if (sc == 0x3A) { caps = !caps; return; }
     }
 

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: graphics.h
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
@@ -5,6 +16,10 @@
 #include <limine/limine.h>
 
 #include <kernel/kernel_processes/tm/cfg/stdclrs.h>
+#include <kernel/kernel_processes/bootscreen/boot.h>
+#include <kernel/kernel_processes/bootscreen/print.h>
+#include <kernel/kernel_processes/bootscreen/log.h>
+
 #include <kernel/graph/theme.h>
 #include <kernel/graph/lib/string.h>
 #include <kernel/mem/lib/main.h>

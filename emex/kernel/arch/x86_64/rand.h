@@ -1,3 +1,15 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: rand.h
+ * CREATED BY: xTrayambak
+ * MODIFIED BY: --
+ *
+ */
+
+
 /* This implements hardware-backed random number generation, utilizing the
  * RDTSC instruction (available on all x64 CPUs afaik).
  *
@@ -27,7 +39,7 @@ u64 get_hw_rand(void)
 	if (value == 0) value = 0xD3ADF00D;
 
 	value ^= (u64) &value; // AUDITME: We're using the stack address as an extra source of entropy, but hopefully the steps below are enough to make address leakage impossible (or atleast very, _VERY_ impractical).
-	
+
 	// Extra scrambling work. I hope this is enough.
     value = (value ^ (value >> 30)) * 0xbf58476d1ce4e5b9;
     value = (value ^ (value >> 27)) * 0x94d049bb133111eb;

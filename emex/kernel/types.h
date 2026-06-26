@@ -1,10 +1,16 @@
-#ifndef TYPES_H
-#define TYPES_H
-
 /*
- * THIS IS ONLY THE KLIBC TYPES.H NOT FOR USERSPACE
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: types.h
+ * CREATED BY: emex
+ * MODIFIED BY: Offihito
  *
  */
+
+#ifndef TYPES_H
+#define TYPES_H
 
 typedef unsigned char u8;
 typedef unsigned short u16, USHORT;

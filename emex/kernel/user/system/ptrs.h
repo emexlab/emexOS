@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: ptrs.c
+ * CREATED BY: xTrayambak
+ * MODIFIED BY: --
+ *
+ */
+
 #pragma once
 
 #define KSTART 0x0000800000000000ULL
@@ -15,7 +26,7 @@ static inline int is_valid_user_ptr_range(u64 pointer, u64 size) {
 	*/
 	if (size == 0) return 0;
 	if (size == 1) return is_valid_user_ptr(pointer);
-	
+
 	u64 max;
 	if (__builtin_add_overflow(pointer, size, &max))
 		return 0;

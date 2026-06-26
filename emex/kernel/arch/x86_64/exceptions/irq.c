@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: irq.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "irq.h"
 #include <kernel/arch/x86_64/idt/idt.h>
 #include <kernel/include/ports.h>

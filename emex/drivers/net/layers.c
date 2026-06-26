@@ -1,3 +1,13 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: layers.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
 #include "layers.h"
 #include "e1000/e1000.h"
 #include "rtl8139/rtl8139.h"

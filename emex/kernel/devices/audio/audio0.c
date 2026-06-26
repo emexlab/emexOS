@@ -1,10 +1,21 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: audio0.c
+ * CREATED BY: Offihito
+ * MODIFIED BY: --
+ *
+ */
+
 #include "audio0.h"
 
 #include <kernel/module/module.h>
 #include <kernel/communication/serial.h>
-#include <drivers/drivers.h>            
-#include <kernel/sound/sound.h>         
-#include <drivers/sound/layer.h>      
+#include <drivers/drivers.h>
+#include <kernel/sound/sound.h>
+#include <drivers/sound/layer.h>
 #include <kernel/kernel_processes/bootscreen/log.h>
 
 static int audio0_init(void)
@@ -30,7 +41,7 @@ static void *audio0_open(const char *path)
     if (!sound_available())
         return NULL;
 
-    return (void *)1; 
+    return (void *)1;
 }
 
 static int audio0_read(void *handle, void *buf, size_t count, u64 offset)

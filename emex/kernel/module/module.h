@@ -1,10 +1,21 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE:
+ * CREATED BY: emex
+ * MODIFIED BY: Offihito
+ *
+ */
+
 #ifndef DRIVER_MODULE_H
 #define DRIVER_MODULE_H
 
 #include <types.h>
 
 #define MAX_MODULES 256
-#define VERSION_NUM(major, minor, patch, build)                                \
+#define VERSION_NUM(major, minor, patch, build) \
   ((major << 24) | (minor << 16) | (patch << 8) | build)
 
 typedef struct driver_module {

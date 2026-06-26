@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: ps.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include <stdio.h>
 #include <dirent.h>
 #include <fcntl.h>
@@ -14,13 +25,20 @@ static int is_num(const char *s)
     return 1;
 }
 
-static void parse_field(const char *buf, const char *key, char *out, int outsz)
-{
+static void parse_field(
+	const char *buf,
+	const char *key,
+	char *out, int outsz
+){
     int klen = (int)strlen(key);
+
     const char *p = buf;
     out[0] = '\0';
-    while (*p) {
-        if (strncmp(p, key, (size_t)klen) == 0) {
+
+    while (*p)
+    {
+        if (strncmp(p, key, (size_t)klen) == 0)
+        {
             p += klen;
             while (*p == ' ') p++;
             int i = 0;

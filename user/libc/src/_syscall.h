@@ -4,6 +4,7 @@
 #define _SCAL_WRITE 1
 #define _SCAL_OPEN 2
 #define _SCAL_CLOSE 3
+#define _SCAL_LSEEK 8
 #define _SCAL_BRK 12
 #define _SCAL_GETPID 39
 #define _SCAL_FORK 57

@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: vt.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "vt.h"
 
 #include <kernel/file_systems/vfs/vfs.h>
@@ -369,5 +380,78 @@ int vt_input_read(vt_t *vt, void *buf, size_t count)
         /* non-printable is skip */
     }
 
-    return (int) produced;
+    return (int)produced;
 }
+
+/* /dev/vt/control */
+
+int vt_ctrl_ioctl(int request, void *arg)
+{
+    if (!arg) return -1;
+
+    switch ((unsigned int)request)
+    {
+        case VT_CREATE: {
+            u64 id = vt_create();
+            if (id == (u64)-1) return -1;
+            *(u64 *)arg = id;
+            return 0;
+        }
+        case VT_DESTROY: {
+            vt_destroy(*(u64 *)arg);
+            return 0;
+        }
+        case VT_FOCUS: {
+            vt_focus(*(u64 *)arg);
+            return 0;
+        }
+        case VT_GETFOC: {
+            *(u64 *)arg = vt_get_focused();
+            return 0;
+        }
+        default:
+            return -1;
+    }
+}
+
+static int ctrl_init(void)
+{
+    log("[VT]", "init /dev/vt/control\n", d);
+    return 0;
+}
+
+static void *ctrl_open(const char *path)
+{
+	(void)path;
+	return (void *)1;
+}
+
+static int ctrl_read(void *h, void *b, size_t n, u64 o)
+{
+	(void)h;
+	(void)b;
+	(void)n;
+	(void)o;
+	return 0;
+}
+
+static int ctrl_write(void *h, const void *b, size_t n, u64 o)
+{
+	(void)h;
+	(void)b;
+	(void)n;
+	(void)o;
+	return 0;
+}
+
+driver_module vt_module =
+{
+    .name    = "dev_vt",
+    .mount   = "/dev/vt/control",
+    .version = VERSION_NUM(0, 1, 0, 0),
+    .init    = ctrl_init,
+    .fini    = NULL,
+    .open    = ctrl_open,
+    .read    = ctrl_read,
+    .write   = ctrl_write,
+};

@@ -1,13 +1,18 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: sha256.c
+ * CREATED BY: asmileyguy
+ * MODIFIED BY: emex
+ *
+ */
+
 #include "sha256.h"
 #include <types.h>
 #include <kernel/mem/lib/main.h>
 #include <kernel/graph/lib/string.h>
-
-/*
- * sha256
- * made by @msaid5860
- * ported to emexOS by @emex
- */
 
 #define SHA2_SHFR(x, n)((x) >> (n))
 #define SHA2_ROTR(x, n)(((x) >> (n)) | ((x) << (32 - (n))))

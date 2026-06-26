@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (c) 2026 emex-foundation
+ *
+ * FILE: random.c
+ * CREATED BY: emex
+ * MODIFIED BY: --
+ *
+ */
+
 #include "random.h"
 #include "urandom.h"
 #include <kernel/module/module.h>
