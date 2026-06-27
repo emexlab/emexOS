@@ -97,7 +97,7 @@ ulime_proc_t *ulime_proc_create(ulime_t *ulime, u8 *name, u64 entry_point)
     proc->code_base = (ulime->user_space_used + 0xFFF) & ~0xFFF;
     ulime->user_space_used = proc->code_base + proc->code_size;
 
-    proc->heap_size = 10 * 1024 * 1024; // 6 MB
+    proc->heap_size = 16 * 1024 * 1024; // 16 MB
     proc->heap_base = (ulime->user_space_used + 0xFFF) & ~0xFFF;
     ulime->user_space_used = proc->heap_base + proc->heap_size;
 

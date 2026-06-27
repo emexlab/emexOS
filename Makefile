@@ -124,13 +124,6 @@ $(ISO): limine.conf $(LIMINE_TOOL) buildgen $(BUILD_DIR)/kernel.elf disk userspa
 	@cp $(USERSPACE_DIR)/bin/dofetch/dofetch.elf $(DISK_DIR)/rd/bin/
 	@cp $(USERSPACE_DIR)/bin/wav/wav.elf $(DISK_DIR)/rd/bin/
 
-# libs arent copied anymore due merge conflicts in prs
-#@echo "[MK] copying libs..."
-#@cp src/userspace/libs/libfont/libfont.a $(DISK_DIR)/rd/emr/system/libraries/
-#@cp src/userspace/libs/emxfb0/libemxfb0.a $(DISK_DIR)/rd/emr/system/libraries/
-#@cp src/userspace/libs/libdesktop/libdesktop.a $(DISK_DIR)/rd/emr/system/libraries/
-
-
 	@echo "[MK] creating initrd.cpio..."
 	@chmod +x tools/initrd.sh
 	./tools/initrd.sh
@@ -153,7 +146,7 @@ run: $(ISO)
 	@qemu-system-x86_64 \
 		-M pc \
 		-cpu qemu64 \
-		-m 512M \
+		-m 1024M \
 		-netdev user,id=net0 \
 		-device e1000,netdev=net0 \
 		-device AC97 \

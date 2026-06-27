@@ -23,8 +23,13 @@ static int slen(const char *s) { int n = 0; while (s[n]) n++; return n; }
 
 static unsigned int stripe(int y, int focused)
 {
-    if (focused) return (y & 1) ? WIN_BLACK : WIN_WHITE;
-    return (y & 1) ? WIN_UNFOCUSED_BG : WIN_FOCUSED_BG;
+	#if DARK_MODE == 1
+	    return focused ? DT_TITLE_ACT : DT_TITLE_INA;
+	#else
+	    if (focused) return (y & 1) ? WIN_BLACK : WIN_WHITE;
+
+	    return (y & 1) ? WIN_UNFOCUSED_BG : WIN_FOCUSED_BG;
+	#endif
 }
 
 static void buf_char(int bx, char c, unsigned int fg, unsigned int bg, int frow)

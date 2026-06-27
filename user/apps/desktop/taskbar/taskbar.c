@@ -161,11 +161,16 @@ void taskbar_draw(int mx, int my, int btn_down)
 	            unsigned int col = press ? TB_BTN_TOP : TB_LIGHT;
 
 	            comp_fill(bx, by, TB_BTN_W, TB_BORDER_W, col);
-	            //comp_fill(bx, by + bh - TB_BORDER_W, TB_BTN_W, TB_BORDER_W, col);
-	            //comp_fill(bx, by, TB_BORDER_W, bh, col);
-	            //comp_fill(bx + TB_BTN_W - TB_BORDER_W, by, TB_BORDER_W, bh, col);
+	            comp_fill(bx, by + bh - TB_BORDER_W, TB_BTN_W, TB_BORDER_W, col);
+	            comp_fill(bx, by, TB_BORDER_W, bh, col);
+	            comp_fill(bx + TB_BTN_W - TB_BORDER_W, by, TB_BORDER_W, bh, col);
 
 				comp_fill(bx, by, TB_BTN_W, bh, TB_BUTTON_BG);
+
+				if (hov || press)
+				{
+				    comp_fill(bx, by, TB_BTN_W, 2, TB_TOP_BORDER);
+				}
 	        }
 	    }
 
@@ -185,7 +190,8 @@ void taskbar_draw(int mx, int my, int btn_down)
                 uint16_t bits = font_glyph(FONT8X12_BOLD, c, row);
                 for (int col = 0; col < fw; col++)
                 {
-                    unsigned int color = (bits & (1u << col)) ? TB_WHITE : TB_BUTTON_BG;
+                    unsigned int bg_col = (hov || press) ? TB_BUTTON_BG : TB_BACKGROUND;
+                    unsigned int color = (bits & (1u << col)) ? TB_WHITE : bg_col;
                     comp_set(tx + ci * fw + col, ty + row, color);
                 }
             }
