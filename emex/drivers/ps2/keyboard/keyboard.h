@@ -19,8 +19,8 @@
  * along with emexOS. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef KEYBOARD_H
-#define KEYBOARD_H
+#ifndef DRIVERS_PS2_KEYBOARD_KEYBOARD_H
+#define DRIVERS_PS2_KEYBOARD_KEYBOARD_H
 
 #include <types.h>
 #include <kernel/module/module.h>
@@ -83,4 +83,4 @@ char keyboard_get_key(void);
 
 extern driver_module keyboard_module;
 
-#endif
+#endif /* DRIVERS_PS2_KEYBOARD_KEYBOARD_H */

@@ -19,8 +19,8 @@
  * along with emexOS. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef CMOS_H
-#define CMOS_H
+#ifndef DRIVERS_CMOS_CMOS_H
+#define DRIVERS_CMOS_CMOS_H
 
 #include <types.h>
 
@@ -42,4 +42,4 @@ char inb(u16 port);*/
 USHORT GetCMOSMem(void);
 void GetCMOSDate(void);
 
-#endif
+#endif /* DRIVERS_CMOS_CMOS_H */

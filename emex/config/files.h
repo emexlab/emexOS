@@ -19,8 +19,11 @@
  * along with emexOS. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef CONFIG_FILES_H
+#define CONFIG_FILES_H
 
 #define KEYMAP_FORMAT ".map"
 #define SYSTEMCONFIG_FORMAT ".emcg"
 #define DRIVER_FORMAT ".kmod"
+
+#endif /* CONFIG_FILES_H */

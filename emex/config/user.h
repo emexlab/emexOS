@@ -19,7 +19,8 @@
  * along with emexOS. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef CONFIG_USER_H
+#define CONFIG_USER_H
 
 #define USERINI_PATH "/emr/config/users.ini"
 #define USERADRESSNUM "kman"
@@ -35,3 +36,5 @@
 #define DEFAULT_PWD "emex"
 
 #define DEFAULT_KM "US"
+
+#endif /* CONFIG_USER_H */

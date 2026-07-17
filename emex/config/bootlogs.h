@@ -19,9 +19,11 @@
  * along with emexOS. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef CONFIG_BOOTLOGS_H
+#define CONFIG_BOOTLOGS_H
 
 #include "system.h"
+
 #if BS_DEBUG == 1
 #   define DBS1 1
 #   define DBS2 1
@@ -57,3 +59,5 @@
     #define BOOTUP_PRINTBS(msg, col)
 
 #endif
+
+#endif /* CONFIG_BOOTLOGS_H */

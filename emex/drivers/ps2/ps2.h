@@ -19,8 +19,8 @@
  * along with emexOS. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef PS2_H
-#define PS2_H
+#ifndef DRIVERS_PS2_PS2_H
+#define DRIVERS_PS2_PS2_H
 
 #include "keyboard/keyboard.h"
 #include "mouse/mouse.h"
@@ -28,4 +28,4 @@
 // keyboard driver
 void keyboard_poll(void);
 
-#endif
+#endif /* DRIVERS_PS2_PS2_H */

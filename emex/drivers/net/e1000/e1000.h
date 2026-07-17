@@ -19,8 +19,8 @@
  * along with emexOS. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef E1000_H
-#define E1000_H
+#ifndef DRIVERS_NET_E1000_E1000_H
+#define DRIVERS_NET_E1000_E1000_H
 
 #include <types.h>
 
@@ -99,4 +99,4 @@ int e1000_recv(void *buf, u16 max_len);
 int e1000_present(void);
 void e1000_get_mac(u8 mac[6]);
 
-#endif
+#endif /* DRIVERS_NET_E1000_E1000_H */

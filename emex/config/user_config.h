@@ -19,8 +19,8 @@
  * along with emexOS. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef USER_CONFIG_H
-#define USER_CONFIG_H
+#ifndef CONFIG_USER_CONFIG_H
+#define CONFIG_USER_CONFIG_H
 
 #include <types.h>
 #include <config/user.h>
@@ -31,7 +31,6 @@ typedef struct {
     char password[64];
     char keymap[64];
 } user_config_t;
-
 
 void uci(void);
 int uci_save(void);
@@ -46,4 +45,4 @@ const char* uci_get_keymap(void);
 // Reload config (for use after file changes)
 void uci_reload(void);
 
-#endif
+#endif /* CONFIG_USER_CONFIG_H */

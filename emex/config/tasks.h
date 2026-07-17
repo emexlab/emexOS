@@ -19,9 +19,12 @@
  * along with emexOS. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef CONFIG_TASKS_H
+#define CONFIG_TASKS_H
 
 #define SOCKET1 0
 #define SOCKET2 0
 #define SOCKET3 1
 #define SOCKET4 0
+
+#endif /* CONFIG_TASKS_H */

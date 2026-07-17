@@ -19,7 +19,11 @@
  * along with emexOS. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef DRIVERS_NET_NET_H
+#define DRIVERS_NET_NET_H
+
 #include "layers.h"
 
 int netdrivers_available(void); /* return 0 on failure */
+
+#endif /* DRIVERS_NET_NET_H */

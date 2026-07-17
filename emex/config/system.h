@@ -19,7 +19,8 @@
  * along with emexOS. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef SYSTEM_H
+#define SYSTEM_H
 
 #include "../ebuild.h"
 #include "../emex.h"
@@ -85,3 +86,5 @@
 #define OVERWRITEALL 0
 
 //#define NULL_ 1
+
+#endif /* SYSTEM_H */

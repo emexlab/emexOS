@@ -19,8 +19,8 @@
  * along with emexOS. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef NETLAYER
-#define NETLAYER
+#ifndef DRIVERS_NET_NETLAYERS_H
+#define DRIVERS_NET_NETLAYERS_H
 
 #include <types.h>
 
@@ -38,4 +38,4 @@ int netdrivers_recv(void *buf, u16 max_len);
 
 void netdrivers_get_mac(u8 mac[6]);
 
-#endif
+#endif /* DRIVERS_NET_NETLAYERS_H */

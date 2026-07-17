@@ -19,7 +19,8 @@
  * along with emexOS. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef CONFIG_DISK_H
+#define CONFIG_DISK_H
 
 #include "system.h"
 
@@ -33,3 +34,5 @@
 
 #define FAT32_VOLUME_LABEL "EMEXOS"
 #define FAT32_OEM_NAME "EMEX" KERNEL_DEFRELEASE
+
+#endif /* CONFIG_DISK_H */

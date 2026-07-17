@@ -19,8 +19,8 @@
  * along with emexOS. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef RTL8139_H
-#define RTL8139_H
+#ifndef DRIVERS_NET_RTL8139_RTL8139_H
+#define DRIVERS_NET_RTL8139_RTL8139_H
 
 /* network driver layer */
 #include "../layers.h"
@@ -32,4 +32,4 @@ int rtl8139_send(const void *data, u16 len);
 int rtl8139_recv(void *buf, u16 max_len);
 void rtl8139_get_mac(u8 mac[6]);
 
-#endif
+#endif /* DRIVERS_NET_RTL8139_RTL8139_H */
