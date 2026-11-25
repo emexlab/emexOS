@@ -1,0 +1,3 @@
+[submodule "EmexToolchain"]
+	path = EmexToolchain
+	url = https://github.com/emexlab/emex64
