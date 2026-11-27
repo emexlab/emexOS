@@ -24,13 +24,16 @@ CFLAGS := --target=emex64-unknown-elf -ffreestanding -fno-builtin -fno-stack-pro
           -IeBoot -IBuild/include -I$(BOOTROM_C)/include -IEmexToolchain/EmexToolchain/include/public
 LDFLAGS := -pie --no-dynamic-linker --gc-sections -T eBoot/eboot.lds
 
-DISK_FILES := Build/bootloader.img4 $(if $(LOGO_PNG),Build/logo.img4)
+DISK_FILES := Build/bootloader.img4 $(if $(LOGO_PNG),Build/logo.img4) Build/kernelcache.img4
 
 EMEX64VM := EmexToolchain/build/bin/emex64vm
 
+KERNELCACHE_SOURCES := kernel/main.c
+KERNELCACHE_OBJECTS := $(addprefix Build/kernelcache/,$(notdir $(KERNELCACHE_SOURCES:.c=.o)))
+
 all: $(EMEX64VM) firmware Build/disk.img
 
-Build Build/eboot Build/include:
+Build Build/eboot Build/include Build/kernelcache:
 	mkdir -p $@
 
 Build/img4: $(IMG4_SOURCES) | Build
@@ -67,6 +70,19 @@ Build/logo.bin: $(LOGO_PNG) Build/logo
 
 Build/logo.img4: Build/logo.bin Build/img4 $(IMG4_KEYS)/signing.key
 	Build/img4 sign "$(IMG4_KEYS)" logo "logo" $< $@
+
+Build/kernelcache/%.o: kernel/%.c eBoot/hidden.h Build/include/img4_root.h | Build/kernelcache $(EMEX64_LLVM)/clang
+	$(CC) $(CFLAGS) -c $< -o $@
+
+Build/kernelcache/%.o: $(BOOTROM_C)/%.c eBoot/hidden.h | Build/kernelcache $(EMEX64_LLVM)/clang
+	$(CC) $(CFLAGS) -c $< -o $@
+
+Build/kernelcache.bin: $(KERNELCACHE_OBJECTS) kernel/kernelcache.lds
+	$(LD) $(LDFLAGS) -o Build/kernelcache.elf $(KERNELCACHE_OBJECTS)
+	$(OBJCOPY) -O binary Build/kernelcache.elf $@
+
+Build/kernelcache.img4: Build/kernelcache.bin Build/img4 $(IMG4_KEYS)/signing.key
+	Build/img4 sign "$(IMG4_KEYS)" ebot "eBoot 1.0.0" $< $@
 
 Build/disk.img: $(DISK_FILES)
 	rm -f $@ Build/esp.img
