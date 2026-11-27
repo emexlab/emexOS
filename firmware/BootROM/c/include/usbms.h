@@ -1,12 +1,12 @@
 /*
- * SPDX-License-Identifier: LicenseRef-EPSL-1.1
+ * SPDX-License-Identifier: LicenseRef-EPSL-1.2
  *
  * Copyright (C) 2026 emexlab
  *
  * This file is part of emexOS.
  *
- * Licensed under the emexLabs Public Source License, version 1.1
- * (EPSL 1.1).
+ * Licensed under the emexLabs Public Source License, version 1.2
+ * (EPSL 1.2).
  *
  * Private use and modification are permitted under the license.
  * Redistribution of source or binaries, modified or unmodified,
@@ -28,24 +28,21 @@
 #include <blk.h>
 
 #define USBMS_MAX_DISKS     8
-
-/* errors returned through the block device, on top of the USB_ERR_* codes */
-#define USBMS_ERR_FAILED    0x10    /* CSW: command failed (see sense) */
-#define USBMS_ERR_PHASE     0x11    /* CSW: phase error */
-#define USBMS_ERR_CSW       0x12    /* missing or malformed CSW */
+#define USBMS_ERR_FAILED    0x10
+#define USBMS_ERR_PHASE     0x11
+#define USBMS_ERR_CSW       0x12
 
 struct usbms_disk {
-    struct blkdev blk;          /* first member */
+    struct blkdev blk;
     struct usb_device *dev;
     u32 tag;
     u32 block_size;
     u64 blocks;
-    u8 sense_key, asc, ascq;    /* of the last failed command */
+    u8 sense_key, asc, ascq;
     char vendor[9];
     char product[17];
 };
 
-/* binds a bulk-only SCSI interface, returns 0 when a disk was registered */
 int usbms_probe(struct usb_device *dev);
 
 #endif /* FW_USBMS_H */

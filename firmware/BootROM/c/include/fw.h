@@ -1,12 +1,12 @@
 /*
- * SPDX-License-Identifier: LicenseRef-EPSL-1.1
+ * SPDX-License-Identifier: LicenseRef-EPSL-1.2
  *
  * Copyright (C) 2026 emexlab
  *
  * This file is part of emexOS.
  *
- * Licensed under the emexLabs Public Source License, version 1.1
- * (EPSL 1.1).
+ * Licensed under the emexLabs Public Source License, version 1.2
+ * (EPSL 1.2).
  *
  * Private use and modification are permitted under the license.
  * Redistribution of source or binaries, modified or unmodified,
@@ -37,7 +37,7 @@ typedef int32_t s32;
 typedef int64_t s64;
 
 #define BOOTROM_VERSION_MAJOR   1
-#define BOOTROM_VERSION_MINOR   0
+#define BOOTROM_VERSION_MINOR   1
 #define BOOTROM_VERSION_PATCH   0
 
 #define EMEX64_PAGE_SIZE        0x2000UL
@@ -46,18 +46,17 @@ typedef int64_t s64;
 #define EMEX64_MC_REG_SIZE      (EMEX64_MMIO_BASE + EMEX64_PAGE_SIZE * 5)
 #define EMEX64_APIC_REG_VERSION (EMEX64_MMIO_BASE + EMEX64_PAGE_SIZE * 1 + 0x08)
 
-#define EMEX64_IC_BASE          (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 0)) /* Interrupt Controller */
-#define EMEX64_APIC_BASE        (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 1)) /* Advanced Programmable Interrupt Controller */
+#define EMEX64_IC_BASE          (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 0))     /* Interrupt Controller */
+#define EMEX64_APIC_BASE        (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 1))     /* Advanced Programmable Interrupt Controller */
 #define EMEX64_TIMER_BASE       (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 2))
 #define EMEX64_RTC_BASE         (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 3))
 #define EMEX64_UART_BASE        (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 4))
 #define EMEX64_MC_BASE          (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 5))
 #define EMEX64_PLATFORM_BASE    (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 6))
 #define EMEX64_8042_BASE        (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 7))
-
-#define EMEX64_PCIE_BASE        (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 8)) /* PCIe Root Complex */
-#define EMEX64_IOAPIC_BASE      (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 9)) /* Input Output Advanced Programmable Interrupt Controller */
-#define EMEX64_CPUID_BASE       (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 10)) /* CPU Identification */
+#define EMEX64_PCIE_BASE        (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 8))     /* PCIe Root Complex */
+#define EMEX64_IOAPIC_BASE      (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 9))     /* Input Output Advanced Programmable Interrupt Controller */
+#define EMEX64_CPUID_BASE       (EMEX64_MMIO_BASE + (EMEX64_PAGE_SIZE * 10))    /* CPU Identification */
 
 /* PCIe related crap*/
 #define EMEX64_PCIE_ECAM_BASE   (EMEX64_MMIO_BASE + 0x0000000100000000)
@@ -102,25 +101,23 @@ static inline void mmio_write64(u64 addr,
     *(volatile u64 *)addr = value;
 }
 
-/* control registers (cmov / cmovb), the selector has to be a constant */
 #define FW_CR_CREL      0
 #define FW_CR_CRKSP     1
 #define FW_CR_CREXC     2
 #define FW_CR_CRISA     6
 
-#define fw_cr_read(cr)                                          \
-({                                                              \
-    u64 __v;                                                    \
-    __asm__ __volatile__("cmovb %0, %1" : "=r"(__v) : "i"(cr)); \
-    __v;                                                        \
+#define fw_cr_read(cr)                                                          \
+({                                                                              \
+    u64 __v;                                                                    \
+    __asm__ __volatile__("cmovb %0, %1" : "=r"(__v) : "i"(cr));                 \
+    __v;                                                                        \
 })
 
-#define fw_cr_write(cr, val)                                    \
-do                                                              \
-{                                                               \
-    u64 __v = (u64)(val);                                       \
-    __asm__ __volatile__("cmov %0, %1"                          \
-                         : : "i"(cr), "r"(__v) : "memory");     \
+#define fw_cr_write(cr, val)                                                    \
+do                                                                              \
+{                                                                               \
+    u64 __v = (u64)(val);                                                       \
+    __asm__ __volatile__("cmov %0, %1" : : "i"(cr), "r"(__v) : "memory");       \
 } while(0)
 
 static inline void fw_hlt(void)

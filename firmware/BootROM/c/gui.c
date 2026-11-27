@@ -1,12 +1,12 @@
 /*
- * SPDX-License-Identifier: LicenseRef-EPSL-1.1
+ * SPDX-License-Identifier: LicenseRef-EPSL-1.2
  *
  * Copyright (C) 2026 emexlab
  *
  * This file is part of emexOS.
  *
- * Licensed under the emexLabs Public Source License, version 1.1
- * (EPSL 1.1).
+ * Licensed under the emexLabs Public Source License, version 1.2
+ * (EPSL 1.2).
  *
  * Private use and modification are permitted under the license.
  * Redistribution of source or binaries, modified or unmodified,
@@ -37,13 +37,13 @@ static void gui_draw_glyph(unsigned char c,
                            u64 x,
                            u64 y)
 {
-    const u8 *glyph = &font_data[c * GUI_GLYPH_BYTES];
+    const u8 *glyph = &iso_font[c * GUI_GLYPH_BYTES];
     for(u64 row = 0; row < GUI_GLYPH_BYTES && y + row < gui_height; row++)
     {
         u8 *line = (u8 *)(gui_fb + (y + row) * gui_width);
         for(u64 col = 0; col < 8 && x + col < gui_width; col++)
         {
-            line[x + col] = (glyph[row] >> (7 - col)) & 1 ? FB_TEXT_COLOR : 0;
+            line[x + col] = (glyph[row] >> col) & 1 ? FB_TEXT_COLOR : 0;
         }
     }
 }
@@ -78,10 +78,6 @@ void gui_putc(int c)
     u64 x = (u64)gui_column * 8 + GUI_MARGIN;
     u64 y = (u64)gui_line * GUI_LINE_HEIGHT + GUI_MARGIN;
     gui_column++;
-    if(ch > 127)
-    {
-        return;
-    }
     gui_draw_glyph(ch, x, y);
 }
 

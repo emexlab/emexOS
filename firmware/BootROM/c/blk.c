@@ -1,12 +1,12 @@
 /*
- * SPDX-License-Identifier: LicenseRef-EPSL-1.1
+ * SPDX-License-Identifier: LicenseRef-EPSL-1.2
  *
  * Copyright (C) 2026 emexlab
  *
  * This file is part of emexOS.
  *
- * Licensed under the emexLabs Public Source License, version 1.1
- * (EPSL 1.1).
+ * Licensed under the emexLabs Public Source License, version 1.2
+ * (EPSL 1.2).
  *
  * Private use and modification are permitted under the license.
  * Redistribution of source or binaries, modified or unmodified,

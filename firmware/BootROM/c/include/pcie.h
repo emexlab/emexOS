@@ -1,12 +1,12 @@
 /*
- * SPDX-License-Identifier: LicenseRef-EPSL-1.1
+ * SPDX-License-Identifier: LicenseRef-EPSL-1.2
  *
  * Copyright (C) 2026 emexlab
  *
  * This file is part of emexOS.
  *
- * Licensed under the emexLabs Public Source License, version 1.1
- * (EPSL 1.1).
+ * Licensed under the emexLabs Public Source License, version 1.2
+ * (EPSL 1.2).
  *
  * Private use and modification are permitted under the license.
  * Redistribution of source or binaries, modified or unmodified,
@@ -51,15 +51,14 @@
 struct pcie_dev {
     u8 bus, dev, fn;
     u16 vendor, device;
-    u32 class_code;             /* class << 16 | subclass << 8 | interface */
+    u32 class_code;
     u8 revision;
-    u64 cfg;                    /* address of its configuration page */
+    u64 cfg;
     u64 bar[PCIE_MAX_BARS];
     u64 bar_size[PCIE_MAX_BARS];
     u64 irq;
 };
 
-/* enumerates bus 0, assigns BARs, returns the number of functions (< 0: no root complex) */
 int pcie_init(void);
 int pcie_count(void);
 struct pcie_dev *pcie_get(int index);

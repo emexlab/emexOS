@@ -1,12 +1,12 @@
 /*
- * SPDX-License-Identifier: LicenseRef-EPSL-1.1
+ * SPDX-License-Identifier: LicenseRef-EPSL-1.2
  *
  * Copyright (C) 2026 emexlab
  *
  * This file is part of emexOS.
  *
- * Licensed under the emexLabs Public Source License, version 1.1
- * (EPSL 1.1).
+ * Licensed under the emexLabs Public Source License, version 1.2
+ * (EPSL 1.2).
  *
  * Private use and modification are permitted under the license.
  * Redistribution of source or binaries, modified or unmodified,
@@ -24,16 +24,7 @@
 #include <display.h>
 #include <interrupt.h>
 
-void print_time(void);
-u64 mc_get_size(void);
 void fw_boot_main(void);
-
-static u64 fw_memory_available(void)
-{
-    u64 fw_end = ((u64)__bss_end + EMEX64_PAGE_SIZE - 1) & ~(EMEX64_PAGE_SIZE - 1);
-    u64 end = fw_ram_end();
-    return end > fw_end ? end - fw_end : 0;
-}
 
 int main(void)
 {
@@ -41,33 +32,6 @@ int main(void)
     put_init();
     interrupt_init();
     interrupt_register_handler(EMEX64_IC_IRQ_EXCEPTION, exception_handler);
-
-    /* printing information about the ISA */
-    fw_printf("[fw] isa: LA64-v%lu-ISA\n", (fw_cr_read(FW_CR_CRISA) >> 16) & 0xFFFF);
-
-    /* printing information about memory */
-    u64 total = mc_get_size() & ~(EMEX64_PAGE_SIZE - 1);
-    fw_printf("[fw] memory installed: ");
-    put_mem(total, total);
-    fw_putc('\n');
-    fw_printf("[fw] memory available: ");
-    put_mem(fw_memory_available(), total);
-    fw_putc('\n');
-    print_time();
-
-    /* printing information about the cores using the long awated APIC */
-    fw_printf("[fw] cores: %lu\n", (mmio_read64(EMEX64_APIC_REG_VERSION) >> 8) & 0xFF);
-
-    /* printing information about the display */
-    fw_printf("[fw] display resolution: ");
-    if(gui_height != 0)
-    {
-        fw_printf("%u x %u\n", gui_width, gui_height);
-    }
-    else
-    {
-        fw_printf("not installed\n");
-    }
 
     /* really hoping it finds some shit like Linux and boots into it, imagine this works */
     fw_boot_main();

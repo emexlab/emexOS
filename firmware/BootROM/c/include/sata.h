@@ -1,12 +1,12 @@
 /*
- * SPDX-License-Identifier: LicenseRef-EPSL-1.1
+ * SPDX-License-Identifier: LicenseRef-EPSL-1.2
  *
  * Copyright (C) 2026 emexlab
  *
  * This file is part of emexOS.
  *
- * Licensed under the emexLabs Public Source License, version 1.1
- * (EPSL 1.1).
+ * Licensed under the emexLabs Public Source License, version 1.2
+ * (EPSL 1.2).
  *
  * Private use and modification are permitted under the license.
  * Redistribution of source or binaries, modified or unmodified,
@@ -61,7 +61,6 @@
 #define SATA_SECTOR_SIZE            512
 #define SATA_MAX_DISKS              8
 
-/* one command slot in memory (64 bytes) */
 struct sata_slot {
     u64 opcode;
     u64 lba;
@@ -73,23 +72,22 @@ struct sata_slot {
 };
 
 struct sata_disk {
-    struct blkdev blk;          /* registered as sata<index> */
+    struct blkdev blk;
     struct pcie_dev *ctrl;
-    int index;                  /* sata<index> */
+    int index;
     int port;
     u64 sectors;
     int readonly;
-    u64 max_sectors;            /* per command */
+    u64 max_sectors;
     char model[41];
     char serial[21];
-    struct sata_slot *slots;    /* 32 slots, 64 byte aligned */
+    struct sata_slot *slots;
 };
 
 int sata_init(void);
 int sata_disk_count(void);
 struct sata_disk *sata_disk(int index);
 
-/* returns 0 or the controller error code (> 0), -1 on timeout */
 int sata_read(struct sata_disk *disk, u64 lba, u64 count, void *buffer);
 int sata_write(struct sata_disk *disk, u64 lba, u64 count, const void *buffer);
 const char *sata_strerror(int err);

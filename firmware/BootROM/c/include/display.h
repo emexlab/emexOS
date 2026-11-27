@@ -1,12 +1,12 @@
 /*
- * SPDX-License-Identifier: LicenseRef-EPSL-1.1
+ * SPDX-License-Identifier: LicenseRef-EPSL-1.2
  *
  * Copyright (C) 2026 emexlab
  *
  * This file is part of emexOS.
  *
- * Licensed under the emexLabs Public Source License, version 1.1
- * (EPSL 1.1).
+ * Licensed under the emexLabs Public Source License, version 1.2
+ * (EPSL 1.2).
  *
  * Private use and modification are permitted under the license.
  * Redistribution of source or binaries, modified or unmodified,
@@ -25,13 +25,13 @@
 
 #include <fw.h>
 
-#define GPU_PCI_ID              0x0003E640UL    /* device 0003, vendor e640 */
+#define GPU_PCI_ID              0x0003E640UL
 
 /* display controller registers (BAR0) */
-#define GPU_DP_STATUS           0x100           /* bit 0 hot plug detect, bit 1 link up */
-#define GPU_DP_LINK             0x108           /* 1: train the link */
+#define GPU_DP_STATUS           0x100
+#define GPU_DP_LINK             0x108
 #define GPU_DP_AUX_ADDR         0x110
-#define GPU_DP_AUX_DATA         0x118           /* 8 bytes at the AUX address, which advances */
+#define GPU_DP_AUX_DATA         0x118
 #define GPU_AUX_EDID            0x80000000UL
 #define GPU_DP_HPD              1
 #define GPU_SCAN_CTRL           0x200
@@ -41,17 +41,16 @@
 #define GPU_SCAN_STRIDE         0x220
 #define GPU_SCAN_FORMAT         0x228
 #define GPU_FORMAT_I8           1
-#define GPU_PALETTE             0x1000          /* 256 x 0x00RRGGBB, one register each */
+#define GPU_PALETTE             0x1000
 
 #define FB_TEXT_COLOR           0xFF
 
-/* text: 8x16 glyphs in lines of 16 pixels, 2 pixels in from the top left */
 #define GUI_LINE_HEIGHT         16
 #define GUI_GLYPH_BYTES         16
 #define GUI_MARGIN              2
 
 extern u16 gui_line, gui_column;
-extern const u8 font_data[128 * 16];
+extern unsigned char iso_font[256 * 16];
 extern const u8 la_logo[440], emex_logo[440];
 
 int display_init(void);

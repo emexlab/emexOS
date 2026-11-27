@@ -1,12 +1,12 @@
 /*
- * SPDX-License-Identifier: LicenseRef-EPSL-1.1
+ * SPDX-License-Identifier: LicenseRef-EPSL-1.2
  *
  * Copyright (C) 2026 emexlab
  *
  * This file is part of emexOS.
  *
- * Licensed under the emexLabs Public Source License, version 1.1
- * (EPSL 1.1).
+ * Licensed under the emexLabs Public Source License, version 1.2
+ * (EPSL 1.2).
  *
  * Private use and modification are permitted under the license.
  * Redistribution of source or binaries, modified or unmodified,
@@ -25,6 +25,8 @@
 
 #include <fw.h>
 #include <pcie.h>
+
+/* USB is a waste of ur time */
 
 #define USB_PCI_CLASS               0x0C03E6
 
@@ -60,7 +62,7 @@
 #define USB_ERR_DMA                 4
 #define USB_ERR_BABBLE              5
 #define USB_ERR_NAK                 6
-#define USB_ERR_TIMEOUT             7       /* driver side: TD never completed */
+#define USB_ERR_TIMEOUT             7
 
 /* standard requests and descriptors */
 #define USB_DIR_IN                  0x80
@@ -79,7 +81,7 @@
 /* one transfer descriptor (64 bytes) */
 struct usb_td {
     u64 type;
-    u64 target;                 /* address | endpoint << 8 */
+    u64 target;
     u64 setup;
     u64 buffer;
     u64 length;
@@ -90,7 +92,7 @@ struct usb_td {
 
 struct usb_hc {
     struct pcie_dev *pci;
-    struct usb_td *tds;         /* 32 TDs, 64 byte aligned; the driver uses TD 0 */
+    struct usb_td *tds;
     int ports;
 };
 
@@ -101,19 +103,13 @@ struct usb_device {
     u8 speed;
     u16 vendor, product;
     u8 config_value;
-    char name[64];              /* product string, ASCII */
-
-    /* the interface a class driver binds to */
+    char name[64];
     u8 if_number, if_class, if_subclass, if_protocol;
-    u8 ep_in, ep_out;           /* bulk endpoint numbers, 0 = none */
+    u8 ep_in, ep_out;
 };
 
-/* finds the controllers and enumerates their ports, returns the number of devices */
 int usb_init(void);
-
-/* return USB_OK or a USB_ERR_* code; *actual (may be NULL) gets the bytes moved */
-int usb_control(struct usb_device *dev, u8 type, u8 request, u16 value, u16 index,
-                u16 length, void *data, u64 *actual);
+int usb_control(struct usb_device *dev, u8 type, u8 request, u16 value, u16 index, u16 length, void *data, u64 *actual);
 int usb_bulk(struct usb_device *dev, u8 ep, int in, void *data, u64 length, u64 *actual);
 int usb_clear_halt(struct usb_device *dev, u8 ep_address);
 const char *usb_strerror(int err);
