@@ -26,6 +26,8 @@ LDFLAGS := -pie --no-dynamic-linker --gc-sections -T eBoot/eboot.lds
 
 DISK_FILES := Build/bootloader.img4 $(if $(LOGO_PNG),Build/logo.img4)
 
+EMEX64VM := EmexToolchain/build/bin/emex64vm
+
 all: firmware Build/disk.img
 
 Build Build/eboot Build/include:
@@ -94,10 +96,10 @@ clean:
 
 run: all Build/nvram
 	Build/nvram -f firmware/BootROM/firmware.img.nvram boot-args=
-	emex64vm -f $(FIRMWARE) --sata Build/disk.img --display:resolution 800 600
+	$(EMEX64VM) -f $(FIRMWARE) --sata Build/disk.img --display:resolution 800 600
 
 run-verbose: all Build/nvram
 	Build/nvram -f firmware/BootROM/firmware.img.nvram boot-args=-v
-	emex64vm -f $(FIRMWARE) --sata Build/disk.img --display:resolution 800 600
+	$(EMEX64VM) -f $(FIRMWARE) --sata Build/disk.img --display:resolution 800 600
 
 .PHONY: all firmware verbose quiet clean run
