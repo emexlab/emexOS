@@ -28,7 +28,7 @@ DISK_FILES := Build/bootloader.img4 $(if $(LOGO_PNG),Build/logo.img4)
 
 EMEX64VM := EmexToolchain/build/bin/emex64vm
 
-all: firmware Build/disk.img
+all: $(EMEX64VM) firmware Build/disk.img
 
 Build Build/eboot Build/include:
 	mkdir -p $@
@@ -81,6 +81,9 @@ Build/disk.img: $(DISK_FILES)
 $(EMEX64_LLVM)/clang:
 	EmexToolchain/llvm/build.sh
 
+$(EMEX64VM):
+	$(MAKE) -C EmexToolchain all
+
 firmware: $(EMEX64_LLVM)/clang | $(IMG4_KEYS)/signing.key
 	$(MAKE) -C firmware/BootROM build IMG4_KEYS="$(IMG4_KEYS)"
 
@@ -92,14 +95,15 @@ quiet: Build/nvram
 
 clean:
 	$(MAKE) -C firmware/BootROM clean
+	$(MAKE) -C EmexToolchain clean
 	rm -rf Build
 
 run: all Build/nvram
 	Build/nvram -f firmware/BootROM/firmware.img.nvram boot-args=
-	$(EMEX64VM) -f $(FIRMWARE) --sata Build/disk.img --display:resolution 800 600
+	$(EMEX64VM) -f $(FIRMWARE) --sata Build/disk.img --display on --display:resolution 800 600
 
 run-verbose: all Build/nvram
 	Build/nvram -f firmware/BootROM/firmware.img.nvram boot-args=-v
-	$(EMEX64VM) -f $(FIRMWARE) --sata Build/disk.img --display:resolution 800 600
+	$(EMEX64VM) -f $(FIRMWARE) --sata Build/disk.img --display on --display:resolution 800 600
 
 .PHONY: all firmware verbose quiet clean run
