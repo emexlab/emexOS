@@ -82,7 +82,7 @@ Build/kernelcache.bin: $(KERNELCACHE_OBJECTS) kernel/kernelcache.lds
 	$(OBJCOPY) -O binary Build/kernelcache.elf $@
 
 Build/kernelcache.img4: Build/kernelcache.bin Build/img4 $(IMG4_KEYS)/signing.key
-	Build/img4 sign "$(IMG4_KEYS)" ebot "eBoot 1.0.0" $< $@
+	Build/img4 sign "$(IMG4_KEYS)" krnl "SNU 1.0.0" $< $@
 
 Build/disk.img: $(DISK_FILES)
 	rm -f $@ Build/esp.img

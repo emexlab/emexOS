@@ -31,9 +31,12 @@
 #include "logo.h"
 #include "poweroff.h"
 
-#define EBOOT_VERSION   "eBoot 1.0.0"
+#define EBOOT_VERSION   "eBoot 1.1.0"
 #define LOGO_PATH       "/logo.img4"
 #define LOGO_TYPE       "logo"
+
+#define KCACHE_PATH     "/kernelcache.img4"
+#define KCACHE_TYPE     "krnl"
 
 #define UART_BASE       0x0020000000008000UL
 #define UART_DATA       0x00
@@ -424,12 +427,76 @@ static void show_logo(const struct e64_boot_info *info)
     }
     if(verbose)
     {
-        print("[eboot] logo ");
-        print_number(le32(image.data + 8));
-        print("x");
-        print_number(le32(image.data + 12));
-        print(", validly signed by by vendor\n");
+        print("[eboot] loaded '" LOGO_PATH "' (valid)\n");
     }
+}
+
+void fw_jump(uint64_t entry,
+             void *arg)
+{
+    register uint64_t r0 __asm__("r0") = (uint64_t)arg;
+    __asm__ __volatile__("b %1" : : "r"(r0), "r"(entry) : "memory");
+    __builtin_unreachable();
+}
+
+static void load_kernelcache(const struct e64_boot_info *info)
+{
+    struct disk disk;
+    struct fat_volume esp;
+    struct img4_image image;
+    uint64_t size;
+    const char *why;
+    int err;
+
+    err = disk_open(&disk, info->boot_device, info->boot_port);
+    if(err != DISK_OK)
+    {
+        if(verbose)
+        {
+            print(err == DISK_ERR_KIND ? "[eboot] no logo, eBoot reads SATA disks only\n" : "[eboot] no logo, the boot disk is not there\n");
+        }
+        return;
+    }
+    err = fat_mount_at(&esp, disk_read, &disk, info->partition_lba);
+    if(err != FAT_OK)
+    {
+        print("[eboot] no logo, the ESP has no FAT file system\n");
+        return;
+    }
+
+    uint64_t at = ((uint64_t)__eboot_end + 0x1FFF) & ~0x1FFFUL;
+    uint64_t end = info->fb_base > at ? info->fb_base : info->memory_size;
+    if(end <= at)
+    {
+        print("[eboot] no logo, there is no memory for it\n");
+        return;
+    }
+    err = fat_load(&esp, KCACHE_PATH, (void *)at, end - at, &size);
+    if(err != FAT_OK)
+    {
+        if(err != FAT_ERR_NOT_FOUND || verbose)
+        {
+            print(err == FAT_ERR_NOT_FOUND ? "[eboot] no " KCACHE_PATH " on the ESP\n" : "[eboot] " KCACHE_PATH " could not be read\n");
+        }
+        return;
+    }
+
+    struct img4_root root;
+    root.public_key = img4_root_public_key;
+    root.subject = img4_root_subject;
+    root.subject_size = sizeof(img4_root_subject);
+    err = img4_verify((const uint8_t *)at, size, KCACHE_TYPE, &root, &img4_this_device, &image);
+    if(err != IMG4_OK)
+    {
+        print("[eboot] " KCACHE_PATH " ");
+        print(img4_error(err));
+        print(", not showing it\n");
+        return;
+    }
+
+    print("[eboot] loaded '" KCACHE_PATH "' (valid)\n");
+    print("[eboot] jumping to kernelcache entry\n");
+    fw_jump(at, NULL);
 }
 
 void eboot_main(struct e64_boot_info *info)
@@ -455,6 +522,8 @@ void eboot_main(struct e64_boot_info *info)
     {
         show_logo(info);
     }
+
+    load_kernelcache(info);
 
     for(;;)
     {
