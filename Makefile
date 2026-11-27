@@ -78,6 +78,9 @@ Build/disk.img: $(DISK_FILES)
 	dd if=Build/esp.img of=$@ bs=1048576 seek=1 conv=notrunc 2>/dev/null
 	rm -f Build/esp.img
 
+Build/ecid: | Build
+	printf '0x%s\n' "$$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')" > $@
+
 $(EMEX64_LLVM)/clang:
 	EmexToolchain/llvm/build.sh
 
@@ -103,12 +106,12 @@ clean-all: clean
 	rm -rf EmexToolchain/llvm/install
 	rm -rf EmexToolchain/llvm/llvm-project
 
-run: all Build/nvram
+run: all Build/nvram Build/ecid
 	Build/nvram -f firmware/BootROM/firmware.img.nvram boot-args=
-	$(EMEX64VM) -f $(FIRMWARE) --sata Build/disk.img --display on --display:resolution 800 600
+	$(EMEX64VM) -f $(FIRMWARE) --ecid $$(cat Build/ecid) --sata Build/disk.img --display on --display:resolution 800 600
 
-run-verbose: all Build/nvram
+run-verbose: all Build/nvram Build/ecid
 	Build/nvram -f firmware/BootROM/firmware.img.nvram boot-args=-v
-	$(EMEX64VM) -f $(FIRMWARE) --sata Build/disk.img --display on --display:resolution 800 600
+	$(EMEX64VM) -f $(FIRMWARE) --ecid $$(cat Build/ecid) --sata Build/disk.img --display on --display:resolution 800 600
 
 .PHONY: all firmware verbose quiet clean run
