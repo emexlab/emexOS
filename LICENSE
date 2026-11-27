@@ -1,12 +1,13 @@
 emexLabs Public Source License
-Version 1.1 (EPSL 1.1)
-20 October 2026
+Version 1.2 (EPSL 1.2)
+27 November 2026
 
 1. Scope and definitions
 
 This license applies only to material that a person entitled to license it
-expressly identifies as licensed under EPSL 1.1. Merely placing this license
-in a repository does not change the license of any material in that repository.
+expressly identifies as licensed under EPSL 1.2 by a license notice included
+in or supplied with that material. Merely placing this license in a repository
+does not change the license of any material in that repository.
 
 "Covered Material" means that identified material, changes to it, and material
 that incorporates any portion of it protected by copyright. An independent
@@ -30,6 +31,8 @@ another person or entity, or using it to provide functionality or a service
 over a network to a person or entity outside Your internal use. A deployment
 may be commercial or noncommercial, public or restricted to selected users.
 
+"Written Instrument" has the meaning given in Section 10.
+
 2. Copyright permission
 
 Each Contributor gives You a worldwide, nonexclusive, royalty-free copyright
@@ -47,12 +50,13 @@ Redistribution means providing copies of Covered Material, whether changed
 or unchanged, in Source or compiled form, to a person or entity outside Your
 internal use. It includes sales, gifts, public repositories, mirrors, forks
 made available to others, and distribution as part of another product.
-Redistribution requires prior written permission from emexLabs identifying
-the material and the scope of permitted redistribution. This requirement
-applies equally to commercial and noncommercial redistribution. Permission
-for one distributor, release, or purpose does not authorize another unless
-the written permission expressly says so. Receiving a copy or its Source
-does not itself give You permission to redistribute it.
+Redistribution requires prior written permission from emexLabs, given as a
+Written Instrument under Section 10, identifying the material and the scope
+of permitted redistribution. This requirement applies equally to commercial
+and noncommercial redistribution. Permission for one distributor, release,
+or purpose does not authorize another unless the written permission expressly
+says so. Receiving a copy or its Source does not itself give You permission
+to redistribute it.
 
 For material You own or are separately authorized to distribute, this license
 does not limit Your independent rights. Permission from emexLabs does not
@@ -100,7 +104,7 @@ Whenever You Externally Deploy Covered Material, You must:
     in those files or in an accompanying change record identifying the files.
 
 (d) Make the complete Source of the version of Covered Material You deploy,
-    including Your changes, available under EPSL 1.1 to every recipient or
+    including Your changes, available under EPSL 1.2 to every recipient or
     service user. You may instead make that Source publicly available.
     Provide a clear notice with the copy or service explaining where and how
     to obtain it. Electronic access must be free of charge and must not require
@@ -168,8 +172,8 @@ TO THE EXTENT ALLOWED BY APPLICABLE LAW, NO CONTRIBUTOR IS LIABLE FOR DAMAGES
 ARISING FROM THIS LICENSE OR THE USE OR INABILITY TO USE COVERED MATERIAL,
 INCLUDING DIRECT, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL LOSS, LOST PROFITS,
 OR LOST DATA, UNDER ANY LEGAL THEORY. THESE EXCLUSIONS DO NOT OVERRIDE LIABILITY
-THAT THE LAW DOES NOT ALLOW TO BE EXCLUDED OR A SEPARATE WRITTEN COMMITMENT
-MADE BY THAT CONTRIBUTOR.
+THAT THE LAW DOES NOT ALLOW TO BE EXCLUDED OR A SEPARATE COMMITMENT MADE BY
+THAT CONTRIBUTOR AS A WRITTEN INSTRUMENT UNDER SECTION 10.
 
 8. Breach and termination
 
@@ -177,8 +181,9 @@ If You breach a condition of this license, Your permissions under it terminate
 unless You fully remedy the breach within thirty days after You first become
 aware of it. Permissions terminated for a breach are automatically reinstated
 when You fully remedy it, unless the relevant Contributor has expressly and
-finally terminated Your permissions by written notice after that thirty-day
-period. Section 3 separately governs termination of patent permissions.
+finally terminated Your permissions by written notice, given as a Written
+Instrument under Section 10, after that thirty-day period. Section 3
+separately governs termination of patent permissions.
 
 Termination of Your permissions does not terminate compliant recipients'
 permissions or withdraw grants You already made. Source-availability duties
@@ -189,20 +194,55 @@ to continue a deployment that otherwise requires terminated rights.
 9. Versions and interpretation
 
 emexLabs is the steward of EPSL and may publish later numbered versions.
-EPSL 1.1 grants no automatic permission to use a later version. Such permission
+EPSL 1.2 grants no automatic permission to use a later version. Such permission
 exists only where the relevant copyright holders expressly authorize it,
-for example by stating "EPSL 1.1 or any later version" in their license notice.
+for example by stating "EPSL 1.2 or any later version" in their license notice.
 Publishing a new version does not revoke permissions already granted.
 Revising this document likewise does not withdraw rights already granted
 under an earlier text, including a text previously bearing the same version
 number. The text supplied with a grant determines that grant's terms.
+Material licensed under an earlier version of EPSL remains under that version
+unless its copyright holders relicense it under EPSL 1.2.
 
 If a provision cannot be enforced, the remaining provisions continue to apply
 to the extent permitted by law. This license creates no agency, partnership,
 or obligation to develop or release further material. It does not restrict
 rights You have independently under applicable law.
 
-10. Reuse of the license document
+10. Written terms only
+
+The permissions and conditions that apply to Covered Material are set out
+only in:
+
+(a) the text of this license supplied with that material;
+
+(b) the license notice identifying that material as licensed under EPSL 1.2;
+    and
+
+(c) any Written Instrument that meets this Section.
+
+A "Written Instrument" is a document or email that is issued by emexLabs or
+the relevant Contributor through a person authorized to act for it, names or
+clearly identifies the person or entity it is addressed to, identifies the
+material it covers, and expressly states that it is given under this license.
+Written permission under Section 2, written notice under Section 8, and a
+separate commitment under Section 7 take effect only as Written Instruments.
+A post or message on a social network, chat or community platform, forum, or
+issue tracker is not a Written Instrument, even if it is addressed to You.
+
+Nothing else grants, waives, expands, limits, interprets, or otherwise changes
+this license. This includes statements by emexLabs, a Contributor, or anyone
+associated with them, made in any form other than a Written Instrument, such
+as posts or messages on social networks (for example X), chat or community
+platforms, forums, issue trackers, livestreams, videos, interviews, talks,
+websites, README or documentation text other than the license notice itself,
+and spoken statements. Such statements have no effect under this license, and
+You may not rely on them as granting permission or excusing compliance with
+any condition. This applies whether the statement was made before or after
+the material was released, and whether it appears to give more or fewer
+permissions than this license.
+
+11. Reuse of the license document
 
 Everyone may copy and distribute this license document unchanged, including
 to license their own material. You may adapt the document to create a different
@@ -213,7 +253,7 @@ change the terms of material previously licensed under EPSL.
 Suggested notice for material You are entitled to license:
 
     Copyright (c) [year] [copyright holder]
-    Licensed under the emexLabs Public Source License, version 1.1
-    (EPSL 1.1). See LICENSE for the full terms.
+    Licensed under the emexLabs Public Source License, version 1.2
+    (EPSL 1.2). See LICENSE for the full terms.
 
-End of EPSL 1.1.
+End of EPSL 1.2.
