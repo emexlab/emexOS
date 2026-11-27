@@ -12,7 +12,7 @@ OBJCOPY = $(EMEX64_LLVM)/llvm-objcopy
 CFLAGS_FW ?= --target=emex64-unknown-elf -O2 -g0 -Wall -msoft-float -ffreestanding -nostdlibinc -Ic/include -I../../EmexToolchain/EmexToolchain/include/public
 
 FW_FILES = src/start.e64
-FW_CFILES = c/main.c c/string.c c/uart.c c/put.c c/gui.c c/font.c c/interrupt.c c/exc.c c/rtc.c c/mc.c c/keyboard.c c/fwlib.c c/pcie.c c/blk.c c/sata.c c/usb.c c/usbms.c c/boot.c
+FW_CFILES = c/main.c c/string.c c/uart.c c/put.c c/gui.c c/font.c c/interrupt.c c/exc.c c/rtc.c c/mc.c c/keyboard.c c/fwlib.c c/pcie.c c/blk.c c/sata.c c/usb.c c/usbms.c c/boot.c c/fat.c
 FW_FLAGS = -DPUT_DRAW_LOGO -Wl,--nmagic,-v
 
 all: FILES ?= $(FW_FILES)
