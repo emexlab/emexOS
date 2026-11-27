@@ -9,7 +9,7 @@
 ### eBoot (Stage 2)
 - [x] Bring a logo to life by loading a cryptographically signed file called `/logo.img4`
 - [ ] Bring the kernel to life by loading a cryptographically signed file called `/kernel.img4`
-- [ ] Load cryptographically signed `~/trustcache.img4`
+- [ ] Load cryptographically signed `/trustcache.img4`
 - [ ] ~~Load cryptographically signed `/sptm.img4`~~ (needs SPTM extension implemented in LA64)
 
 ### Kernel (Stage 3)
