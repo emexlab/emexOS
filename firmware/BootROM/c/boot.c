@@ -25,6 +25,7 @@
 #include <blk.h>
 #include <sata.h>
 #include <usb.h>
+#include <fat.h>
 #include <EmexToolchain/Boot/e64boot.h>
 
 #define SECTOR              E64BOOT_SECTOR_SIZE
@@ -171,6 +172,49 @@ static int check_header(struct blkdev *d,
     return 0;
 }
 
+static const u8 esp_part_type_guid[16] = {
+    0x28, 0x73, 0x2A, 0xC1, 0x1F, 0xF8, 0xD2, 0x11,
+    0xBA, 0x4B, 0x00, 0xA0, 0xC9, 0x3E, 0xC9, 0x3B,
+};
+
+static int esp_read(void *context, uint64_t lba, uint32_t count, void *buffer)
+{
+    struct blkdev *d = context;
+    return d->read(d, lba, count, buffer);
+}
+
+static void try_esp(struct blkdev *d, struct gpt_entry *e)
+{
+    struct fat_volume esp;
+    u64 load = ((u64)__bss_end + EMEX64_PAGE_SIZE - 1) & ~(EMEX64_PAGE_SIZE - 1);
+    u64 size;
+    int err;
+
+    if(e->last_lba < e->first_lba || e->last_lba >= d->sectors)
+    {
+        return;
+    }
+
+    err = fat_mount_at(&esp, esp_read, d, e->first_lba);
+    if(err != FAT_OK)
+    {
+        fw_printf("[boot] %s: ESP has no FAT file system (error %u)\n", d->name, (u32)-err);
+        return;
+    }
+
+    err = fat_load(&esp, "/bootloader.bin", (void *)load, fw_ram_end() - load, &size);
+    if(err != FAT_OK)
+    {
+        fw_printf("[boot] %s: %s not loaded (error %u)\n", d->name, "/bootloader.bin", (u32)-err);
+        return;
+    }
+
+    fw_printf("[boot] loaded %s: ", "/bootloader.bin");
+    fw_put_size(size);
+    fw_printf(" to 0x%lx\n", load);
+    fw_jump(load, &boot_info);
+}
+
 static void try_disk(struct blkdev *d)
 {
     struct gpt_header h;
@@ -185,10 +229,18 @@ static void try_disk(struct blkdev *d)
     for(u32 i = 0; i < h.entry_count; i++)
     {
         struct gpt_entry *e = (struct gpt_entry *)(entry_buf + (u64)i * h.entry_size);
+
+        if(fw_memcmp(e->type_guid, esp_part_type_guid, 16) == 0)
+        {
+            try_esp(d, e);
+            continue;
+        }
+
         if(fw_memcmp(e->type_guid, e64boot_part_type_guid, 16) != 0)
         {
             continue;
         }
+
         if(e->last_lba < e->first_lba || e->last_lba >= d->sectors)
         {
             fw_printf("[boot] %s: boot partition #%u lies outside the disk\n", d->name, i);
@@ -281,7 +333,6 @@ static void try_disk(struct blkdev *d)
     fw_printf("[boot] %s: nothing bootable\n", d->name);
 }
 
-/* called from main (main.c) :3c */
 void fw_boot_main(void)
 {
     /* scanning storage devices */

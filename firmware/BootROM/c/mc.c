@@ -26,15 +26,3 @@ u64 mc_get_size(void)
 {
     return mmio_read64(EMEX64_MC_REG_SIZE);
 }
-
-void mc_protect_ktrr(void)
-{
-    mmio_write64(EMEX64_MC_REG_KTRR_SIZE, 0);
-    mmio_write64(EMEX64_MC_REG_KTRR_BASE, 0);
-    mmio_write64(EMEX64_MC_REG_KTRR_SIZE, (u64)__data_start);
-}
-
-void mc_lock_ktrr(void)
-{
-    mmio_write64(EMEX64_MC_REG_KTRR_LOCKED, 1);
-}

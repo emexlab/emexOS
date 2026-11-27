@@ -26,8 +26,6 @@
 
 void print_time(void);
 u64 mc_get_size(void);
-void mc_protect_ktrr(void);
-void mc_lock_ktrr(void);
 void fw_boot_main(void);
 
 static u64 fw_memory_available(void)
@@ -71,15 +69,8 @@ int main(void)
         fw_printf("not installed\n");
     }
 
-    mc_protect_ktrr();
-    fw_printf("[fw] KTRR protects the firmware text\n");
-
     /* really hoping it finds some shit like Linux and boots into it, imagine this works */
     fw_boot_main();
-
-    /* the fallback, mhhhh :< */
-    mc_lock_ktrr();
-    fw_printf("[fw] nothing booted, locked KTRR over the firmware\n");
 
     for(;;)
     {
