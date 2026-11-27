@@ -127,7 +127,7 @@ void put_init(void)
     }
     putc_fn = gui_putc;
 
-    fw_printf("eBoot %d.%d.%d (based on emexFirmware)\n", EBOOT_VERSION_MAJOR, EBOOT_VERSION_MINOR, EBOOT_VERSION_PATCH);
+    fw_printf("BootROM %d.%d.%d (based on emexFirmware)\n", BOOTROM_VERSION_MAJOR, BOOTROM_VERSION_MINOR, BOOTROM_VERSION_PATCH);
 }
 
 void put_mem(u64 bytes,
