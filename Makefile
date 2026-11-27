@@ -1,10 +1,16 @@
 # emexOS Makefile lol
 
-all: EmexToolchain/llvm/install EmexToolchain/firmware/TianoCore/firmware.img
+PROJECT_ROOT := $(CURDIR)
+EMEX64_LLVM := $(PROJECT_ROOT)/EmexToolchain/llvm/install/bin
+FIRMWARE := $(PROJECT_ROOT)/firmware/eBoot/firmware.img
 
-# dependencies
-EmexToolchain/llvm/install:
+all: $(FIRMWARE)
+
+$(EMEX64_LLVM)/clang:
 	EmexToolchain/llvm/build.sh
 
-EmexToolchain/firmware/TianoCore/firmware.img:
-	EmexToolchain/firmware/TianoCore/build.sh
+$(FIRMWARE): $(EMEX64_LLVM)/clang
+	$(MAKE) -C firmware/eBoot build
+
+clean:
+	$(MAKE) -C firmware/eBoot clean
