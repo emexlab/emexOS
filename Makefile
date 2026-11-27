@@ -98,6 +98,11 @@ clean:
 	$(MAKE) -C EmexToolchain clean
 	rm -rf Build
 
+clean-all: clean
+	rm -rf EmexToolchain/llvm/build
+	rm -rf EmexToolchain/llvm/install
+	rm -rf EmexToolchain/llvm/llvm-project
+
 run: all Build/nvram
 	Build/nvram -f firmware/BootROM/firmware.img.nvram boot-args=
 	$(EMEX64VM) -f $(FIRMWARE) --sata Build/disk.img --display on --display:resolution 800 600
