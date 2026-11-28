@@ -470,7 +470,10 @@ static void show_logo(const struct e64_boot_info *info,
 
 static void load_kernelcache(struct img4_image *image)
 {
-    print("[eboot] jumping to kernelcache entry\n");
+    if(verbose)
+    {
+        print("[eboot] jumping to kernelcache entry\n");
+    }
     fw_jump((uint64_t)image->data, NULL);
 }
 
