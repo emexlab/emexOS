@@ -127,10 +127,10 @@ clean-all: clean
 
 run: all Build/nvram Build/ecid
 	Build/nvram -f firmware/BootROM/firmware.img.nvram boot-args=
-	$(EMEX64VM) -f $(FIRMWARE) --ecid $$(cat Build/ecid) --sata Build/disk.img --display on --display:resolution 800 600
+	$(EMEX64VM) -f $(FIRMWARE) --ecid $$(cat Build/ecid) --sata Build/disk.img --display on --display:resolution 800 600 -m:gb 8
 
 run-verbose: all Build/nvram Build/ecid
 	Build/nvram -f firmware/BootROM/firmware.img.nvram boot-args=-v
-	$(EMEX64VM) -f $(FIRMWARE) --ecid $$(cat Build/ecid) --sata Build/disk.img --display on --display:resolution 800 600
+	$(EMEX64VM) -f $(FIRMWARE) --ecid $$(cat Build/ecid) --sata Build/disk.img --display on --display:resolution 800 600 -m:gb 8
 
 .PHONY: all firmware verbose quiet clean run
