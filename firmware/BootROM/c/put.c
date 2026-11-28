@@ -129,30 +129,3 @@ void put_init(void)
 
     fw_printf("BootROM %d.%d.%d\n", BOOTROM_VERSION_MAJOR, BOOTROM_VERSION_MINOR, BOOTROM_VERSION_PATCH);
 }
-
-void put_mem(u64 bytes,
-             u64 unit_of)
-{
-    static const char *units[] = { "B", "KB", "MB", "GB", "TB" };
-
-    u64 x = unit_of ? unit_of : bytes;
-    int unit = 0;
-    while(x >= 1024 && unit < 4)
-    {
-        x /= 1024;
-        unit++;
-    }
-
-    u64 size = 1;
-    for(int i = 0; i < unit; i++)
-    {
-        size *= 1024;
-    }
-
-    fw_printf("%lu", bytes / size);
-    if(unit != 0)
-    {
-        fw_printf(".%lu", (bytes % size) * 10 / size);
-    }
-    fw_printf("%s ", units[unit]);
-}

@@ -38,7 +38,7 @@ typedef int64_t s64;
 
 #define BOOTROM_VERSION_MAJOR   1
 #define BOOTROM_VERSION_MINOR   3
-#define BOOTROM_VERSION_PATCH   0
+#define BOOTROM_VERSION_PATCH   1
 
 #define EMEX64_PAGE_SIZE        0x2000UL
 #define EMEX64_MMIO_BASE        0x0020000000000000UL
@@ -139,7 +139,6 @@ void *memmove(void *dst, const void *src, size_t len);
 /* put.c */
 void fw_putc(int c);
 void fw_puts(const char *s);
-void put_mem(u64 bytes, u64 unit_of);
 
 /* fwlib.c */
 void fw_printf(const char *fmt, ...);
