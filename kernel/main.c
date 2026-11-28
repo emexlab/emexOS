@@ -25,6 +25,7 @@
 #include <mm/pmap.h>
 #include <eboot_api.h>
 #include <arch/emex64/random.h>
+#include <EmexToolchain/Boot/e64boot.h>
 
 extern char __bss_start[] __attribute__((visibility("hidden")));
 extern char __bss_end[] __attribute__((visibility("hidden")));
