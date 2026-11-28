@@ -51,12 +51,6 @@ void kernel_main(struct e64_boot_info *info)
 
     for(;;)
     {
-        void *meow = kmalloc(0x128000);
-        printf("[Kernel] allocated %p\n", meow);
-    }
-
-    for(;;)
-    {
         __asm__ __volatile__("hlt");
     }
 }
