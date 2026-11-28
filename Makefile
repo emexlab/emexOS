@@ -32,8 +32,8 @@ DISK_FILES := Build/bootloader.img4 $(if $(LOGO_PNG),Build/emexlogo.img4) Build/
 
 EMEX64VM := EmexToolchain/build/bin/emex64vm
 
-KERNELCACHE_SOURCES := kernel/main.c kernel/icm.c kernel/arch/emex64/mm/pmm.c kernel/arch/emex64/mm/pmap.c
-KERNELCACHE_OBJECTS := $(addprefix Build/kernelcache/,$(notdir $(KERNELCACHE_SOURCES:.c=.o)))
+KERNELCACHE_SOURCES := kernel/main.c kernel/icm.c kernel/arch/emex64/mm/pmm.c kernel/arch/emex64/mm/pmap.c kernel/arch/emex64/mm/kmalloc.c
+KERNELCACHE_OBJECTS := $(patsubst kernel/%.c,Build/kernelcache/%.o,$(KERNELCACHE_SOURCES))
 
 all: $(EMEX64VM) firmware Build/disk.img
 
@@ -75,7 +75,8 @@ Build/emexlogo.bin: $(LOGO_PNG) Build/logo
 Build/emexlogo.img4: Build/emexlogo.bin Build/img4 $(IMG4_KEYS)/signing.key Build/ecid
 	Build/img4 --ecid $$(cat Build/ecid) --kbag prod:00112233445566778899aabbccddeeff:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef sign "$(IMG4_KEYS)" logo "logo" $< $@
 
-Build/kernelcache/%.o: kernel/%.c Build/include/img4_root.h | Build/kernelcache $(EMEX64_LLVM)/clang
+Build/kernelcache/%.o: kernel/%.c Build/include/img4_root.h | $(EMEX64_LLVM)/clang
+	mkdir -p $(dir $@)
 	$(CC) $(KERNEL_CFLAGS) -c $< -o $@
 
 Build/kernelcache/%.o: $(BOOTROM_C)/%.c | Build/kernelcache $(EMEX64_LLVM)/clang
@@ -127,10 +128,10 @@ clean-all: clean
 
 run: all Build/nvram Build/ecid
 	Build/nvram -f firmware/BootROM/firmware.img.nvram boot-args=
-	$(EMEX64VM) -f $(FIRMWARE) --ecid $$(cat Build/ecid) --sata Build/disk.img --display on --display:resolution 800 600 -m:gb 8
+	$(EMEX64VM) -f $(FIRMWARE) --ecid $$(cat Build/ecid) --sata Build/disk.img --display on --display:resolution 800 600 -m:mb 124
 
 run-verbose: all Build/nvram Build/ecid
 	Build/nvram -f firmware/BootROM/firmware.img.nvram boot-args=-v
-	$(EMEX64VM) -f $(FIRMWARE) --ecid $$(cat Build/ecid) --sata Build/disk.img --display on --display:resolution 800 600 -m:gb 8
+	$(EMEX64VM) -f $(FIRMWARE) --ecid $$(cat Build/ecid) --sata Build/disk.img --display on --display:resolution 800 600 -m:mb 124
 
 .PHONY: all firmware verbose quiet clean run

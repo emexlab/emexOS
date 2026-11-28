@@ -23,6 +23,7 @@
 #include <icm.h>
 #include <mm/pmm.h>
 #include <mm/pmap.h>
+#include <mm/kmalloc.h>
 #include <eboot_api.h>
 #include <arch/emex64/random.h>
 #include <EmexToolchain/Boot/e64boot.h>
@@ -36,6 +37,7 @@ void kernel_main(struct e64_boot_info *info)
 
     printf("[Kernel] hello from kernelcache!\n");
 
+    /* initializing all sub systems */
     icm_init();
     pmm_init();
     if(info->fb_base != 0 && info->fb_stride != 0 && info->fb_height != 0)
@@ -45,6 +47,13 @@ void kernel_main(struct e64_boot_info *info)
         pmm_reserve_range(info->fb_base, fb_size);
     }
     pmap_bootstrap();
+    kmalloc_init();
+
+    for(;;)
+    {
+        void *meow = kmalloc(0x128000);
+        printf("[Kernel] allocated %p\n", meow);
+    }
 
     for(;;)
     {
