@@ -25,7 +25,7 @@
 
 #include <stdint.h>
 
-#define rdrnd(cr)                                                               \
+#define rand64(cr)                                                              \
 ({                                                                              \
     uint64_t __v;                                                               \
     __asm__ __volatile__("rdrnd %0" : "=r"(__v));                               \

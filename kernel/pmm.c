@@ -61,18 +61,17 @@ static inline void pmm_set_state(uint64_t page_idx,
     bitmap[byte_idx] = (bitmap[byte_idx] & ~(0x3U << shift)) | ((state & 0x3U) << shift);
 }
 
-static inline void *pmm_random_addr(void)
+static inline uint64_t pmm_random_pfn(void)
 {
-    uint64_t start = (uint64_t)pmm_space_start;
-    uint64_t end = (uint64_t)pmm_space_end;
+    uint64_t start_pfn = (uint64_t)pmm_space_start / EMEX64_PAGE_SIZE;
+    uint64_t end_pfn = (uint64_t)pmm_space_end / EMEX64_PAGE_SIZE;
 
-    if(end <= start)
+    if(end_pfn <= start_pfn)
     {
-        return NULL;
+        return 0;
     }
 
-    uint64_t offset = rdrnd() % (end - start);
-    return (void *)(start + offset);
+    return start_pfn + (rand64() % (end_pfn - start_pfn));
 }
 
 void pmm_init(void)
