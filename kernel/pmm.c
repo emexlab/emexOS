@@ -61,6 +61,20 @@ static inline void pmm_set_state(uint64_t page_idx,
     bitmap[byte_idx] = (bitmap[byte_idx] & ~(0x3U << shift)) | ((state & 0x3U) << shift);
 }
 
+static inline void *pmm_random_addr(void)
+{
+    uint64_t start = (uint64_t)pmm_space_start;
+    uint64_t end = (uint64_t)pmm_space_end;
+
+    if(end <= start)
+    {
+        return NULL;
+    }
+
+    uint64_t offset = rdrnd() % (end - start);
+    return (void *)(start + offset);
+}
+
 void pmm_init(void)
 {
     printf("[PMM] computing offsets and sizes\n");
