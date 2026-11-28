@@ -29,7 +29,7 @@
 extern char __bss_start[] __attribute__((visibility("hidden")));
 extern char __bss_end[] __attribute__((visibility("hidden")));
 
-void kernel_main(void *info)
+void kernel_main(struct e64_boot_info *info)
 {
     memset(__bss_start, 0, ((size_t)__bss_end - (size_t)__bss_start));
 
