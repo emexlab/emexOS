@@ -31,7 +31,7 @@
 #include "logo.h"
 #include "poweroff.h"
 
-#define EBOOT_VERSION   "eBoot 1.1.0"
+#define EBOOT_VERSION   "eBoot 1.2.0"
 #define LOGO_PATH       "/logo.img4"
 #define LOGO_TYPE       "logo"
 
