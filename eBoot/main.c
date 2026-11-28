@@ -31,7 +31,7 @@
 #include "logo.h"
 #include "poweroff.h"
 
-#define EBOOT_VERSION   "eBoot 1.2.1"
+#define EBOOT_VERSION   "eBoot 1.2.2"
 #define LOGO_PATH       "/logo.img4"
 #define LOGO_TYPE       "logo"
 
@@ -447,36 +447,6 @@ static bool eboot_load_img4(const struct e64_boot_info *info,
     return true;
 }
 
-void fw_jump(uint64_t entry,
-             void *arg)
-{
-    register uint64_t r0 __asm__("r0") = (uint64_t)arg;
-    __asm__ __volatile__("b %1" : : "r"(r0), "r"(entry) : "memory");
-    __builtin_unreachable();
-}
-
-static void show_logo(const struct e64_boot_info *info,
-                      struct img4_image *image)
-{
-    const char *why = draw_logo(image->data, image->size);
-    if(why != 0)
-    {
-        print("[eboot] failed to show logo: '");
-        print(why);
-        print("'\n");
-        return;
-    }
-}
-
-static void load_kernelcache(struct img4_image *image)
-{
-    if(verbose)
-    {
-        print("[eboot] jumping to kernelcache entry\n");
-    }
-    fw_jump((uint64_t)image->data, NULL);
-}
-
 void eboot_main(struct e64_boot_info *info)
 {
     for(volatile char *p = __bss_start; p < __bss_end; p++)
@@ -517,17 +487,35 @@ void eboot_main(struct e64_boot_info *info)
         goto fail;
     }
 
+    /* acting uppon loaded images */
+    if(verbose)
+    {
+        print("[eboot] setting up img4 payloads\n");
+    }
     if(success)
     {
         if(verbose)
         {
             print("[eboot] showing logo\n");
         }
-        show_logo(info, &logo_image);
+        const char *why = draw_logo(logo_image.data, logo_image.size);
+        if(why != 0)
+        {
+            print("[eboot] failed to show logo: '");
+            print(why);
+            print("'\n");
+            return;
+        }
     }
 
-    /* loading all images first */
-    load_kernelcache(&kernelcache_image);
+    if(verbose)
+    {
+        print("[eboot] jumping to kernelcache entry\n");
+    }
+    void (*kernelcache_entry)(void) = (void*)kernelcache_image.data;
+    kernelcache_entry();
+
+    print("[eboot] error: returned from kernelcache entry\n");
 
 fail:
     for(;;)
