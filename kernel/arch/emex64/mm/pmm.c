@@ -20,7 +20,7 @@
  * See LICENSE for the full license terms.
  */
 
-#include <pmm.h>
+#include <mm/pmm.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <arch/emex64/mmio.h>

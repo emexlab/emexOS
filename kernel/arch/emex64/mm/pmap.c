@@ -23,8 +23,8 @@
 #include <arch/emex64/mmio.h>
 #include <arch/emex64/csr.h>
 #include <arch/emex64/mmu.h>
-#include <pmap.h>
-#include <pmm.h>
+#include <mm/pmap.h>
+#include <mm/pmm.h>
 #include <eboot_api.h>
 #include <stdbool.h>
 

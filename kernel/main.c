@@ -21,8 +21,8 @@
  */
 
 #include <icm.h>
-#include <pmm.h>
-#include <pmap.h>
+#include <mm/pmm.h>
+#include <mm/pmap.h>
 #include <eboot_api.h>
 #include <arch/emex64/random.h>
 
