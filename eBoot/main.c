@@ -27,11 +27,12 @@
 #include <fat.h>
 #include <img4.h>
 #include <img4_root.h>
+#include <fw.h>
 #include "disk.h"
 #include "logo.h"
 #include "poweroff.h"
 
-#define EBOOT_VERSION   "eBoot 1.2.2"
+#define EBOOT_VERSION   "eBoot 1.2.3"
 #define LOGO_PATH       "/logo.img4"
 #define LOGO_TYPE       "logo"
 
@@ -472,6 +473,10 @@ void eboot_main(struct e64_boot_info *info)
     {
         goto fail;
     }
+
+    /* find ecid */
+    struct img4_device *device = (struct img4_device *)&img4_this_device;
+    device->ecid = mmio_read64(CPUID_REG_ECID);
 
     /* now we load the images first, they must all be valid */
     struct img4_image logo_image;

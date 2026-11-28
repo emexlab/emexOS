@@ -63,7 +63,7 @@ Build/bootloader.bin: $(EBOOT_OBJECTS) eBoot/eboot.lds
 	$(OBJCOPY) -O binary Build/bootloader.elf $@
 
 Build/bootloader.img4: Build/bootloader.bin Build/img4 $(IMG4_KEYS)/signing.key
-	Build/img4 sign "$(IMG4_KEYS)" ebot "eBoot 1.2.1" $< $@
+	Build/img4 sign "$(IMG4_KEYS)" ebot "eBoot 1.2.3" $< $@
 
 Build/logo.bin: $(LOGO_PNG) Build/logo
 	Build/logo $(LOGO_PNG) $@ $(LOGO_SIZE)

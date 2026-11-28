@@ -23,11 +23,15 @@
 #include <fw.h>
 #include <display.h>
 #include <interrupt.h>
+#include <img4.h>
 
 void fw_boot_main(void);
 
 int main(void)
 {
+    struct img4_device *device = (struct img4_device *)&img4_this_device;
+    device->ecid = mmio_read64(CPUID_REG_ECID);
+
     /* finally C, how long I waited for this moment */
     put_init();
     interrupt_init();
