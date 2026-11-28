@@ -28,7 +28,7 @@ EBOOT_LDFLAGS := -pie --no-dynamic-linker --export-dynamic --gc-sections -T eBoo
 KERNEL_CFLAGS  := -Ikernel $(COMMON_CFLAGS) -fPIC -fvisibility=hidden -fno-plt
 KERNEL_LDFLAGS := -shared -Bsymbolic -z max-page-size=0x1000 -e _start -T kernel/kernelcache.lds
 
-DISK_FILES := Build/bootloader.img4 $(if $(LOGO_PNG),Build/logo.img4) Build/kernelcache.img4
+DISK_FILES := Build/bootloader.img4 $(if $(LOGO_PNG),Build/emexlogo.img4) Build/kernelcache.img4
 
 EMEX64VM := EmexToolchain/build/bin/emex64vm
 
@@ -67,12 +67,12 @@ Build/bootloader.bin: $(EBOOT_OBJECTS) eBoot/eboot.lds
 	$(OBJCOPY) -O binary Build/bootloader.elf $@
 
 Build/bootloader.img4: Build/bootloader.bin Build/img4 $(IMG4_KEYS)/signing.key Build/ecid
-	Build/img4 --ecid $$(cat Build/ecid) --kbag prod:00112233445566778899aabbccddeeff:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef sign "$(IMG4_KEYS)" ebot "eBoot 1.4.0" $< $@
+	Build/img4 --ecid $$(cat Build/ecid) --kbag prod:00112233445566778899aabbccddeeff:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef sign "$(IMG4_KEYS)" ebot "eBoot 1.5.0" $< $@
 
-Build/logo.bin: $(LOGO_PNG) Build/logo
+Build/emexlogo.bin: $(LOGO_PNG) Build/logo
 	Build/logo $(LOGO_PNG) $@ $(LOGO_SIZE)
 
-Build/logo.img4: Build/logo.bin Build/img4 $(IMG4_KEYS)/signing.key Build/ecid
+Build/emexlogo.img4: Build/emexlogo.bin Build/img4 $(IMG4_KEYS)/signing.key Build/ecid
 	Build/img4 --ecid $$(cat Build/ecid) --kbag prod:00112233445566778899aabbccddeeff:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef sign "$(IMG4_KEYS)" logo "logo" $< $@
 
 Build/kernelcache/%.o: kernel/%.c Build/include/img4_root.h | Build/kernelcache $(EMEX64_LLVM)/clang
