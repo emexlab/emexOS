@@ -632,6 +632,7 @@ static int valid_type(const char *type)
 
 static int verify_with(const char *folder,
                        const char *type,
+                       const struct img4_device *device,
                        const uint8_t *file,
                        size_t size,
                        struct img4_image *image)
@@ -642,7 +643,7 @@ static int verify_with(const char *folder,
         return 1;
     }
     struct img4_root key = { root.cert.public_key, root.cert.subject, root.cert.subject_size };
-    int result = img4_verify(file, size, type, &key, &img4_this_device, image);
+    int result = img4_verify(file, size, type, &key, device, image);
     free(root.der);
     return result;
 }
@@ -651,7 +652,8 @@ static int sign(const char *folder,
                 const char *type,
                 const char *description,
                 const char *in,
-                const char *out)
+                const char *out,
+                const struct img4_device *device)
 {
     if(!valid_type(type))
     {
@@ -696,11 +698,11 @@ static int sign(const char *folder,
     /* MANP (this chip and board, ECID, BNCH and CEPO 0) */
     struct buf props[8] = { 0 };
     int n = 0;
-    property_integer(&props[n++], "CHIP", IMG4_CHIP);
-    property_integer(&props[n++], "BORD", IMG4_BOARD);
-    property_integer(&props[n++], "ECID", img4_this_device.ecid);
-    property_bytes(&props[n++], "BNCH", img4_this_device.nonce_hash, IMG4_NONCE_HASH_SIZE);
-    property_integer(&props[n++], "CEPO", img4_this_device.epoch);
+    property_integer(&props[n++], "CHIP", device->chip);
+    property_integer(&props[n++], "BORD", device->board);
+    property_integer(&props[n++], "ECID", device->ecid);
+    property_bytes(&props[n++], "BNCH", device->nonce_hash, IMG4_NONCE_HASH_SIZE);
+    property_integer(&props[n++], "CEPO", device->epoch);
     property_bool(&props[n++], "CPRO", 1);
     property_bool(&props[n++], "CSEC", 1);
     property_integer(&props[n++], "SDOM", 1);
@@ -753,7 +755,7 @@ static int sign(const char *folder,
 
     /* (checked the BootROM's way before it is written) */
     struct img4_image image;
-    int result = verify_with(folder, type, img4.p, img4.n, &image);
+    int result = verify_with(folder, type, device, img4.p, img4.n, &image);
     if(result != IMG4_OK)
     {
         fprintf(stderr, "img4: the file made %s\n", result > 0 ? "cannot be checked" : img4_error(result));
@@ -774,7 +776,10 @@ static int sign(const char *folder,
     return 0;
 }
 
-static int verify(const char *folder, const char *type, const char *path)
+static int verify(const char *folder,
+                  const char *type,
+                  const char *path,
+                  const struct img4_device *device)
 {
     size_t size;
     uint8_t *file = read_file(path, &size);
@@ -784,7 +789,7 @@ static int verify(const char *folder, const char *type, const char *path)
     }
 
     struct img4_image image;
-    int result = verify_with(folder, type, file, size, &image);
+    int result = verify_with(folder, type, device, file, size, &image);
     if(result > 0)
     {
         free(file);
@@ -801,29 +806,61 @@ static int verify(const char *folder, const char *type, const char *path)
     return 0;
 }
 
+static int parse_ecid(const char *s,
+                      uint64_t *out)
+{
+    if(s == NULL || *s == '\0')
+    {
+        return -1;
+    }
+    char *end = NULL;
+    errno = 0;
+    unsigned long long v = strtoull(s, &end, 0);
+    if(errno != 0 || *end != '\0')
+    {
+        return -1;
+    }
+    *out = (uint64_t)v;
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
-    if(argc == 3 && strcmp(argv[1], "init") == 0)
+    struct img4_device device = img4_this_device;
+    int argi = 1;
+
+    if(argi + 2 < argc && strcmp(argv[argi], "--ecid") == 0)
     {
-        return init(argv[2]);
+        if(parse_ecid(argv[argi + 1], &device.ecid) != 0)
+        {
+            fprintf(stderr, "img4: invalid ecid '%s'\n", argv[argi + 1]);
+            return 2;
+        }
+        argi += 2;
     }
-    if(argc == 4 && strcmp(argv[1], "rom") == 0)
+
+    int rem = argc - argi;
+    if(rem == 2 && strcmp(argv[argi], "init") == 0)
     {
-        return rom(argv[2], argv[3]);
+        return init(argv[argi + 1]);
     }
-    if(argc == 7 && strcmp(argv[1], "sign") == 0)
+    if(rem == 3 && strcmp(argv[argi], "rom") == 0)
     {
-        return sign(argv[2], argv[3], argv[4], argv[5], argv[6]);
+        return rom(argv[argi + 1], argv[argi + 2]);
     }
-    if(argc == 5 && strcmp(argv[1], "verify") == 0)
+    if(rem == 6 && strcmp(argv[argi], "sign") == 0)
     {
-        return verify(argv[2], argv[3], argv[4]);
+        return sign(argv[argi + 1], argv[argi + 2], argv[argi + 3], argv[argi + 4], argv[argi + 5], &device);
+    }
+    if(rem == 4 && strcmp(argv[argi], "verify") == 0)
+    {
+        return verify(argv[argi + 1], argv[argi + 2], argv[argi + 3], &device);
     }
 
     fprintf(stderr,
             "usage: img4 init <key folder>\n"
             "       img4 rom <key folder> <img4_root.h>\n"
-            "       img4 sign <key folder> <type> <description> <payload> <out.img4>\n"
-            "       img4 verify <key folder> <type> <file.img4>\n");
+            "       img4 [--ecid <value>] sign <key folder> <type> <description> <payload> <out.img4>\n"
+            "       img4 [--ecid <value>] verify <key folder> <type> <file.img4>\n");
     return 2;
 }

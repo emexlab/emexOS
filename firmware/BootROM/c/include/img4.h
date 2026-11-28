@@ -60,7 +60,7 @@ struct img4_device {
     uint64_t epoch;
 };
 
-extern const struct img4_device img4_this_device;
+extern struct img4_device img4_this_device;
 
 /* the payload, inside the file that was checked */
 struct img4_image {

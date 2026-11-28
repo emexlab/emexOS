@@ -475,8 +475,7 @@ void eboot_main(struct e64_boot_info *info)
     }
 
     /* find ecid */
-    struct img4_device *device = (struct img4_device *)&img4_this_device;
-    device->ecid = mmio_read64(CPUID_REG_ECID);
+    img4_this_device.ecid = mmio_read64(EMEX64_CPUID_REG_ECID);
 
     /* now we load the images first, they must all be valid */
     struct img4_image logo_image;

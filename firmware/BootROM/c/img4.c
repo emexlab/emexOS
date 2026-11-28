@@ -23,7 +23,7 @@
 #include <img4.h>
 #include <monocypher-ed25519.h>
 
-const struct img4_device img4_this_device = {
+struct img4_device img4_this_device = {
     .chip = IMG4_CHIP,
     .board = IMG4_BOARD,
     .ecid = 0,

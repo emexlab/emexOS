@@ -29,17 +29,23 @@ void fw_boot_main(void);
 
 int main(void)
 {
-    struct img4_device *device = (struct img4_device *)&img4_this_device;
-    device->ecid = mmio_read64(CPUID_REG_ECID);
+    img4_this_device.ecid = mmio_read64(EMEX64_CPUID_REG_ECID);
 
     /* finally C, how long I waited for this moment */
     put_init();
     interrupt_init();
     interrupt_register_handler(EMEX64_IC_IRQ_EXCEPTION, exception_handler);
 
+    if(img4_this_device.ecid == 0)
+    {
+        fw_printf("[boot] ECID is null which is illegal\n");
+        goto fail;
+    }
+
     /* really hoping it finds some shit like Linux and boots into it, imagine this works */
     fw_boot_main();
 
+fail:
     for(;;)
     {
         fw_hlt();

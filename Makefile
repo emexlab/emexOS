@@ -62,14 +62,14 @@ Build/bootloader.bin: $(EBOOT_OBJECTS) eBoot/eboot.lds
 	$(LD) $(LDFLAGS) -o Build/bootloader.elf $(EBOOT_OBJECTS)
 	$(OBJCOPY) -O binary Build/bootloader.elf $@
 
-Build/bootloader.img4: Build/bootloader.bin Build/img4 $(IMG4_KEYS)/signing.key
-	Build/img4 sign "$(IMG4_KEYS)" ebot "eBoot 1.2.3" $< $@
+Build/bootloader.img4: Build/bootloader.bin Build/img4 $(IMG4_KEYS)/signing.key Build/ecid
+	Build/img4 --ecid $$(cat Build/ecid) sign "$(IMG4_KEYS)" ebot "eBoot 1.2.3" $< $@
 
 Build/logo.bin: $(LOGO_PNG) Build/logo
 	Build/logo $(LOGO_PNG) $@ $(LOGO_SIZE)
 
-Build/logo.img4: Build/logo.bin Build/img4 $(IMG4_KEYS)/signing.key
-	Build/img4 sign "$(IMG4_KEYS)" logo "logo" $< $@
+Build/logo.img4: Build/logo.bin Build/img4 $(IMG4_KEYS)/signing.key Build/ecid
+	Build/img4 --ecid $$(cat Build/ecid) sign "$(IMG4_KEYS)" logo "logo" $< $@
 
 Build/kernelcache/%.o: kernel/%.c eBoot/hidden.h Build/include/img4_root.h | Build/kernelcache $(EMEX64_LLVM)/clang
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -81,8 +81,8 @@ Build/kernelcache.bin: $(KERNELCACHE_OBJECTS) kernel/kernelcache.lds
 	$(LD) $(LDFLAGS) -o Build/kernelcache.elf $(KERNELCACHE_OBJECTS)
 	$(OBJCOPY) -O binary Build/kernelcache.elf $@
 
-Build/kernelcache.img4: Build/kernelcache.bin Build/img4 $(IMG4_KEYS)/signing.key
-	Build/img4 sign "$(IMG4_KEYS)" krnl "SNU 1.0.0" $< $@
+Build/kernelcache.img4: Build/kernelcache.bin Build/img4 $(IMG4_KEYS)/signing.key Build/ecid
+	Build/img4 --ecid $$(cat Build/ecid) sign "$(IMG4_KEYS)" krnl "SNU 1.0.0" $< $@
 
 Build/disk.img: $(DISK_FILES)
 	rm -f $@ Build/esp.img

@@ -90,7 +90,7 @@ static inline u64 fw_ram_end(void)
 #define EMEX64_MC_REG_KTRR_BASE   (EMEX64_MC_REG_SIZE + 0x18)
 
 /* CPUID ECID shit */
-#define CPUID_REG_ECID          EMEX64_CPUID_BASE + 0x20
+#define EMEX64_CPUID_REG_ECID   (EMEX64_CPUID_BASE + 0x20)
 
 /* MMIO registers are aligned to a quad word boundary */
 static inline u64 mmio_read64(u64 addr)
