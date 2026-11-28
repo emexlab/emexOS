@@ -23,6 +23,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+__attribute__((visibility("default")))
 void *memcpy(void *dst,
              const void *src,
              size_t n)
@@ -31,6 +32,7 @@ void *memcpy(void *dst,
     return dst;
 }
 
+__attribute__((visibility("default")))
 void *memmove(void *dst,
               const void *src,
               size_t n)
@@ -39,6 +41,7 @@ void *memmove(void *dst,
     return dst;
 }
 
+__attribute__((visibility("default")))
 void *memset(void *dst,
              int value,
              size_t n)
@@ -47,6 +50,7 @@ void *memset(void *dst,
     return dst;
 }
 
+__attribute__((visibility("default")))
 int memcmp(const void *a,
            const void *b,
            size_t n)

@@ -16,13 +16,17 @@ CC := $(EMEX64_LLVM)/clang
 LD := $(EMEX64_LLVM)/ld.lld
 OBJCOPY := $(EMEX64_LLVM)/llvm-objcopy
 
-EBOOT_SOURCES := eBoot/main.c eBoot/disk.c eBoot/string.c $(BOOTROM_C)/iso_font.c $(BOOTROM_C)/fat.c $(BOOTROM_C)/img4.c $(BOOTROM_C)/x509.c $(BOOTROM_C)/der.c $(BOOTROM_C)/monocypher.c $(BOOTROM_C)/monocypher-ed25519.c
+EBOOT_SOURCES := eBoot/main.c eBoot/printf.c eBoot/elfreloc.c eBoot/disk.c eBoot/string.c $(BOOTROM_C)/iso_font.c $(BOOTROM_C)/fat.c $(BOOTROM_C)/img4.c $(BOOTROM_C)/x509.c $(BOOTROM_C)/der.c $(BOOTROM_C)/monocypher.c $(BOOTROM_C)/monocypher-ed25519.c
 EBOOT_OBJECTS := $(addprefix Build/eboot/,$(notdir $(EBOOT_SOURCES:.c=.o)))
 
-CFLAGS := --target=emex64-unknown-elf -ffreestanding -fno-builtin -fno-stack-protector -fpie -O2 -Wall \
-          -ffunction-sections -fdata-sections -fno-jump-tables -include eBoot/hidden.h \
-          -IeBoot -IBuild/include -I$(BOOTROM_C)/include -IEmexToolchain/EmexToolchain/include/public
-LDFLAGS := -pie --no-dynamic-linker --gc-sections -T eBoot/eboot.lds
+COMMON_CFLAGS := --target=emex64-unknown-elf -ffreestanding -fno-builtin -fno-stack-protector -O2 -Wall \
+                 -fno-jump-tables -IBuild/include -I$(BOOTROM_C)/include -IEmexToolchain/EmexToolchain/include/public
+
+EBOOT_CFLAGS  := $(COMMON_CFLAGS) -fpie -ffunction-sections -fdata-sections -include eBoot/hidden.h -IeBoot
+EBOOT_LDFLAGS := -pie --no-dynamic-linker --export-dynamic --gc-sections -T eBoot/eboot.lds
+
+KERNEL_CFLAGS  := $(COMMON_CFLAGS) -fPIC -fvisibility=hidden -fno-plt -Ikernel
+KERNEL_LDFLAGS := -shared -Bsymbolic -z max-page-size=0x1000 -e _start -T kernel/kernelcache.lds
 
 DISK_FILES := Build/bootloader.img4 $(if $(LOGO_PNG),Build/logo.img4) Build/kernelcache.img4
 
@@ -53,13 +57,13 @@ Build/include/img4_root.h: Build/img4 $(IMG4_KEYS)/signing.key | Build/include
 	Build/img4 rom "$(IMG4_KEYS)" $@
 
 Build/eboot/%.o: eBoot/%.c eBoot/hidden.h Build/include/img4_root.h | Build/eboot $(EMEX64_LLVM)/clang
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(EBOOT_CFLAGS) -c $< -o $@
 
 Build/eboot/%.o: $(BOOTROM_C)/%.c eBoot/hidden.h | Build/eboot $(EMEX64_LLVM)/clang
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(EBOOT_CFLAGS) -c $< -o $@
 
 Build/bootloader.bin: $(EBOOT_OBJECTS) eBoot/eboot.lds
-	$(LD) $(LDFLAGS) -o Build/bootloader.elf $(EBOOT_OBJECTS)
+	$(LD) $(EBOOT_LDFLAGS) -o Build/bootloader.elf $(EBOOT_OBJECTS)
 	$(OBJCOPY) -O binary Build/bootloader.elf $@
 
 Build/bootloader.img4: Build/bootloader.bin Build/img4 $(IMG4_KEYS)/signing.key Build/ecid
@@ -71,17 +75,16 @@ Build/logo.bin: $(LOGO_PNG) Build/logo
 Build/logo.img4: Build/logo.bin Build/img4 $(IMG4_KEYS)/signing.key Build/ecid
 	Build/img4 --ecid $$(cat Build/ecid) --kbag prod:00112233445566778899aabbccddeeff:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef sign "$(IMG4_KEYS)" logo "logo" $< $@
 
-Build/kernelcache/%.o: kernel/%.c eBoot/hidden.h Build/include/img4_root.h | Build/kernelcache $(EMEX64_LLVM)/clang
-	$(CC) $(CFLAGS) -c $< -o $@
+Build/kernelcache/%.o: kernel/%.c Build/include/img4_root.h | Build/kernelcache $(EMEX64_LLVM)/clang
+	$(CC) $(KERNEL_CFLAGS) -c $< -o $@
 
-Build/kernelcache/%.o: $(BOOTROM_C)/%.c eBoot/hidden.h | Build/kernelcache $(EMEX64_LLVM)/clang
-	$(CC) $(CFLAGS) -c $< -o $@
+Build/kernelcache/%.o: $(BOOTROM_C)/%.c | Build/kernelcache $(EMEX64_LLVM)/clang
+	$(CC) $(KERNEL_CFLAGS) -c $< -o $@
 
-Build/kernelcache.bin: $(KERNELCACHE_OBJECTS) kernel/kernelcache.lds
-	$(LD) $(LDFLAGS) -o Build/kernelcache.elf $(KERNELCACHE_OBJECTS)
-	$(OBJCOPY) -O binary Build/kernelcache.elf $@
+Build/kernelcache.elf: $(KERNELCACHE_OBJECTS) kernel/kernelcache.lds
+	$(LD) $(KERNEL_LDFLAGS) -o $@ $(KERNELCACHE_OBJECTS)
 
-Build/kernelcache.img4: Build/kernelcache.bin Build/img4 $(IMG4_KEYS)/signing.key Build/ecid
+Build/kernelcache.img4: Build/kernelcache.elf Build/img4 $(IMG4_KEYS)/signing.key Build/ecid
 	Build/img4 --ecid $$(cat Build/ecid) --kbag prod:00112233445566778899aabbccddeeff:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef sign "$(IMG4_KEYS)" krnl "SNU 1.0.0" $< $@
 
 Build/disk.img: $(DISK_FILES)

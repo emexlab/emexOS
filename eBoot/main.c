@@ -31,6 +31,9 @@
 #include "disk.h"
 #include "logo.h"
 #include "poweroff.h"
+#include "elfreloc.h"
+#include "export.h"
+#include "printf.h"
 
 #define EBOOT_VERSION   "eBoot 1.3.0"
 #define LOGO_PATH       "/logo.img4"
@@ -71,6 +74,14 @@ static struct {
 
 static int verbose;
 
+static struct {
+    const uint8_t *pixels;
+    uint64_t width;
+    uint64_t x0, y0;
+    uint64_t x1, y1;
+    uint64_t sx, sy;
+} logo;
+
 static void uart_putc(char c)
 {
     while(!(*(volatile uint64_t *)(UART_BASE + UART_STATUS) & UART_TX_EMPTY))
@@ -79,24 +90,59 @@ static void uart_putc(char c)
     *(volatile uint64_t *)(UART_BASE + UART_DATA) = (uint8_t)c;
 }
 
-static void screen_scroll(void)
-{
-    uint64_t shift = LINE_HEIGHT * screen.stride;
-    uint64_t rest = (screen.height - LINE_HEIGHT) * screen.stride;
-
-    for(uint64_t i = 0; i < rest; i++)
-    {
-        screen.fb[i] = screen.fb[i + shift];
-    }
-    for(uint64_t i = 0; i < shift; i++)
-    {
-        screen.fb[rest + i] = COLOR_BACK;
-    }
-}
-
 static int is_logo(uint8_t pixel)
 {
     return pixel != COLOR_BACK && pixel != screen.color;
+}
+
+static uint8_t logo_at(uint64_t x,
+                       uint64_t y)
+{
+    if(logo.pixels == 0 || x < logo.x0 || x >= logo.x1 || y < logo.y0 || y >= logo.y1)
+    {
+        return 0;
+    }
+    return logo.pixels[(y - logo.y0 + logo.sy) * logo.width + (x - logo.x0 + logo.sx)];
+}
+
+static uint8_t compose(int text,
+                       uint8_t under)
+{
+    if(under != 0)
+    {
+        return text ? COLOR_BACK : under;
+    }
+    return text ? screen.color : COLOR_BACK;
+}
+
+static int is_text(uint8_t pixel,
+                   uint8_t under)
+{
+    return under != 0 ? pixel == COLOR_BACK : pixel == screen.color;
+}
+
+static void screen_scroll(void)
+{
+    uint64_t rows = screen.height - LINE_HEIGHT;
+
+    for(uint64_t y = 0; y < screen.height; y++)
+    {
+        volatile uint8_t *to = screen.fb + y * screen.stride;
+        volatile uint8_t *from = to + LINE_HEIGHT * screen.stride;
+        int has_from = y < rows;
+        int near_logo = logo.pixels != 0 && ((y >= logo.y0 && y < logo.y1) || (y + LINE_HEIGHT >= logo.y0 && y + LINE_HEIGHT < logo.y1));
+
+        for(uint64_t x = 0; x < screen.width; x++)
+        {
+            if(!near_logo || x < logo.x0 || x >= logo.x1)
+            {
+                to[x] = has_from ? from[x] : COLOR_BACK;
+                continue;
+            }
+            int text = has_from ? is_text(from[x], logo_at(x, y + LINE_HEIGHT)) : 0;
+            to[x] = compose(text, logo_at(x, y));
+        }
+    }
 }
 
 static void screen_draw_glyph(unsigned char c,
@@ -155,7 +201,7 @@ static void screen_putc(char c)
     screen_draw_glyph(ch, x, y);
 }
 
-static void print(const char *s)
+EBOOT_EXPORT void print(const char *s)
 {
     while(*s)
     {
@@ -175,7 +221,13 @@ static void print(const char *s)
     }
 }
 
-static void print_number(uint64_t value)
+void eboot_putc(char c)
+{
+    char s[2] = { c, 0 };
+    print(s);
+}
+
+EBOOT_EXPORT void print_number(uint64_t value)
 {
     char digits[20];
     int n = 0;
@@ -190,11 +242,13 @@ static void print_number(uint64_t value)
     {
         text[i] = digits[n - 1 - i];
     }
+
     text[n] = 0;
     print(text);
 }
 
-static void palette_set(int entry, uint32_t rgb)
+static void palette_set(int entry,
+                        uint32_t rgb)
 {
     if(screen.gpu == 0)
     {
@@ -275,7 +329,7 @@ static bool screen_init(struct e64_boot_info *info)
     return true;
 }
 
-static int has_verbose(const struct e64_boot_info *info)
+EBOOT_EXPORT int has_verbose(const struct e64_boot_info *info)
 {
     const char *s = info->cmdline;
     size_t n = sizeof(info->cmdline);
@@ -348,15 +402,25 @@ static const char *draw_logo(const uint8_t *data, size_t size)
     uint64_t y0 = height < screen.height ? (screen.height - height) / 2 : 0;
     uint64_t sx = width > screen.width ? (width - screen.width) / 2 : 0;
     uint64_t sy = height > screen.height ? (height - screen.height) / 2 : 0;
-    for(uint64_t y = 0; y + sy < height && y0 + y < screen.height; y++)
+
+    logo.pixels = pixels;
+    logo.width = width;
+    logo.x0 = x0;
+    logo.y0 = y0;
+    logo.sx = sx;
+    logo.sy = sy;
+    logo.x1 = x0 + (width - sx < screen.width - x0 ? width - sx : screen.width - x0);
+    logo.y1 = y0 + (height - sy < screen.height - y0 ? height - sy : screen.height - y0);
+
+    for(uint64_t y = logo.y0; y < logo.y1; y++)
     {
-        const uint8_t *row = pixels + (y + sy) * width + sx;
-        volatile uint8_t *line = screen.fb + (y0 + y) * screen.stride + x0;
-        for(uint64_t x = 0; x + sx < width && x0 + x < screen.width; x++)
+        volatile uint8_t *line = screen.fb + y * screen.stride;
+        for(uint64_t x = logo.x0; x < logo.x1; x++)
         {
-            if(row[x] != 0)
+            uint8_t under = logo_at(x, y);
+            if(under != 0)
             {
-                line[x] = line[x] == screen.color ? COLOR_BACK : row[x];
+                line[x] = compose(line[x] == screen.color, under);
             }
         }
     }
@@ -389,10 +453,11 @@ static bool eboot_open_disk(const struct e64_boot_info *info)
 }
 
 static uint64_t img4_load_cursor;
-static bool eboot_load_img4(const struct e64_boot_info *info,
-                            struct img4_image *image,
-                            const char *path,
-                            const char *type)
+
+EBOOT_EXPORT bool eboot_load_img4(const struct e64_boot_info *info,
+                                  struct img4_image *image,
+                                  const char *path,
+                                  const char *type)
 {
     int err;
     uint64_t size;
@@ -448,6 +513,22 @@ static bool eboot_load_img4(const struct e64_boot_info *info,
     return true;
 }
 
+extern const uint64_t __rela_dyn_start[] __attribute__((visibility("hidden")));
+extern const uint64_t __rela_dyn_end[] __attribute__((visibility("hidden")));
+void _start(void);
+
+static void eboot_relocate(void)
+{
+    uint64_t base = (uint64_t)(uintptr_t)_start;
+    for(const uint64_t *r = __rela_dyn_start; r + 3 <= __rela_dyn_end; r += 3)
+    {
+        if((r[1] & 0xFFFFFFFF) == 10) /* R_EMEX64_RELATIVE */
+        {
+            *(volatile uint64_t *)(base + r[0]) = base + r[2];
+        }
+    }
+}
+
 void eboot_main(struct e64_boot_info *info)
 {
     for(volatile char *p = __bss_start; p < __bss_end; p++)
@@ -458,7 +539,7 @@ void eboot_main(struct e64_boot_info *info)
     if(info == 0 || info->magic != E64BOOT_INFO_MAGIC)
     {
         print("[eBoot] BootROM gave no boot info\n");
-        power_off();
+        goto fail;
     }
 
     verbose = has_verbose(info);
@@ -467,6 +548,29 @@ void eboot_main(struct e64_boot_info *info)
     {
         print(EBOOT_VERSION "\n");
     }
+
+    eboot_relocate();
+
+    void _start(void);
+    extern const char __dynsym_start[] __attribute__((visibility("hidden")));
+    extern const char __dynsym_end[]   __attribute__((visibility("hidden")));
+    extern const char __dynstr_start[] __attribute__((visibility("hidden")));
+    extern const char __dynstr_end[]   __attribute__((visibility("hidden")));
+
+    elf_image_t eboot_img = {
+        .base         = (uint64_t)(uintptr_t)_start,
+        .span         = (uint64_t)(__eboot_end - (char *)_start),
+        .load_bias    = (uint64_t)(uintptr_t)_start,
+        .entry        = (uint64_t)(uintptr_t)_start,
+        .dynsym       = __dynsym_start,
+        .dynsym_count = (size_t)(__dynsym_end - __dynsym_start) / 24, /* sizeof(Elf64_Sym) */
+        .dynstr       = __dynstr_start,
+        .dynstr_size  = (size_t)(__dynstr_end - __dynstr_start),
+    };
+
+    elf_symtab_t symtab;
+    elf_symtab_init(&symtab);
+    elf_symtab_add_image(&symtab, &eboot_img);
 
     /* first open the boot disk*/
     if(!eboot_open_disk(info))
@@ -514,10 +618,35 @@ void eboot_main(struct e64_boot_info *info)
 
     if(verbose)
     {
+        print("[eBoot] relocating kernelcache\n");
+    }
+
+    uint64_t entry_addr = 0;
+    uint64_t mem_limit = info->fb_base > img4_load_cursor ? info->fb_base : info->memory_size;
+    elf_image_t kernel_img;
+    const char *missing_sym = 0;
+    const char *reloc_err = elfreloc_load_ex(kernelcache_image.data, kernelcache_image.size, &img4_load_cursor, mem_limit, &symtab, &kernel_img, &missing_sym);
+    if(reloc_err != 0)
+    {
+        print("[eBoot] failed to relocate kernelcache: ");
+        print(reloc_err);
+        if(missing_sym != 0)
+        {
+            print(" (");
+            print(missing_sym);
+            print(")");
+        }
+        print("\n");
+        goto fail;
+    }
+    elf_symtab_add_image(&symtab, &kernel_img);
+
+    if(verbose)
+    {
         print("[eBoot] jumping to kernelcache entry\n");
     }
-    void (*kernelcache_entry)(void) = (void*)kernelcache_image.data;
-    kernelcache_entry();
+    void (*kernelcache_entry)(struct e64_boot_info *) = (void (*)(struct e64_boot_info *))kernel_img.entry;
+    kernelcache_entry(info);
 
     print("[eBoot] error: returned from kernelcache entry\n");
 

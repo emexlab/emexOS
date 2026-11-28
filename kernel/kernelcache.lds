@@ -23,35 +23,53 @@
 OUTPUT_ARCH(emex64)
 ENTRY(_start)
 
+PHDRS
+{
+	text    PT_LOAD    FLAGS(5);
+	rodata  PT_LOAD    FLAGS(4);
+	data    PT_LOAD    FLAGS(6);
+	dynamic PT_DYNAMIC FLAGS(6);
+}
+
 SECTIONS
 {
 	. = 0;
-	.text : {
+	.text : ALIGN(0x1000) {
 		KEEP(*(.text.entry))
 		*(.text .text.*)
+	} :text
+	.rodata : ALIGN(0x1000) {
 		*(.rodata .rodata.*)
-	}
-	.data : {
-		*(.data .data.*)
-		*(.got .got.plt)
-	}
+	} :rodata
+	.dynsym   : { *(.dynsym) }   :rodata
+	.dynstr   : { *(.dynstr) }   :rodata
+	.hash     : { *(.hash) }     :rodata
+	.gnu.hash : { *(.gnu.hash) } :rodata
 	.rela.dyn : {
 		*(.rela.dyn) *(.rela.*) *(.relr.dyn)
-	}
+	} :rodata
+	.data : ALIGN(0x1000) {
+		*(.data .data.*)
+	} :data
+	.dynamic : {
+		*(.dynamic)
+	} :data :dynamic
+	.got : {
+		*(.got .got.*)
+	} :data
 	.bss (NOLOAD) : ALIGN(64) {
-		__bss_start = .;
+		HIDDEN(__bss_start = .);
 		*(.bss .bss.*)
 		*(COMMON)
-		__bss_end = .;
-	}
+		HIDDEN(__bss_end = .);
+	} :data
 	.stack (NOLOAD) : ALIGN(16) {
 		. += 0x10000;
-		__stack_top = . - 8;
-	}
-	__eboot_end = .;
+		HIDDEN(__stack_top = . - 8);
+	} :data
+	HIDDEN(__kernel_end = .);
 	/DISCARD/ : {
-		*(.interp .dynamic)
-		*(.dynsym .dynstr .hash .gnu.hash)
+		*(.interp)
 		*(.note .note.*)
 		*(.comment)
 		*(.eh_frame .eh_frame_hdr)

@@ -24,6 +24,7 @@
 #define EBOOT_DISK_H
 
 #include <stdint.h>
+#include "export.h"
 
 #define DISK_SECTOR_SIZE    512
 
@@ -37,7 +38,7 @@ struct disk {
     uint64_t port;
 };
 
-int disk_open(struct disk *disk, uint64_t boot_device, uint64_t boot_port);
-int disk_read(void *disk, uint64_t lba, uint32_t count, void *buffer);
+EBOOT_EXPORT int disk_open(struct disk *disk, uint64_t boot_device, uint64_t boot_port);
+EBOOT_EXPORT int disk_read(void *disk, uint64_t lba, uint32_t count, void *buffer);
 
 #endif /* EBOOT_DISK_H */

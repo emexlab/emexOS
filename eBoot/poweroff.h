@@ -23,6 +23,7 @@
 #ifndef POWEROFF_H
 #define POWEROFF_H
 
+__attribute__((visibility("default")))
 __attribute__((noreturn))
 static void power_off(void)
 {

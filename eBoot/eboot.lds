@@ -31,12 +31,26 @@ SECTIONS
 		*(.text .text.*)
 		*(.rodata .rodata.*)
 	}
+	.dynsym : ALIGN(8) {
+		HIDDEN(__dynsym_start = .);
+		*(.dynsym)
+		HIDDEN(__dynsym_end = .);
+	}
+	.dynstr : {
+		HIDDEN(__dynstr_start = .);
+		*(.dynstr)
+		HIDDEN(__dynstr_end = .);
+	}
+	.hash     : { *(.hash) }
+	.gnu.hash : { *(.gnu.hash) }
 	.data : {
 		*(.data .data.*)
 		*(.got .got.plt)
 	}
 	.rela.dyn : {
-		*(.rela.dyn) *(.rela.*) *(.relr.dyn)
+		HIDDEN(__rela_dyn_start = .);
+		*(.rela.dyn) *(.rela.*)
+		HIDDEN(__rela_dyn_end = .);
 	}
 	.bss (NOLOAD) : ALIGN(64) {
 		__bss_start = .;
@@ -51,7 +65,6 @@ SECTIONS
 	__eboot_end = .;
 	/DISCARD/ : {
 		*(.interp .dynamic)
-		*(.dynsym .dynstr .hash .gnu.hash)
 		*(.note .note.*)
 		*(.comment)
 		*(.eh_frame .eh_frame_hdr)

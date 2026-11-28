@@ -20,10 +20,11 @@
  * See LICENSE for the full license terms.
  */
 
-
 extern char __bss_start[] __attribute__((visibility("hidden")));
 extern char __bss_end[] __attribute__((visibility("hidden")));
 extern char __eboot_end[] __attribute__((visibility("hidden")));
+
+extern void print(const char *str);
 
 void kernel_main(void *info)
 {
@@ -31,6 +32,8 @@ void kernel_main(void *info)
     {
         *p = 0;
     }
+
+    print("hello from kernelcache!\n");
 
     for(;;)
     {
