@@ -22,6 +22,7 @@
 
 #include <icm.h>
 #include <arch/emex64/mmio.h>
+#include <eboot_api.h>
 #include <stddef.h>
 
 #define EMEX64_IC_CTRL_ENABLE   0x1
@@ -82,6 +83,8 @@ void icm_init(void)
     mmio_write64(EMEX64_INTC_REG_VECTOR, (uint64_t)icm_vector);
     mmio_write64(EMEX64_INTC_REG_CTRL, EMEX64_IC_CTRL_ENABLE);
     icm_ready = 1;
+
+    printf("[IC] claimed interrupt controller\n");
 }
 
 int icm_register_handler(uint64_t irq, icm_handler_t handler)
