@@ -25,14 +25,14 @@ COMMON_CFLAGS := --target=emex64-unknown-elf -ffreestanding -fno-builtin -fno-st
 EBOOT_CFLAGS  := $(COMMON_CFLAGS) -fpie -ffunction-sections -fdata-sections -include eBoot/hidden.h -IeBoot
 EBOOT_LDFLAGS := -pie --no-dynamic-linker --export-dynamic --gc-sections -T eBoot/eboot.lds
 
-KERNEL_CFLAGS  := $(COMMON_CFLAGS) -fPIC -fvisibility=hidden -fno-plt -Ikernel
+KERNEL_CFLAGS  := -Ikernel $(COMMON_CFLAGS) -fPIC -fvisibility=hidden -fno-plt
 KERNEL_LDFLAGS := -shared -Bsymbolic -z max-page-size=0x1000 -e _start -T kernel/kernelcache.lds
 
 DISK_FILES := Build/bootloader.img4 $(if $(LOGO_PNG),Build/logo.img4) Build/kernelcache.img4
 
 EMEX64VM := EmexToolchain/build/bin/emex64vm
 
-KERNELCACHE_SOURCES := kernel/main.c kernel/interrupt.c
+KERNELCACHE_SOURCES := kernel/main.c kernel/interrupt.c kernel/pmm.c
 KERNELCACHE_OBJECTS := $(addprefix Build/kernelcache/,$(notdir $(KERNELCACHE_SOURCES:.c=.o)))
 
 all: $(EMEX64VM) firmware Build/disk.img

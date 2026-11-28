@@ -14,6 +14,6 @@
 
 ### Kernel (Stage 3)
 - [ ] Pointer Authentication Codes(PAC) setup
-- [ ] Interrupt Controller Management (ICM)
+- [x] Interrupt Controller Management (ICM)
 - [ ] Physical Memory Management (PMM)
 - [ ] Virtual Memory Management (VMM)

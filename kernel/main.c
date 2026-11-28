@@ -20,11 +20,10 @@
  * See LICENSE for the full license terms.
  */
 
+#include <interrupt.h>
+
 extern char __bss_start[] __attribute__((visibility("hidden")));
 extern char __bss_end[] __attribute__((visibility("hidden")));
-extern char __eboot_end[] __attribute__((visibility("hidden")));
-
-#include "interrupt.h"
 
 extern void print(const char *str);
 

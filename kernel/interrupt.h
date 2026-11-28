@@ -7,6 +7,17 @@
  *
  * Licensed under the emexLabs Public Source License, version 1.2
  * (EPSL 1.2).
+ *
+ * Private use and modification are permitted under the license.
+ * Redistribution of source or binaries, modified or unmodified,
+ * requires prior written permission from emexLabs.
+ *
+ * External deployment is subject to the source-availability
+ * requirements and other conditions of the license.
+ *
+ * Provided "AS IS", without warranty, to the extent permitted by law.
+ *
+ * See LICENSE for the full license terms.
  */
 
 #ifndef KERNEL_INTERRUPT_H
@@ -14,14 +25,14 @@
 
 #include <stdint.h>
 
-#define KERNEL_IC_IRQS          64
-#define KERNEL_IC_IRQ_EXCEPTION 0
-#define KERNEL_IC_IRQ_TIMER     1
-#define KERNEL_IC_IRQ_DISK      2
-#define KERNEL_IC_IRQ_NETWORK   3
-#define KERNEL_IC_IRQ_SOFTWARE  4
-#define KERNEL_IC_IRQ_UART      5
-#define KERNEL_IC_IRQ_8042      6
+#define EMEX64_IC_IRQS          64
+#define EMEX64_IC_IRQ_EXCEPTION 0
+#define EMEX64_IC_IRQ_TIMER     1
+#define EMEX64_IC_IRQ_DISK      2
+#define EMEX64_IC_IRQ_NETWORK   3
+#define EMEX64_IC_IRQ_SOFTWARE  4
+#define EMEX64_IC_IRQ_UART      5
+#define EMEX64_IC_IRQ_8042      6
 
 struct icm_frame {
     uint64_t rr;
