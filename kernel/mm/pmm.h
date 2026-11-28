@@ -24,10 +24,12 @@
 #define SNU_PMM_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 void pmm_init(void);
 
 void *pmm_alloc(size_t size);
 void pmm_free(void *ptr);
+void pmm_reserve_range(uint64_t phys_start, uint64_t size);
 
 #endif /* SNU_PMM_H */

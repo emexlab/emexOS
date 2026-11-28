@@ -37,6 +37,12 @@ void kernel_main(void *info)
 
     icm_init();
     pmm_init();
+    if(info->fb_base != 0 && info->fb_stride != 0 && info->fb_height != 0)
+    {
+        /* prevents the screen from flickering (yk since the fb could be allocated it self) */
+        uint64_t fb_size = (uint64_t)info->fb_stride * (uint64_t)info->fb_height;
+        pmm_reserve_range(info->fb_base, fb_size);
+    }
     pmap_bootstrap();
 
     for(;;)

@@ -27,9 +27,10 @@
 #include <arch/emex64/random.h>
 #include <eboot_api.h>
 
-#define PAGE_FREE 0x0
-#define PAGE_HEAD 0x1
-#define PAGE_CONT 0x2
+#define PAGE_FREE       0x0
+#define PAGE_HEAD       0x1
+#define PAGE_CONT       0x2
+#define PAGE_RESERVED   0x3
 
 #ifndef PMM_DEBUG_ENABLED
 #define PMM_DEBUG_ENABLED 0
@@ -226,5 +227,45 @@ void pmm_free(void *ptr)
         {
             break;
         }
+    }
+}
+
+void pmm_reserve_range(uint64_t phys_start,
+                       uint64_t size)
+{
+    if(size == 0)
+    {
+        return;
+    }
+
+    uint64_t space_start = (uint64_t)pmm_space_start;
+    uint64_t space_end = (uint64_t)pmm_space_end;
+
+    uint64_t start = EMEX64_PAGE_ROUND_DOWN(phys_start);
+    if(start >= space_end)
+    {
+        return;
+    }
+
+    uint64_t raw_end = phys_start + size;
+    uint64_t end = (raw_end < phys_start) ? space_end : EMEX64_PAGE_ROUND_UP(raw_end);
+    if(end <= space_start)
+    {
+        return;
+    }
+
+    if(start < space_start)
+    {
+        start = space_start;
+    }
+    if(end > space_end)
+    {
+        end = space_end;
+    }
+
+    for(uint64_t addr = start; addr < end; addr += EMEX64_PAGE_SIZE)
+    {
+        uint64_t page_idx = (addr - space_start) / EMEX64_PAGE_SIZE;
+        pmm_set_state(page_idx, PAGE_RESERVED);
     }
 }
