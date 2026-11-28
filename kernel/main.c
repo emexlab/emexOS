@@ -31,10 +31,7 @@ extern char __bss_end[] __attribute__((visibility("hidden")));
 
 void kernel_main(void *info)
 {
-    for(volatile char *p = __bss_start; p < __bss_end; p++)
-    {
-        *p = 0;
-    }
+    memset(__bss_start, 0, ((size_t)__bss_end - (size_t)__bss_start));
 
     printf("[Kernel] hello from kernelcache!\n");
 
