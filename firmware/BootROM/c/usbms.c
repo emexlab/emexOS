@@ -249,12 +249,12 @@ int usbms_probe(struct usb_device *dev)
     int err = command(d, inquiry, 6, 1, data_buf, 36);
     if(err)
     {
-        fw_printf("[usbms] port %d: INQUIRY failed (%s)\n", dev->port, blk_strerror(&d->blk, err));
+        fw_printf("[USBMS] port %d: INQUIRY failed (%s)\n", dev->port, blk_strerror(&d->blk, err));
         return -1;
     }
     if((data_buf[0] & 0x1F) != 0x00)
     {
-        fw_printf("[usbms] port %d: not a block device (type %u)\n", dev->port, data_buf[0] & 0x1F);
+        fw_printf("[USBMS] port %d: not a block device (type %u)\n", dev->port, data_buf[0] & 0x1F);
         return -1;
     }
     copy_trimmed(d->vendor, data_buf + 8, 8);
@@ -266,7 +266,7 @@ int usbms_probe(struct usb_device *dev)
     }
     if(err)
     {
-        fw_printf("[usbms] port %d: unit not ready (%s)\n", dev->port, blk_strerror(&d->blk, err));
+        fw_printf("[USBMS] port %d: unit not ready (%s)\n", dev->port, blk_strerror(&d->blk, err));
         return -1;
     }
 
@@ -274,7 +274,7 @@ int usbms_probe(struct usb_device *dev)
     err = command(d, cap10, 10, 1, data_buf, 8);
     if(err)
     {
-        fw_printf("[usbms] port %d: READ CAPACITY failed (%s)\n", dev->port, blk_strerror(&d->blk, err));
+        fw_printf("[USBMS] port %d: READ CAPACITY failed (%s)\n", dev->port, blk_strerror(&d->blk, err));
         return -1;
     }
     d->blocks = (u64)be32(data_buf) + 1;
@@ -286,7 +286,7 @@ int usbms_probe(struct usb_device *dev)
         err = command(d, cap16, 16, 1, data_buf, 32);
         if(err)
         {
-            fw_printf("[usbms] port %d: READ CAPACITY(16) failed (%s)\n", dev->port, blk_strerror(&d->blk, err));
+            fw_printf("[USBMS] port %d: READ CAPACITY(16) failed (%s)\n", dev->port, blk_strerror(&d->blk, err));
             return -1;
         }
         d->blocks = (((u64)be32(data_buf) << 32) | be32(data_buf + 4)) + 1;
@@ -297,13 +297,13 @@ int usbms_probe(struct usb_device *dev)
     int readonly = command(d, mode_sense, 6, 1, data_buf, 4) == 0 && (data_buf[2] & 0x80);
 
     char name[8] = { 'u', 's', 'b', (char)('0' + disk_count), 0 };
-    fw_printf("[usbms] %s (port %d): %s %s, ", name, dev->port, d->vendor, d->product);
+    fw_printf("[USBMS] %s (port %d): %s %s, ", name, dev->port, d->vendor, d->product);
     fw_put_size(d->blocks * d->block_size);
     fw_printf("%s%s\n", max_lun ? ", LUN 0 only" : "", readonly ? ", write protected" : "");
 
     if(d->block_size != BLK_SECTOR_SIZE)
     {
-        fw_printf("[usbms] %s: %u byte blocks are not supported\n", name, d->block_size);
+        fw_printf("[USBMS] %s: %u byte blocks are not supported\n", name, d->block_size);
         return -1;
     }
 

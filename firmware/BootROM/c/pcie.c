@@ -92,7 +92,7 @@ static void probe(u64 ecam,
     u64 control = mmio_read64(cfg + PCIE_CFG_CONTROL);
     if(control & PCIE_CONTROL_MEM)
     {
-        fw_printf("[pcie] 00:%02x.%u %04x:%04x %s (class %06x)", dev, fn, d->vendor, d->device, class_name(d->class_code), d->class_code);
+        fw_printf("[PCIe] 00:%02x.%u %04x:%04x %s (class %06x)", dev, fn, d->vendor, d->device, class_name(d->class_code), d->class_code);
         if(d->irq != ~0UL)
         {
             fw_printf(", irq %lu", d->irq);
@@ -113,7 +113,7 @@ static void probe(u64 ecam,
     }
 
     mmio_write64(cfg + PCIE_CFG_CONTROL, 0);
-    fw_printf("[pcie] 00:%02x.%u %04x:%04x %s (class %06x)", dev, fn, d->vendor, d->device, class_name(d->class_code), d->class_code);
+    fw_printf("[PCIe] 00:%02x.%u %04x:%04x %s (class %06x)", dev, fn, d->vendor, d->device, class_name(d->class_code), d->class_code);
     if(d->irq != ~0UL)
     {
         fw_printf(", irq %lu", d->irq);
@@ -134,14 +134,14 @@ static void probe(u64 ecam,
         u64 base = (*next + size - 1) & ~(size - 1);
         if(base + size > end)
         {
-            fw_printf("[pcie]        BAR%d: no space left in the aperture\n", b);
+            fw_printf("[PCIe]        BAR%d: no space left in the aperture\n", b);
             d->bar_size[b] = 0;
             continue;
         }
         *next = base + size;
         mmio_write64(cfg + PCIE_CFG_BAR(b), base);
         d->bar[b] = mmio_read64(cfg + PCIE_CFG_BAR(b));
-        fw_printf("[pcie]        BAR%d: 0x%lx (", b, d->bar[b]);
+        fw_printf("[PCIe]        BAR%d: 0x%lx (", b, d->bar[b]);
         fw_put_size(size);
         fw_printf(")\n");
     }
@@ -152,7 +152,7 @@ int pcie_init(void)
     u64 id = mmio_read64(PCIE_RC_BASE + PCIE_RC_REG_ID);
     if((id & 0xFFFFFFFF) != PCIE_RC_ID_MAGIC)
     {
-        fw_printf("[pcie] no root complex\n");
+        fw_printf("[PCIe] no root complex\n");
         return -1;
     }
 
@@ -167,7 +167,7 @@ int pcie_init(void)
         end = display_bar;
     }
 
-    fw_printf("[pcie] root complex v%lu, config space 0x%lx, aperture 0x%lx-0x%lx\n", id >> 32, ecam, next, aperture_end - 1);
+    fw_printf("[PCIe] root complex v%lu, config space 0x%lx, aperture 0x%lx-0x%lx\n", id >> 32, ecam, next, aperture_end - 1);
 
     device_count = 0;
     for(u8 dev = 0; dev < 32; dev++)
@@ -189,7 +189,7 @@ int pcie_init(void)
         }
     }
 
-    fw_printf("[pcie] %d function(s) found\n", device_count);
+    fw_printf("[PCIe] %d function(s) found\n", device_count);
     return device_count;
 }
 

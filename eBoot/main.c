@@ -32,7 +32,7 @@
 #include "logo.h"
 #include "poweroff.h"
 
-#define EBOOT_VERSION   "eBoot 1.2.3"
+#define EBOOT_VERSION   "eBoot 1.3.0"
 #define LOGO_PATH       "/logo.img4"
 #define LOGO_TYPE       "logo"
 
@@ -216,17 +216,17 @@ static bool screen_init(struct e64_boot_info *info)
 {
     if(info->fb_base == 0)
     {
-        print("[eboot] error: no frame buffer base was provided by the BootROM\n");
+        print("[eBoot] error: no frame buffer base was provided by the BootROM\n");
         return false;
     }
     if(info->fb_format != 1)
     {
-        print("[eboot] error: framebuffer format is not the one expected\n");
+        print("[eBoot] error: framebuffer format is not the one expected\n");
         return false;
     }
     if(info->fb_height < LINE_HEIGHT)
     {
-        print("[eboot] error: framebuffer is to small\n");
+        print("[eBoot] error: framebuffer is to small\n");
         return false;
     }
 
@@ -374,14 +374,14 @@ static bool eboot_open_disk(const struct e64_boot_info *info)
     {
         if(verbose)
         {
-            print(err == DISK_ERR_KIND ? "[eboot] eBoot reads SATA disks only\n" : "[eboot] the boot disk is not there\n");
+            print(err == DISK_ERR_KIND ? "[eBoot] eBoot reads SATA disks only\n" : "[eBoot] the boot disk is not there\n");
         }
         return false;
     }
     err = fat_mount_at(&esp, disk_read, &disk, info->partition_lba);
     if(err != FAT_OK)
     {
-        print("[eboot] the ESP has no FAT file system\n");
+        print("[eBoot] the ESP has no FAT file system\n");
         return false;
     }
 
@@ -404,7 +404,7 @@ static bool eboot_load_img4(const struct e64_boot_info *info,
     uint64_t end = info->fb_base > at ? info->fb_base : info->memory_size;
     if(end <= at)
     {
-        print("[eboot] there is no memory to load img4 at '");
+        print("[eBoot] there is no memory to load img4 at '");
         print(path);
         print("\n");
         return false;
@@ -414,7 +414,7 @@ static bool eboot_load_img4(const struct e64_boot_info *info,
     {
         if(err != FAT_ERR_NOT_FOUND || verbose)
         {
-            print(err == FAT_ERR_NOT_FOUND ? "[eboot] no '" : "[eboot] '");
+            print(err == FAT_ERR_NOT_FOUND ? "[eBoot] no '" : "[eBoot] '");
             print(path);
             print(err == FAT_ERR_NOT_FOUND ? "' on the ESP\n" : "' could not be read\n");
             print("\n");
@@ -429,7 +429,7 @@ static bool eboot_load_img4(const struct e64_boot_info *info,
     err = img4_verify((const uint8_t *)at, size, type, &root, &img4_this_device, image);
     if(err != IMG4_OK)
     {
-        print("[eboot] '");
+        print("[eBoot] '");
         print(path);
         print("' ");
         print(img4_error(err));
@@ -440,7 +440,7 @@ static bool eboot_load_img4(const struct e64_boot_info *info,
     img4_load_cursor = (at + size + 0x1FFF) & ~0x1FFFUL;
     if(verbose)
     {
-        print("[eboot] loaded '");
+        print("[eBoot] loaded '");
         print(path);
         print("' (codesignature valid)\n");
     }
@@ -457,7 +457,7 @@ void eboot_main(struct e64_boot_info *info)
 
     if(info == 0 || info->magic != E64BOOT_INFO_MAGIC)
     {
-        print("[eboot] BootROM gave no boot info\n");
+        print("[eBoot] BootROM gave no boot info\n");
         power_off();
     }
 
@@ -483,7 +483,7 @@ void eboot_main(struct e64_boot_info *info)
 
     if(verbose)
     {
-        print("[eboot] loading img4 payloads\n");
+        print("[eBoot] loading img4 payloads\n");
     }
     if(!eboot_load_img4(info, &logo_image, LOGO_PATH, LOGO_TYPE) ||
        !eboot_load_img4(info, &kernelcache_image, KCACHE_PATH, KCACHE_TYPE))
@@ -494,18 +494,18 @@ void eboot_main(struct e64_boot_info *info)
     /* acting uppon loaded images */
     if(verbose)
     {
-        print("[eboot] setting up img4 payloads\n");
+        print("[eBoot] setting up img4 payloads\n");
     }
     if(success)
     {
         if(verbose)
         {
-            print("[eboot] showing logo\n");
+            print("[eBoot] showing logo\n");
         }
         const char *why = draw_logo(logo_image.data, logo_image.size);
         if(why != 0)
         {
-            print("[eboot] failed to show logo: '");
+            print("[eBoot] failed to show logo: '");
             print(why);
             print("'\n");
             return;
@@ -514,12 +514,12 @@ void eboot_main(struct e64_boot_info *info)
 
     if(verbose)
     {
-        print("[eboot] jumping to kernelcache entry\n");
+        print("[eBoot] jumping to kernelcache entry\n");
     }
     void (*kernelcache_entry)(void) = (void*)kernelcache_image.data;
     kernelcache_entry();
 
-    print("[eboot] error: returned from kernelcache entry\n");
+    print("[eBoot] error: returned from kernelcache entry\n");
 
 fail:
     for(;;)

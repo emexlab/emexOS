@@ -63,7 +63,7 @@ Build/bootloader.bin: $(EBOOT_OBJECTS) eBoot/eboot.lds
 	$(OBJCOPY) -O binary Build/bootloader.elf $@
 
 Build/bootloader.img4: Build/bootloader.bin Build/img4 $(IMG4_KEYS)/signing.key Build/ecid
-	Build/img4 --ecid $$(cat Build/ecid) --kbag prod:00112233445566778899aabbccddeeff:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef sign "$(IMG4_KEYS)" ebot "eBoot 1.2.3" $< $@
+	Build/img4 --ecid $$(cat Build/ecid) --kbag prod:00112233445566778899aabbccddeeff:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef sign "$(IMG4_KEYS)" ebot "eBoot 1.3.0" $< $@
 
 Build/logo.bin: $(LOGO_PNG) Build/logo
 	Build/logo $(LOGO_PNG) $@ $(LOGO_SIZE)

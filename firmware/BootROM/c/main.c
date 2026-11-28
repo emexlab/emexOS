@@ -38,7 +38,7 @@ int main(void)
 
     if(img4_this_device.ecid == 0)
     {
-        fw_printf("[boot] ECID is null which is illegal\n");
+        fw_printf("[BootROM] ECID is null which is illegal\n");
         goto fail;
     }
 

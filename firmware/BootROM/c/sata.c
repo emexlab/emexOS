@@ -171,8 +171,7 @@ static void init_controller(struct pcie_dev *ctrl)
     u64 pi = pcie_bar_read(ctrl, 0, SATA_REG_PI);
     int ports = (int)(cap & 0xFF);
 
-    fw_printf("[sata] controller at 00:%02x.%u, %d ports, %lu slots, v%lu\n", ctrl->dev, ctrl->fn,
-              ports, (cap >> 8) & 0xFF, cap >> 32);
+    fw_printf("[SATA] controller at 00:%02x.%u, %d ports, %lu slots, v%lu\n", ctrl->dev, ctrl->fn, ports, (cap >> 8) & 0xFF, cap >> 32);
 
     for(int p = 0; p < ports && p < 64; p++)
     {
@@ -201,7 +200,7 @@ static void init_controller(struct pcie_dev *ctrl)
         int err = issue(d, SATA_OP_IDENTIFY, 0, 1, (u64)identify_buf);
         if(err)
         {
-            fw_printf("[sata] port %d: IDENTIFY failed (%s)\n", p, sata_strerror(err));
+            fw_printf("[SATA] port %d: IDENTIFY failed (%s)\n", p, sata_strerror(err));
             continue;
         }
 
@@ -216,7 +215,7 @@ static void init_controller(struct pcie_dev *ctrl)
             d->max_sectors = 65536;
         }
 
-        fw_printf("[sata] sata%d (port %d): %s, serial %s, ", disk_count, p, d->model, d->serial);
+        fw_printf("[SATA] sata%d (port %d): %s, serial %s, ", disk_count, p, d->model, d->serial);
         fw_put_size(d->sectors * SATA_SECTOR_SIZE);
         fw_printf("%s\n", d->readonly ? ", read only" : "");
 
@@ -247,7 +246,7 @@ int sata_init(void)
     }
     if(disk_count == 0)
     {
-        fw_printf("[sata] no disks attached\n");
+        fw_printf("[SATA] no disks attached\n");
     }
     return disk_count;
 }

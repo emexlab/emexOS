@@ -60,7 +60,7 @@ void interrupt_init(void)
     mmio_write64(EMEX64_IC_REG_ENABLED, 0);
     mmio_write64(EMEX64_IC_REG_CTRL, EMEX64_IC_CTRL_ENABLE);
 
-    fw_printf("[ic] initialized\n");
+    fw_printf("[IC] initialized\n");
 }
 
 void interrupt_register_handler(u64 irq,

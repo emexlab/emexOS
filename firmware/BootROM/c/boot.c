@@ -57,7 +57,7 @@ static int read_gpt_header(struct blkdev *d,
     int err = d->read(d, lba, 1, sector_buf);
     if(err)
     {
-        fw_printf("[boot] %s: reading LBA %lu failed (%s)\n", d->name, lba, d->strerror(d, err));
+        fw_printf("[BootROM] %s: reading LBA %lu failed (%s)\n", d->name, lba, d->strerror(d, err));
         return -1;
     }
 
@@ -72,7 +72,7 @@ static int read_gpt_header(struct blkdev *d,
     ((struct gpt_header *)sector_buf)->header_crc32 = 0;
     if(fw_crc32_update(0, sector_buf, h->header_size) != want)
     {
-        fw_printf("[boot] %s: GPT header at LBA %lu has a bad checksum\n", d->name, lba);
+        fw_printf("[BootROM] %s: GPT header at LBA %lu has a bad checksum\n", d->name, lba);
         return -1;
     }
 
@@ -80,7 +80,7 @@ static int read_gpt_header(struct blkdev *d,
        h->entry_count == 0 ||
        (u64)h->entry_count * h->entry_size > MAX_ENTRY_BYTES)
     {
-        fw_printf("[boot] %s: unsupported GPT entry layout\n", d->name);
+        fw_printf("[BootROM] %s: unsupported GPT entry layout\n", d->name);
         return -1;
     }
 
@@ -96,7 +96,7 @@ static int read_gpt(struct blkdev *d,
         {
             return -1;
         }
-        fw_printf("[boot] %s: using the backup GPT\n", d->name);
+        fw_printf("[BootROM] %s: using the backup GPT\n", d->name);
     }
 
     u64 bytes = (u64)h->entry_count * h->entry_size;
@@ -104,13 +104,13 @@ static int read_gpt(struct blkdev *d,
     int err = d->read(d, h->entries_lba, sectors, entry_buf);
     if(err)
     {
-        fw_printf("[boot] %s: reading the partition table failed (%s)\n", d->name, d->strerror(d, err));
+        fw_printf("[BootROM] %s: reading the partition table failed (%s)\n", d->name, d->strerror(d, err));
         return -1;
     }
 
     if(fw_crc32_update(0, entry_buf, bytes) != h->entries_crc32)
     {
-        fw_printf("[boot] %s: partition table has a bad checksum\n", d->name);
+        fw_printf("[BootROM] %s: partition table has a bad checksum\n", d->name);
         return -1;
     }
 
@@ -129,29 +129,29 @@ static int check_header(struct blkdev *d,
     bh->header_crc32 = 0;
     if(fw_memcmp(bh->magic, E64BOOT_MAGIC, 8) != 0)
     {
-        fw_printf("[boot] %s: boot partition has no emex64 boot header\n", d->name);
+        fw_printf("[BootROM] %s: boot partition has no emex64 boot header\n", d->name);
         return -1;
     }
     if(fw_crc32_update(0, bh, sizeof(*bh)) != want)
     {
-        fw_printf("[boot] %s: boot header checksum mismatch\n", d->name);
+        fw_printf("[BootROM] %s: boot header checksum mismatch\n", d->name);
         return -1;
     }
     bh->header_crc32 = want;
 
     if(bh->version != E64BOOT_VERSION || bh->header_size != SECTOR)
     {
-        fw_printf("[boot] %s: unsupported boot header version %u\n", d->name, bh->version);
+        fw_printf("[BootROM] %s: unsupported boot header version %u\n", d->name, bh->version);
         return -1;
     }
     if(bh->image_size == 0 || bh->image_size > part_bytes || bh->memory_size < bh->image_size)
     {
-        fw_printf("[boot] %s: boot image size is invalid\n", d->name);
+        fw_printf("[BootROM] %s: boot image size is invalid\n", d->name);
         return -1;
     }
     if(bh->load_address & (EMEX64_PAGE_SIZE - 1))
     {
-        fw_printf("[boot] %s: load address 0x%lx is not page aligned\n", d->name, bh->load_address);
+        fw_printf("[BootROM] %s: load address 0x%lx is not page aligned\n", d->name, bh->load_address);
         return -1;
     }
 
@@ -162,20 +162,20 @@ static int check_header(struct blkdev *d,
     }
     if(bh->load_address < fw_end || bh->load_address > mem || footprint > mem - bh->load_address)
     {
-        fw_printf("[boot] %s: image 0x%lx-0x%lx does not fit (firmware ends at 0x%lx, memory 0x%lx)\n",
+        fw_printf("[BootROM] %s: image 0x%lx-0x%lx does not fit (firmware ends at 0x%lx, memory 0x%lx)\n",
                   d->name, bh->load_address, bh->load_address + bh->memory_size, fw_end, mem);
         return -1;
     }
     if(bh->entry < bh->load_address || bh->entry - bh->load_address >= bh->image_size)
     {
-        fw_printf("[boot] %s: entry point 0x%lx is outside the image\n", d->name, bh->entry);
+        fw_printf("[BootROM] %s: entry point 0x%lx is outside the image\n", d->name, bh->entry);
         return -1;
     }
     if(bh->text_size != 0 &&
        ((bh->text_size & (EMEX64_PAGE_SIZE - 1)) || bh->text_size > bh->memory_size ||
         bh->entry - bh->load_address >= bh->text_size))
     {
-        fw_printf("[boot] %s: text size 0x%lx is invalid\n", d->name, bh->text_size);
+        fw_printf("[BootROM] %s: text size 0x%lx is invalid\n", d->name, bh->text_size);
         return -1;
     }
 
@@ -210,7 +210,7 @@ static void read_boot_args(char *out,
     }
     fw_memcpy(out, value, value_size);
     out[value_size] = 0;
-    fw_printf("[boot] boot-args %s\n", out);
+    fw_printf("[BootROM] boot-args %s\n", out);
 }
 
 static const u8 esp_part_type_guid[16] = {
@@ -234,7 +234,7 @@ static void try_disk(struct blkdev *d)
 
     if(read_gpt(d, &h) != 0)
     {
-        fw_printf("[boot] %s: no valid GPT\n", d->name);
+        fw_printf("[BootROM] %s: no valid GPT\n", d->name);
         return;
     }
 
@@ -256,18 +256,18 @@ static void try_disk(struct blkdev *d)
             err = fat_mount_at(&esp, esp_read, d, e->first_lba);
             if(err != FAT_OK)
             {
-                fw_printf("[boot] %s: ESP has no FAT file system (error %u)\n", d->name, (u32)-err);
+                fw_printf("[BootROM] %s: ESP has no FAT file system (error %u)\n", d->name, (u32)-err);
                 return;
             }
 
             err = fat_load(&esp, ESP_BOOTLOADER, (void *)load, fw_ram_end() - load, &size);
             if(err != FAT_OK)
             {
-                fw_printf("[boot] %s: %s not loaded (error %u)\n", d->name, ESP_BOOTLOADER, (u32)-err);
+                fw_printf("[BootROM] %s: %s not loaded (error %u)\n", d->name, ESP_BOOTLOADER, (u32)-err);
                 return;
             }
 
-            fw_printf("[boot] loaded %s: ", ESP_BOOTLOADER);
+            fw_printf("[BootROM] loaded %s: ", ESP_BOOTLOADER);
             fw_put_size(size);
             fw_printf(" to 0x%lx\n", load);
 
@@ -276,7 +276,7 @@ static void try_disk(struct blkdev *d)
             err = img4_verify((const u8 *)load, size, BOOTLOADER_TYPE, &img4_rom_root, &img4_this_device, &image);
             if(err != IMG4_OK)
             {
-                fw_printf("[boot] %s: %s %s, not booting it\n", d->name, ESP_BOOTLOADER, img4_error(err));
+                fw_printf("[BootROM] %s: %s %s, not booting it\n", d->name, ESP_BOOTLOADER, img4_error(err));
                 return;
             }
 
@@ -286,7 +286,7 @@ static void try_disk(struct blkdev *d)
             name[name_size] = 0;
             memmove((void *)load, image.data, image.size);
             size = image.size;
-            fw_printf("[boot] '%s' is validly signed by vendor\n", name);
+            fw_printf("[BootROM] '%s' is validly signed by vendor\n", name);
 
             fw_memset(&boot_info, 0, sizeof(boot_info));
             boot_info.magic = E64BOOT_INFO_MAGIC;
@@ -303,7 +303,7 @@ static void try_disk(struct blkdev *d)
             fw_memcpy(boot_info.name, name, sizeof(name));
             read_boot_args(boot_info.cmdline, sizeof(boot_info.cmdline));
 
-            fw_printf("[boot] jumping to 0x%lx\n", load);
+            fw_printf("[BootROM] jumping to 0x%lx\n", load);
 
             if(gui_fb)
             {
@@ -322,7 +322,7 @@ static void try_disk(struct blkdev *d)
         }
     }
 
-    fw_printf("[boot] %s: nothing bootable\n", d->name);
+    fw_printf("[BootROM] %s: nothing bootable\n", d->name);
 }
 
 void fw_boot_main(void)
@@ -338,7 +338,7 @@ void fw_boot_main(void)
     /* hopefully there are block devices to boot from */
     if(blk_count() == 0)
     {
-        fw_printf("[boot] no disks\n");
+        fw_printf("[BootROM] no disks\n");
         return;
     }
 
@@ -349,5 +349,5 @@ void fw_boot_main(void)
     }
 
     /* ouweeeeee */
-    fw_printf("[boot] no bootable disk found\n");
+    fw_printf("[BootROM] no bootable disk found\n");
 }

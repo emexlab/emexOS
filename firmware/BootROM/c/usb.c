@@ -228,7 +228,7 @@ static void enumerate_port(struct usb_hc *hc, int p)
     }
     if(device_count >= USB_MAX_DEVICES || next_address > 127)
     {
-        fw_printf("[usb] port %d: too many devices\n", p);
+        fw_printf("[USB] port %d: too many devices\n", p);
         return;
     }
 
@@ -236,7 +236,7 @@ static void enumerate_port(struct usb_hc *hc, int p)
     u64 portsc = pcie_bar_read(hc->pci, 0, portsc_reg);
     if(!(portsc & USB_PORTSC_ENABLED))
     {
-        fw_printf("[usb] port %d: reset failed\n", p);
+        fw_printf("[USB] port %d: reset failed\n", p);
         return;
     }
 
@@ -257,7 +257,7 @@ static void enumerate_port(struct usb_hc *hc, int p)
     }
     if(err != USB_OK)
     {
-        fw_printf("[usb] port %d: device does not respond (%s)\n", p, usb_strerror(err));
+        fw_printf("[USB] port %d: device does not respond (%s)\n", p, usb_strerror(err));
         pcie_bar_write(hc->pci, 0, USB_PORT_BASE(p) + USB_PORTCTL, USB_PORTCTL_DISABLE);
         return;
     }
@@ -266,7 +266,7 @@ static void enumerate_port(struct usb_hc *hc, int p)
     err = usb_control(dev, USB_DIR_IN, USB_REQ_GET_DESCRIPTOR, USB_DT_DEVICE << 8, 0, 18, desc_buf, &got);
     if(err != USB_OK || got < 18 || desc_buf[1] != USB_DT_DEVICE)
     {
-        fw_printf("[usb] port %d: bad device descriptor (%s)\n", p, usb_strerror(err));
+        fw_printf("[USB] port %d: bad device descriptor (%s)\n", p, usb_strerror(err));
         return;
     }
     dev->vendor = desc_buf[8] | (desc_buf[9] << 8);
@@ -277,7 +277,7 @@ static void enumerate_port(struct usb_hc *hc, int p)
     err = usb_control(dev, USB_DIR_IN, USB_REQ_GET_DESCRIPTOR, USB_DT_CONFIG << 8, 0, 9, desc_buf, &got);
     if(err != USB_OK || got < 9)
     {
-        fw_printf("[usb] port %d: no configuration descriptor (%s)\n", p, usb_strerror(err));
+        fw_printf("[USB] port %d: no configuration descriptor (%s)\n", p, usb_strerror(err));
         return;
     }
     u16 total = desc_buf[2] | (desc_buf[3] << 8);
@@ -289,7 +289,7 @@ static void enumerate_port(struct usb_hc *hc, int p)
     err = usb_control(dev, USB_DIR_IN, USB_REQ_GET_DESCRIPTOR, USB_DT_CONFIG << 8, 0, total, desc_buf, &got);
     if(err != USB_OK)
     {
-        fw_printf("[usb] port %d: reading the configuration failed (%s)\n", p, usb_strerror(err));
+        fw_printf("[USB] port %d: reading the configuration failed (%s)\n", p, usb_strerror(err));
         return;
     }
     parse_config(dev, desc_buf, got);
@@ -303,11 +303,11 @@ static void enumerate_port(struct usb_hc *hc, int p)
     err = usb_control(dev, 0x00, USB_REQ_SET_CONFIGURATION, dev->config_value, 0, 0, NULL, NULL);
     if(err != USB_OK)
     {
-        fw_printf("[usb] port %d: SET_CONFIGURATION failed (%s)\n", p, usb_strerror(err));
+        fw_printf("[USB] port %d: SET_CONFIGURATION failed (%s)\n", p, usb_strerror(err));
         return;
     }
 
-    fw_printf("[usb] port %d: %04x:%04x '%s', %s, address %u, class %02x/%02x/%02x\n",
+    fw_printf("[USB] port %d: %04x:%04x '%s', %s, address %u, class %02x/%02x/%02x\n",
               p, dev->vendor, dev->product, dev->name, speed_name(dev->speed), dev->address,
               class_code ? class_code : dev->if_class, dev->if_subclass, dev->if_protocol);
     device_count++;
@@ -320,7 +320,7 @@ static void enumerate_port(struct usb_hc *hc, int p)
         }
         else
         {
-            fw_printf("[usb] port %d: mass storage, but not SCSI over bulk-only: ignored\n", p);
+            fw_printf("[USB] port %d: mass storage, but not SCSI over bulk-only: ignored\n", p);
         }
     }
 }
@@ -345,7 +345,7 @@ static void init_controller(struct pcie_dev *pci)
 
     u64 cap = pcie_bar_read(pci, 0, USB_REG_CAP);
     hc->ports = (int)(cap & 0xFF);
-    fw_printf("[usb] controller at 00:%02x.%u, %d ports, v%lu\n", pci->dev, pci->fn, hc->ports, cap >> 32);
+    fw_printf("[USB] controller at 00:%02x.%u, %d ports, v%lu\n", pci->dev, pci->fn, hc->ports, cap >> 32);
 
     for(int p = 0; p < hc->ports; p++)
     {
@@ -363,7 +363,7 @@ int usb_init(void)
     }
     if(controller_count != 0 && device_count == 0)
     {
-        fw_printf("[usb] no devices attached\n");
+        fw_printf("[USB] no devices attached\n");
     }
     return device_count;
 }
