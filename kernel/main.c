@@ -40,18 +40,6 @@ void kernel_main(void *info)
     icm_init();
     pmm_init();
 
-    void *meow = pmm_alloc(0x20);
-    printf("allocated %p\n", meow);
-
-    meow = pmm_alloc(0x20);
-    printf("allocated %p\n", meow);
-
-    meow = pmm_alloc(0x4000);
-    printf("allocated %p\n", meow);
-
-    meow = pmm_alloc(0x20);
-    printf("allocated %p\n", meow);
-
     for(;;)
     {
         __asm__ __volatile__("hlt");

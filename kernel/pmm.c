@@ -123,7 +123,10 @@ void *pmm_alloc(size_t size)
     uint64_t run_start = 0;
     uint64_t run_length = 0;
 
-    for(uint64_t i = 0; i < total_alloc_pages; i++)
+    uint64_t start_pfn = (uint64_t)pmm_space_start / EMEX64_PAGE_SIZE;
+    uint64_t start_idx = pmm_random_pfn() - start_pfn;
+
+    for(uint64_t i = start_idx; i < total_alloc_pages; i++)
     {
         if(pmm_get_state(i) == PAGE_FREE)
         {
@@ -146,6 +149,42 @@ void *pmm_alloc(size_t size)
         else
         {
             run_length = 0;
+        }
+    }
+
+    if(start_idx > 0)
+    {
+        run_length = 0;
+        uint64_t wrap_end = start_idx + needed_pages - 1;
+        if(wrap_end > total_alloc_pages)
+        {
+            wrap_end = total_alloc_pages;
+        }
+
+        for(uint64_t i = 0; i < wrap_end; i++)
+        {
+            if(pmm_get_state(i) == PAGE_FREE)
+            {
+                if(run_length == 0)
+                {
+                    run_start = i;
+                }
+                run_length++;
+
+                if(run_length == needed_pages)
+                {
+                    pmm_set_state(run_start, PAGE_HEAD);
+                    for(uint64_t j = 1; j < needed_pages; j++)
+                    {
+                        pmm_set_state(run_start + j, PAGE_CONT);
+                    }
+                    return (void *)((uint64_t)pmm_space_start + (run_start * EMEX64_PAGE_SIZE));
+                }
+            }
+            else
+            {
+                run_length = 0;
+            }
         }
     }
 
