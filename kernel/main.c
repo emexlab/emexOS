@@ -21,11 +21,12 @@
  */
 
 #include <interrupt.h>
+#include <pmm.h>
+#include <eboot_api.h>
+#include <arch/emex64/random.h>
 
 extern char __bss_start[] __attribute__((visibility("hidden")));
 extern char __bss_end[] __attribute__((visibility("hidden")));
-
-extern void print(const char *str);
 
 void kernel_main(void *info)
 {
@@ -34,8 +35,22 @@ void kernel_main(void *info)
         *p = 0;
     }
 
+    printf("[Kernel] hello from kernelcache!\n");
+
     icm_init();
-    print("hello from kernelcache!\n");
+    pmm_init();
+
+    void *meow = pmm_alloc(0x20);
+    printf("allocated %p\n", meow);
+
+    meow = pmm_alloc(0x20);
+    printf("allocated %p\n", meow);
+
+    meow = pmm_alloc(0x4000);
+    printf("allocated %p\n", meow);
+
+    meow = pmm_alloc(0x20);
+    printf("allocated %p\n", meow);
 
     for(;;)
     {

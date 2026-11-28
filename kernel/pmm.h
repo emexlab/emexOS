@@ -23,6 +23,11 @@
 #ifndef SNU_PMM_H
 #define SNU_PMM_H
 
+#include <stddef.h>
 
+void pmm_init(void);
+
+void *pmm_alloc(size_t size);
+void pmm_free(void *ptr);
 
 #endif /* SNU_PMM_H */
