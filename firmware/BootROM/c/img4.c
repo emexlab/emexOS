@@ -74,6 +74,69 @@ static int property_set(const struct der *e,
     return 0;
 }
 
+static int parse_kbag(const struct der *outer,
+                      struct img4_kbag *kbags,
+                      int *kbag_count)
+{
+    struct der seq, entry, field;
+    struct der_list list, fields;
+    int count = 0, got;
+
+    if(outer->cls != DER_UNIVERSAL || outer->constructed || outer->tag != DER_OCTET_STRING)
+    {
+        return IMG4_ERR_FORMAT;
+    }
+    if(der_read(outer->content, outer->length, &seq) != 0 || seq.element_size != outer->length ||
+       seq.cls != DER_UNIVERSAL || !seq.constructed || seq.tag != DER_SEQUENCE)
+    {
+        return IMG4_ERR_FORMAT;
+    }
+
+    der_open(&seq, &list);
+    while((got = der_next(&list, &entry)) == 1)
+    {
+        if(count == IMG4_MAX_KBAGS ||
+           entry.cls != DER_UNIVERSAL || !entry.constructed || entry.tag != DER_SEQUENCE)
+        {
+            return IMG4_ERR_FORMAT;
+        }
+        der_open(&entry, &fields);
+        if(der_expect(&fields, DER_UNIVERSAL, 0, DER_INTEGER, &field) != 0 ||
+           der_uint64(&field, &kbags[count].type) != 0)
+        {
+            return IMG4_ERR_FORMAT;
+        }
+        if(der_expect(&fields, DER_UNIVERSAL, 0, DER_OCTET_STRING, &field) != 0 ||
+           field.length == 0 || field.length > sizeof(kbags[count].iv))
+        {
+            return IMG4_ERR_FORMAT;
+        }
+        for(size_t i = 0; i < field.length; i++)
+        {
+            kbags[count].iv[i] = field.content[i];
+        }
+        kbags[count].iv_size = field.length;
+
+        if(der_expect(&fields, DER_UNIVERSAL, 0, DER_OCTET_STRING, &field) != 0 ||
+           field.length == 0 || field.length > sizeof(kbags[count].key) || !der_end(&fields))
+        {
+            return IMG4_ERR_FORMAT;
+        }
+        for(size_t i = 0; i < field.length; i++)
+        {
+            kbags[count].key[i] = field.content[i];
+        }
+        kbags[count].key_size = field.length;
+        count++;
+    }
+    if(got < 0 || count == 0)
+    {
+        return IMG4_ERR_FORMAT;
+    }
+    *kbag_count = count;
+    return IMG4_OK;
+}
+
 #define SEEN_CHIP   (1 << 0)
 #define SEEN_BORD   (1 << 1)
 #define SEEN_ECID   (1 << 2)
@@ -268,7 +331,7 @@ int img4_verify(const uint8_t *file,
         return IMG4_ERR_FORMAT;
     }
 
-    /* IM4P (no keybag andddd no compression yet sadly :<) */
+    /* IM4P (with optional keybag; no compression yet sadly :<) */
     der_open(&im4p, &fields);
     if(der_next(&fields, &e) != 1 || !is_fourcc(&e, IMG4_FOURCC("IM4P")))
     {
@@ -285,12 +348,31 @@ int img4_verify(const uint8_t *file,
     }
     image->description = e.content;
     image->description_size = e.length;
-    if(der_expect(&fields, DER_UNIVERSAL, 0, DER_OCTET_STRING, &e) != 0 || !der_end(&fields))
+    if(der_expect(&fields, DER_UNIVERSAL, 0, DER_OCTET_STRING, &e) != 0)
     {
         return IMG4_ERR_FORMAT;
     }
     image->data = e.content;
     image->size = e.length;
+    image->kbag_count = 0;
+
+    got = der_next(&fields, &e);
+    if(got < 0)
+    {
+        return IMG4_ERR_FORMAT;
+    }
+    if(got == 1)
+    {
+        if(!der_end(&fields))
+        {
+            return IMG4_ERR_FORMAT;
+        }
+        error = parse_kbag(&e, image->kbags, &image->kbag_count);
+        if(error != IMG4_OK)
+        {
+            return error;
+        }
+    }
 
     /* IM4M */
     der_open(&im4m, &fields);

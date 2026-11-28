@@ -44,6 +44,21 @@
 #define IMG4_ERR_TYPE           (-7)    /* the payload is not of the type asked for, or the manifest has no entry for it */
 #define IMG4_ERR_DIGEST         (-8)    /* the payload is not the one the manifest vouches for */
 
+#define IMG4_MAX_KBAGS      2
+#define IMG4_MAX_KBAG_IV    24
+#define IMG4_MAX_KBAG_KEY   32
+
+#define IMG4_KBAG_PROD      1
+#define IMG4_KBAG_DEV       2
+
+struct img4_kbag {
+    uint64_t type;
+    uint8_t iv[IMG4_MAX_KBAG_IV];
+    size_t iv_size;
+    uint8_t key[IMG4_MAX_KBAG_KEY];
+    size_t key_size;
+};
+
 /* the key at the top of the chain, built into the BootROM */
 struct img4_root {
     const uint8_t *public_key;
@@ -69,6 +84,8 @@ struct img4_image {
     size_t description_size;
     const uint8_t *data;
     size_t size;
+    struct img4_kbag kbags[IMG4_MAX_KBAGS];
+    int kbag_count;
 };
 
 int img4_verify(const uint8_t *file, size_t size, const char *type, const struct img4_root *root, const struct img4_device *device, struct img4_image *image);

@@ -653,7 +653,9 @@ static int sign(const char *folder,
                 const char *description,
                 const char *in,
                 const char *out,
-                const struct img4_device *device)
+                const struct img4_device *device,
+                const struct img4_kbag *kbags,
+                int kbag_count)
 {
     if(!valid_type(type))
     {
@@ -689,6 +691,22 @@ static int sign(const char *folder,
     ia5(&fields, type);
     ia5(&fields, description);
     tlv(&fields, DER_UNIVERSAL, 0, DER_OCTET_STRING, payload, size);
+    if(kbag_count > 0)
+    {
+        struct buf kbag_list = { 0 };
+        for(int i = 0; i < kbag_count; i++)
+        {
+            struct buf entry = { 0 };
+            integer(&entry, kbags[i].type);
+            tlv(&entry, DER_UNIVERSAL, 0, DER_OCTET_STRING, kbags[i].iv, kbags[i].iv_size);
+            tlv(&entry, DER_UNIVERSAL, 0, DER_OCTET_STRING, kbags[i].key, kbags[i].key_size);
+            sequence(&kbag_list, &entry);
+        }
+        struct buf kbag_seq = { 0 };
+        sequence(&kbag_seq, &kbag_list);
+        tlv(&fields, DER_UNIVERSAL, 0, DER_OCTET_STRING, kbag_seq.p, kbag_seq.n);
+        free(kbag_seq.p);
+    }
     sequence(&im4p, &fields);
     free(payload);
 
@@ -801,7 +819,26 @@ static int verify(const char *folder,
         free(file);
         return 1;
     }
-    printf("%s is valid: %.4s '%.*s', %zu bytes\n", path, type, (int)image.description_size, (const char *)image.description, image.size);
+    printf("%s is valid: %.4s '%.*s', %zu bytes", path, type, (int)image.description_size, (const char *)image.description, image.size);
+    if(image.kbag_count > 0)
+    {
+        printf(", %d kbag(s)", image.kbag_count);
+    }
+    printf("\n");
+    for(int i = 0; i < image.kbag_count; i++)
+    {
+        printf("  kbag[%d]: type=%llu iv=", i, (unsigned long long)image.kbags[i].type);
+        for(size_t j = 0; j < image.kbags[i].iv_size; j++)
+        {
+            printf("%02x", image.kbags[i].iv[j]);
+        }
+        printf(" key=");
+        for(size_t j = 0; j < image.kbags[i].key_size; j++)
+        {
+            printf("%02x", image.kbags[i].key[j]);
+        }
+        printf("\n");
+    }
     free(file);
     return 0;
 }
@@ -824,43 +861,165 @@ static int parse_ecid(const char *s,
     return 0;
 }
 
+static int hex_nibble(char c)
+{
+    if(c >= '0' && c <= '9')
+    {
+        return c - '0';
+    }
+    if(c >= 'a' && c <= 'f')
+    {
+        return c - 'a' + 10;
+    }
+    if(c >= 'A' && c <= 'F')
+    {
+        return c - 'A' + 10;
+    }
+    return -1;
+}
+
+static int parse_hex(const char *s,
+                     size_t len,
+                     uint8_t *out,
+                     size_t max_size,
+                     size_t *out_size)
+{
+    if(len == 0 || (len % 2) != 0 || (len / 2) > max_size)
+    {
+        return -1;
+    }
+    for(size_t i = 0; i < len; i += 2)
+    {
+        int hi = hex_nibble(s[i]);
+        int lo = hex_nibble(s[i + 1]);
+        if(hi < 0 || lo < 0)
+        {
+            return -1;
+        }
+        out[i / 2] = (uint8_t)((hi << 4) | lo);
+    }
+    *out_size = len / 2;
+    return 0;
+}
+
+static int parse_kbag_arg(const char *s,
+                          struct img4_kbag *out)
+{
+    if(s == NULL)
+    {
+        return -1;
+    }
+    const char *c1 = strchr(s, ':');
+    if(c1 == NULL || c1 == s)
+    {
+        return -1;
+    }
+    const char *c2 = strchr(c1 + 1, ':');
+    if(c2 == NULL || c2 == c1 + 1 || c2[1] == '\0')
+    {
+        return -1;
+    }
+
+    size_t type_len = (size_t)(c1 - s);
+    if(type_len == 4 && strncmp(s, "prod", 4) == 0)
+    {
+        out->type = IMG4_KBAG_PROD;
+    }
+    else if(type_len == 3 && strncmp(s, "dev", 3) == 0)
+    {
+        out->type = IMG4_KBAG_DEV;
+    }
+    else
+    {
+        char type_buf[32];
+        if(type_len >= sizeof(type_buf))
+        {
+            return -1;
+        }
+        memcpy(type_buf, s, type_len);
+        type_buf[type_len] = '\0';
+        if(parse_ecid(type_buf, &out->type) != 0)
+        {
+            return -1;
+        }
+    }
+
+    size_t iv_len = (size_t)(c2 - (c1 + 1));
+    size_t key_len = strlen(c2 + 1);
+    if(parse_hex(c1 + 1, iv_len, out->iv, sizeof(out->iv), &out->iv_size) != 0 ||
+       parse_hex(c2 + 1, key_len, out->key, sizeof(out->key), &out->key_size) != 0)
+    {
+        return -1;
+    }
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
     struct img4_device device = img4_this_device;
+    struct img4_kbag kbags[IMG4_MAX_KBAGS] = { 0 };
+    int kbag_count = 0;
     int argi = 1;
 
-    if(argi + 2 < argc && strcmp(argv[argi], "--ecid") == 0)
+    while(argi < argc && strncmp(argv[argi], "--", 2) == 0)
     {
-        if(parse_ecid(argv[argi + 1], &device.ecid) != 0)
+        if(strcmp(argv[argi], "--ecid") == 0)
         {
-            fprintf(stderr, "img4: invalid ecid '%s'\n", argv[argi + 1]);
-            return 2;
+            if(argi + 1 >= argc || parse_ecid(argv[argi + 1], &device.ecid) != 0)
+            {
+                fprintf(stderr, "img4: invalid ecid '%s'\n", argi + 1 < argc ? argv[argi + 1] : "");
+                return 2;
+            }
+            argi += 2;
         }
-        argi += 2;
+        else if(strcmp(argv[argi], "--kbag") == 0)
+        {
+            if(kbag_count >= IMG4_MAX_KBAGS)
+            {
+                fprintf(stderr, "img4: at most %d keybags are supported\n", IMG4_MAX_KBAGS);
+                return 2;
+            }
+            if(argi + 1 >= argc || parse_kbag_arg(argv[argi + 1], &kbags[kbag_count]) != 0)
+            {
+                fprintf(stderr, "img4: invalid kbag '%s'\n", argi + 1 < argc ? argv[argi + 1] : "");
+                return 2;
+            }
+            kbag_count++;
+            argi += 2;
+        }
+        else
+        {
+            break;
+        }
     }
 
     int rem = argc - argi;
-    if(rem == 2 && strcmp(argv[argi], "init") == 0)
+    int result = 2;
+    if(rem == 2 && strcmp(argv[argi], "init") == 0 && kbag_count == 0)
     {
-        return init(argv[argi + 1]);
+        result = init(argv[argi + 1]);
     }
-    if(rem == 3 && strcmp(argv[argi], "rom") == 0)
+    else if(rem == 3 && strcmp(argv[argi], "rom") == 0 && kbag_count == 0)
     {
-        return rom(argv[argi + 1], argv[argi + 2]);
+        result = rom(argv[argi + 1], argv[argi + 2]);
     }
-    if(rem == 6 && strcmp(argv[argi], "sign") == 0)
+    else if(rem == 6 && strcmp(argv[argi], "sign") == 0)
     {
-        return sign(argv[argi + 1], argv[argi + 2], argv[argi + 3], argv[argi + 4], argv[argi + 5], &device);
+        result = sign(argv[argi + 1], argv[argi + 2], argv[argi + 3], argv[argi + 4], argv[argi + 5], &device, kbags, kbag_count);
     }
-    if(rem == 4 && strcmp(argv[argi], "verify") == 0)
+    else if(rem == 4 && strcmp(argv[argi], "verify") == 0 && kbag_count == 0)
     {
-        return verify(argv[argi + 1], argv[argi + 2], argv[argi + 3], &device);
+        result = verify(argv[argi + 1], argv[argi + 2], argv[argi + 3], &device);
+    }
+    else
+    {
+        fprintf(stderr,
+                "usage: img4 init <key folder>\n"
+                "       img4 rom <key folder> <img4_root.h>\n"
+                "       img4 [--ecid <value>] [--kbag <prod|dev|n>:<iv_hex>:<key_hex>] sign <key folder> <type> <description> <payload> <out.img4>\n"
+                "       img4 [--ecid <value>] verify <key folder> <type> <file.img4>\n");
     }
 
-    fprintf(stderr,
-            "usage: img4 init <key folder>\n"
-            "       img4 rom <key folder> <img4_root.h>\n"
-            "       img4 [--ecid <value>] sign <key folder> <type> <description> <payload> <out.img4>\n"
-            "       img4 [--ecid <value>] verify <key folder> <type> <file.img4>\n");
-    return 2;
+    crypto_wipe(kbags, sizeof(kbags));
+    return result;
 }
