@@ -22,6 +22,7 @@
 
 #include <icm.h>
 #include <pmm.h>
+#include <pmap.h>
 #include <eboot_api.h>
 #include <arch/emex64/random.h>
 
@@ -39,6 +40,7 @@ void kernel_main(void *info)
 
     icm_init();
     pmm_init();
+    pmap_bootstrap();
 
     for(;;)
     {

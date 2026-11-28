@@ -32,7 +32,7 @@ DISK_FILES := Build/bootloader.img4 $(if $(LOGO_PNG),Build/emexlogo.img4) Build/
 
 EMEX64VM := EmexToolchain/build/bin/emex64vm
 
-KERNELCACHE_SOURCES := kernel/main.c kernel/icm.c kernel/pmm.c
+KERNELCACHE_SOURCES := kernel/main.c kernel/icm.c kernel/pmm.c kernel/pmap.c
 KERNELCACHE_OBJECTS := $(addprefix Build/kernelcache/,$(notdir $(KERNELCACHE_SOURCES:.c=.o)))
 
 all: $(EMEX64VM) firmware Build/disk.img
