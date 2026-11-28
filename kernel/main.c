@@ -20,7 +20,7 @@
  * See LICENSE for the full license terms.
  */
 
-#include <interrupt.h>
+#include <icm.h>
 #include <pmm.h>
 #include <eboot_api.h>
 #include <arch/emex64/random.h>

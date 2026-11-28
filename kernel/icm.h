@@ -20,8 +20,8 @@
  * See LICENSE for the full license terms.
  */
 
-#ifndef KERNEL_INTERRUPT_H
-#define KERNEL_INTERRUPT_H
+#ifndef SNU_ICM_H
+#define SNU_ICM_H
 
 #include <stdint.h>
 
@@ -50,4 +50,4 @@ void icm_enable_irq(uint64_t irq);
 void icm_disable_irq(uint64_t irq);
 void icm_ack_irq(uint64_t irq);
 
-#endif
+#endif /* SNU_ICM_H */

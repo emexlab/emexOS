@@ -20,7 +20,7 @@
  * See LICENSE for the full license terms.
  */
 
-#include <interrupt.h>
+#include <icm.h>
 #include <arch/emex64/mmio.h>
 #include <stddef.h>
 
