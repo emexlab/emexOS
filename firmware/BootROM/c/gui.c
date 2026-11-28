@@ -80,38 +80,3 @@ void gui_putc(int c)
     gui_column++;
     gui_draw_glyph(ch, x, y);
 }
-
-void gui_draw_logo(u64 scale,
-                   u64 x,
-                   u64 y,
-                   const u8 *logo)
-{
-    for(u64 py = 0; py < 20; py++)
-    {
-        for(u64 px = 0; px < 22; px++)
-        {
-            u8 color = logo[py * 22 + px];
-            if(color == 0)
-            {
-                continue;
-            }
-            for(u64 sy = 0; sy < scale; sy++)
-            {
-                u64 fy = y + py * scale + sy;
-                if(fy >= gui_height)
-                {
-                    break;
-                }
-                for(u64 sx = 0; sx < scale; sx++)
-                {
-                    u64 fx = x + px * scale + sx;
-                    if(fx >= gui_width)
-                    {
-                        break;
-                    }
-                    *(u8 *)(gui_fb + fy * gui_width + fx) = color;
-                }
-            }
-        }
-    }
-}

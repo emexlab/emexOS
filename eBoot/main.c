@@ -35,7 +35,7 @@
 #include "export.h"
 #include "printf.h"
 
-#define EBOOT_VERSION   "eBoot 1.3.0"
+#define EBOOT_VERSION   "eBoot 1.4.0"
 #define LOGO_PATH       "/logo.img4"
 #define LOGO_TYPE       "logo"
 
