@@ -37,8 +37,8 @@ typedef int32_t s32;
 typedef int64_t s64;
 
 #define BOOTROM_VERSION_MAJOR   1
-#define BOOTROM_VERSION_MINOR   3
-#define BOOTROM_VERSION_PATCH   1
+#define BOOTROM_VERSION_MINOR   4
+#define BOOTROM_VERSION_PATCH   0
 
 #define EMEX64_PAGE_SIZE        0x2000UL
 #define EMEX64_MMIO_BASE        0x0020000000000000UL
