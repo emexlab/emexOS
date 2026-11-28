@@ -12,7 +12,6 @@
 #include "interrupt.h"
 #include <stddef.h>
 
-#define KERNEL_PAGE_SIZE        0x2000UL
 #define KERNEL_MMIO_BASE        0x0020000000000000UL
 #define KERNEL_IC_BASE          (KERNEL_MMIO_BASE + 0)
 #define KERNEL_IC_REG_PENDING   (KERNEL_IC_BASE + 0x00)
@@ -23,12 +22,8 @@
 #define KERNEL_IC_REG_CURRENT   (KERNEL_IC_BASE + 0x28)
 #define KERNEL_IC_CTRL_ENABLE   0x1
 
-#define KERNEL_CR_CRKSP         1
-#define ICM_STACK_SIZE          KERNEL_PAGE_SIZE
-
 static uint64_t icm_vector[KERNEL_IC_IRQS];
 static icm_handler_t icm_handlers[KERNEL_IC_IRQS];
-static uint8_t icm_stack[ICM_STACK_SIZE] __attribute__((aligned(16)));
 static int icm_ready;
 
 static int icm_irq_is_valid(uint64_t irq)
@@ -51,13 +46,6 @@ static inline void icm_mmio_write(uint64_t addr, uint64_t value)
     *(volatile uint64_t *)addr = value;
 }
 
-#define icm_cr_write(cr, value)                                                \
-do                                                                              \
-{                                                                               \
-    uint64_t __value = (uint64_t)(value);                                       \
-    __asm__ __volatile__("cmov %0, %1" : : "i"(cr), "r"(__value) : "memory");  \
-} while(0)
-
 void icm_dispatch(struct icm_frame *frame);
 
 __attribute__((naked)) static void icm_trap_entry(void)
@@ -65,7 +53,7 @@ __attribute__((naked)) static void icm_trap_entry(void)
     __asm__ __volatile__(
         "push rr, er0, er1, er2, er3, er4, er5, er6, er7\n\t"
         "mov r0, fp\n\t"
-        "bl icm_dispatch\n\t"
+        "bl icm_dispatch@plt\n\t"
         "pop er7, er6, er5, er4, er3, er2, er1, er0, rr\n\t"
         "iret");
 }
@@ -89,9 +77,6 @@ void icm_init(void)
 {
     icm_ready = 0;
     icm_mmio_write(KERNEL_IC_REG_ENABLED, 0);
-
-    icm_cr_write(KERNEL_CR_CRKSP,
-                 (uint64_t)icm_stack + ICM_STACK_SIZE - 8);
 
     for(uint64_t irq = 0; irq < KERNEL_IC_IRQS; irq++)
     {
